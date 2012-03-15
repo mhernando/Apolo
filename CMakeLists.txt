@@ -5,24 +5,26 @@ IF(wxWidgets_FOUND)
 	INCLUDE(${wxWidgets_USE_FILE})
 
 	IF(WIN32)
-		INCLUDE_DIRECTORIES(C:/usr/include/mrcore) 
-		LINK_DIRECTORIES(C:/usr/lib)
+		INCLUDE_DIRECTORIES(C:/mrcore/include/mrcore) 
+		LINK_DIRECTORIES(C:/mrcore/lib)
 	ELSE(WIN32)
 		INCLUDE_DIRECTORIES(/usr/local/include/mrcore)
 		LINK_DIRECTORIES(/usr/local/lib)
 	ENDIF(WIN32)
 
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp)
+
 	IF(WIN32)
 		SET_TARGET_PROPERTIES(APOLO PROPERTIES
 				COMPILE_FLAGS "${wxWidgets_CXX_FLAGS} ${wxWidgets_DEFINITIONS}"
 				LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 	ENDIF(WIN32)
 
-	IF(WIN32)
-    		TARGET_LINK_LIBRARIES(APOLO  mrcore_d ${wxWidgets_LIBRARIES})
-    	ELSE(WIN32)
-		TARGET_LINK_LIBRARIES(APOLO  mrcores GL GLU ${wxWidgets_LIBRARIES})
+	IF(WIN32)	
+		TARGET_LINK_LIBRARIES(APOLO debug mrcore_d ${wxWidgets_LIBRARIES})	
+		TARGET_LINK_LIBRARIES(APOLO optimized mrcore ${wxWidgets_LIBRARIES})
+	ELSE(WIN32) #LINUX		
+		TARGET_LINK_LIBRARIES(simulator mrcore ${OPENGL_LIBRARIES} ${wxWidgets_LIBRARIES})
 	ENDIF(WIN32)
     	
 ENDIF(wxWidgets_FOUND)
