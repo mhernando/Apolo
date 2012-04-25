@@ -135,8 +135,8 @@ void GenericSlider::updateMinMax(double m_currentMin, double m_currentMax)
 	if(m_currentMax-m_currentMin>15 && m_currentMax-m_currentMin<24)precis[2]='1';
 	if(m_currentMax-m_currentMin<14)precis[2]='2';
 
-	aux1.Printf(wxT(precis),m_currentMin);
-	aux2.Printf(wxT(precis),m_currentMax);
+	aux1.Printf(precis,m_currentMin);
+	aux2.Printf(precis,m_currentMax);
 	m_min->SetLabel(aux1);
 	m_max->SetLabel(aux2);
 }

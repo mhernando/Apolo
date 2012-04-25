@@ -32,7 +32,7 @@ END_EVENT_TABLE()
 
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
-: wxMDIParentFrame(parent, id, title, pos, size, style)
+: wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
 {
 	Centre();
 	treeVisible=true;
@@ -97,7 +97,7 @@ void MainWindow::OnSize(wxSizeEvent& WXUNUSED (event))
 {
 	int w, h;
 	GetClientSize(&w,&h);
-	note->SetSize(0,0,230,h);
+	if(note)note->SetSize(0,0,230,h);
 	GetClientWindow()->SetSize(230,0,w-230,h);
 	Refresh(false);
 }

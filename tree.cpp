@@ -131,7 +131,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemId.IsOk())
 		{
 			wxString text = itemData ? itemData->getNameTree() : GetItemText(itemId) ;
-			title<<wxT("Menu for ") << wxT(text);
+			title<<wxT("Menu for ") << text;
 		}
 		else 
 		{

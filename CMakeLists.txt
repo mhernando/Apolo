@@ -15,8 +15,13 @@ IF(wxWidgets_FOUND)
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp)
 
 	IF(WIN32)
+#		SET_TARGET_PROPERTIES(APOLO PROPERTIES
+#				COMPILE_FLAGS "${wxWidgets_CXX_FLAGS} ${wxWidgets_DEFINITIONS}"
+#				LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+
+
 		SET_TARGET_PROPERTIES(APOLO PROPERTIES
-				COMPILE_FLAGS "${wxWidgets_CXX_FLAGS} ${wxWidgets_DEFINITIONS}"
+				COMPILE_FLAGS "/D _CRT_SECURE_NO_WARNINGS"
 				LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 	ENDIF(WIN32)
 
