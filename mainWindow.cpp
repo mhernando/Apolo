@@ -2,6 +2,11 @@
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
+	EVT_MENU(ID_ADDSPHERE, MainWindow::AddObject)
+	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
+	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
+	EVT_MENU(ID_ADDFACE, MainWindow::AddObject)
+	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
 	EVT_MENU(wxID_EXIT, MainWindow::OnQuit)
 	EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
 	EVT_MENU(ID_LOADWORLD, MainWindow::OnLoadWorld)
@@ -15,6 +20,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
+	EVT_MENU(ID_RAD, MainWindow::OnRadius)
 	EVT_MENU(ID_COLOR, MainWindow::OnColor)
 	EVT_MENU(ID_BOX, MainWindow::OnDrawBox)
 	EVT_MENU(ID_REFER, MainWindow::OnDrawReference)
@@ -36,6 +42,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 {
 	Centre();
 	treeVisible=true;
+	
 
 #if wxUSE_STATUSBAR
 	CreateStatusBar();
@@ -48,17 +55,19 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	InitToolBar(GetToolBar());
 
 	//make a Aui Notebook
-	note = new wxAuiNotebook(this, wxID_ANY,wxDefaultPosition,wxSize(300,300), wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
-
+	note = new wxAuiNotebook(this, wxID_ANY,wxDefaultPosition,wxSize(300,300), wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
+	
 	tree = new Tree(note, ID_TREE);
 	tree->m_mainWin = this;
-	m_root = tree->AddRoot(wxT("Universe"), 0, 43, new TreeItemData(wxT("Root item")));
+	m_root = tree->AddRoot(wxT("Universe"), 0, 45, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
+	
 
 	note->AddPage(tree, wxT("Universe"));
 
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
+	
 	
 }
 void MainWindow::OnClose(wxCloseEvent& event)
@@ -108,6 +117,7 @@ void MainWindow::OnCloseNotebook(wxAuiNotebookEvent& event)
 }
 void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
+	
 	wxMessageBox(wxT("Apolo Simulator\n")
 		wxT("Author:Esther LLorente 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.8.11 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
@@ -136,6 +146,35 @@ void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 	if(treeVisible)showTree(false);
 	else showTree(true);
 }
+
+void MainWindow::AddObject(wxCommandEvent& event)
+{
+	int id= event.GetId();
+
+	
+	for(int i=0;i<listWorlds.size();i++)	
+			if (listWorlds[i]->getTreeItem() == tree->GetSelection())
+		  			listWorlds[i]->AddObject(id);
+	
+	
+}
+
+void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
+{
+		wxString msg;
+        msg.Printf(wxT("Are you sure you want to delete this object?"));
+        if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
+        else
+		{
+		for(int i=0;i<listWorlds.size();i++)
+			if(listWorlds[i]->getTreeItem()==tree->GetItemParent(tree->GetSelection()))
+				listWorlds[i]->DeleteObject(tree->GetSelection());
+		}
+		
+}
+
+
+
 void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId  = tree->GetSelection();
@@ -187,7 +226,8 @@ void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 	{
 		ChangeLocationCtrl* locationCtrl;
 		if(id == ID_ORI)locationCtrl = new ChangeLocationCtrl(this, ID_ORI, wxT("Change Orientation"));
-		else if(id == ID_POSIT)locationCtrl = new ChangeLocationCtrl(this, ID_POSIT, wxT("Change Position"));
+		else locationCtrl = new ChangeLocationCtrl(this, ID_POSIT, wxT("Change Position"));
+		
 		locationCtrl->setItemData(itemData);
 		locationCtrl->ShowModal();	
 		wxLogStatus(wxT("Change Location"));
@@ -245,6 +285,22 @@ void MainWindow::OnDrawReference(wxCommandEvent& WXUNUSED(event))
 	if(itemData->pointer.positionableentity->getDrawReferenceSystem())ShowReference(true);
 	else ShowReference(false);
 }
+
+void MainWindow::OnRadius(wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	static wxString s_text;
+    s_text = wxGetTextFromUser(wxT("New radius:"), wxT("Change Radius"),s_text, this);
+	if(itemData->pointer.spherepart)
+	{
+		double valor;
+		s_text.ToDouble(&valor);
+		itemData->pointer.spherepart->setRadius(valor);
+	}
+	for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
+}
+
 void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
@@ -254,7 +310,7 @@ void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
 		double _r,_g,_b;
 		itemData->pointer.solidentity->getColor(_r,_g,_b);
 		wxColour c = wxColour(_r*255,_g*255,_b*255);
-		wxColour color = wxGetColourFromUser(0,c);
+		wxColour color = wxGetColourFromUser(0);
 		if(color.IsOk())
 		{
 			double r = color.Red();
@@ -271,6 +327,7 @@ void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
 	World *w = new World;
 	simuWorld = new SimulatedWorld(w);
 	listWorlds.push_back(simuWorld);
+	tree->ExpandAll();
 }
 void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
 {

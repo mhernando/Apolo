@@ -26,6 +26,12 @@ public:
 	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
 
 	void InitToolBar(wxToolBar* toolbar);
+		
+	void InitToolBar2(wxToolBar* toolbar2);
+
+
+
+
 	void UpdateWorld();
 	void RefreshChild();
 	void CreateSubWindows();
@@ -64,6 +70,9 @@ private:
 	bool playsimu;
 	wxTimer m_timer;
 	wxToolBar* toolbar;
+	/////
+	wxToolBar* toolbar2;
+	/////
 	wxMenu * file_menu;
 	wxMenu * file_menu2;
 	wxMenu * file_menu3;

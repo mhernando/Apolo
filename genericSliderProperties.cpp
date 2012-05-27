@@ -13,7 +13,7 @@ BEGIN_EVENT_TABLE(GenericSliderProperties, wxDialog)
 END_EVENT_TABLE()
 
 GenericSliderProperties::GenericSliderProperties(wxPanel *parent,wxWindowID id,const wxString& title)
-:wxDialog(parent,id,title,wxPoint(500,200),wxSize(200,150),wxDEFAULT_DIALOG_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX |wxMINIMIZE_BOX)|wxSTAY_ON_TOP)
+:wxDialog(parent,id,title,wxPoint(500,200),wxSize(200,150),wxDEFAULT_DIALOG_STYLE & ~( wxMAXIMIZE_BOX |wxMINIMIZE_BOX)|wxSTAY_ON_TOP)
 {
 	winSlider = (GenericSlider *)parent;
 	isDecimal=true;
