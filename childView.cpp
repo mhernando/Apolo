@@ -39,9 +39,8 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	m_timer.Start(100);
 
 	//make a toolbar
-	CreateToolBar(wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL, wxID_ANY, wxT(""));
+	CreateToolBar( wxNO_BORDER | wxTB_FLAT |wxTB_HORIZONTAL, wxID_ANY, wxT(""));
 	toolbar = GetToolBar();
-
 	if(toolbar)InitToolBar(toolbar);
 
 	//make a other menu
@@ -134,7 +133,9 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	toolbar->AddTool(ID_STOP2, bitmaps[6], wxT("STOP"));
 	toolbar->AddSeparator();
 	toolbar->Realize();
+	
 }
+
 void ChildView::UpdateWorld()
 {
 	canvas1->UpdateWorld(m_world);
@@ -153,7 +154,7 @@ void ChildView::CreateSubWindows()
 	GetClientSize(&width, &height);
 
 	//make a splitter
-	m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(width,height));
+	m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize/*wxSize(width,height)*/);
 	m_splitterSub = new wxSplitterWindow(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(100, 100));
 	m_splitter->SetMinimumPaneSize(50);
 	m_splitterSub->SetMinimumPaneSize(50);

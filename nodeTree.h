@@ -28,6 +28,7 @@ enum TypeNode
 	N_World,
 	N_RobotSim,
 	N_AdeptOneSim,
+	N_SpherePart,
 };
 enum Bitmap 
 {
@@ -52,6 +53,7 @@ enum Bitmap
 	Bit_world=37,
 	Bit_robotsim=39,
 	Bit_adeptonesim=41,
+	Bit_spherepart=43,
 };
 enum BitmapSelect
 {
@@ -76,6 +78,7 @@ enum BitmapSelect
 	BitSel_world=38,
 	BitSel_robotsim=40,
 	BitSel_adeptonesim=42,
+	BitSel_spherepart=44,
 
 };
 struct MRPointer
@@ -96,6 +99,7 @@ struct MRPointer
 	LaserSensorSim* lasersensorsim;
 	MeshPart* meshpart;
 	AdeptOneSim* adeptone;
+	SpherePart * spherepart;
 	};
 	WheeledBaseSim* wheeledbasesim;
 	ComposedEntity* composedentity;
@@ -106,6 +110,7 @@ struct MRPointer
 };
 struct ContextualMenu
 {
+
 	bool menu_positionable;
 	bool menu_solid;
 	bool menu_composed;
@@ -113,6 +118,7 @@ struct ContextualMenu
 	bool menu_robotsim;
 	bool menu_world;
 	bool menu_meshpart;
+	bool menu_radius;
 };
 class SimulatedWorld;
 

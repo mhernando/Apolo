@@ -20,7 +20,7 @@ RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,NodeTree* itemData)
 	{	
 		
 		nameJoint.Printf(wxT("Joint %d"),i);
-		joint = new GenericSlider(this,nameJoint,wxDefaultPosition,wxSize(300,300),false);
+		joint = new GenericSlider(this,nameJoint,wxDefaultPosition,wxDefaultSize/*wxSize(300,300)*/,false);
 
 		listJoints.push_back(joint);
 		vbox->Add(joint,0,wxEXPAND|wxALL,5);

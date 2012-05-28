@@ -22,7 +22,12 @@
 #define ID_ROBOT 1017
 #define ID_CONVER 1018
 #define ID_CONVERMESH 1019
-
+#define ID_RAD 1020
+#define ID_ADDSPHERE 1021
+#define ID_ADDCYL 1022
+#define ID_ADDPRI 1023
+#define ID_ADDFACE 1024
+#define ID_DELOBJ 1025
 //FUNCTIONS OF CHILDFRAME 200X
 #define ID_HIDE 2000
 #define ID_SPLITHF 2001 
@@ -45,6 +50,7 @@
 #define ID_EDIT 4004 
 #define ID_ACCEPT 4005 
 #define ID_CANCEL 4006 
+#define ID_DEFAULT 4007 
 
 // Define  for wxwigets reseved 50XX
 //wxID_EXIT 5006

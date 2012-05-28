@@ -3,6 +3,8 @@
 
 NodeTree::NodeTree(PositionableEntity* pos)
 {
+	
+	/////
 	menus.menu_positionable = false;
 	menus.menu_solid = false;
 	menus.menu_composed = false;
@@ -10,6 +12,8 @@ NodeTree::NodeTree(PositionableEntity* pos)
 	menus.menu_world = false;
 	menus.menu_robotsim = false;
 	menus.menu_meshpart = false;
+	menus.menu_radius=false;
+
 
 	//primero las clases bases que pueden ser compuestas
 	if(dynamic_cast<PositionableEntity *>(pos))	menus.menu_positionable = true;
@@ -18,6 +22,7 @@ NodeTree::NodeTree(PositionableEntity* pos)
 	if(dynamic_cast<WheeledBaseSim *>(pos))	menus.menu_wheeledbased = true;	
 	if(dynamic_cast<RobotSim *>(pos)) menus.menu_robotsim = true;
 	if(dynamic_cast<MeshPart *>(pos)) menus.menu_meshpart = true;
+	if(dynamic_cast<SpherePart *>(pos)) menus.menu_radius = true;
 
 	//Ahora los punteros a las clases base que pueden ser parte
 	//de una herencia multiple, los cuales no retornan directamente y son no exclusivos
@@ -95,7 +100,18 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_cylindricalpart;
 		bitsel = BitSel_cylindricalpart;
 		name = pos->getName();
-		if(name.empty())name = "Cylindrical";
+		if(name.empty())name = "Cylinder";
+		return;
+	}
+
+	if(dynamic_cast<SpherePart *>(pos))
+	{
+		pointer.spherepart = dynamic_cast<SpherePart*>(pos);
+		tipo = N_SpherePart;
+		bit = Bit_spherepart;
+		bitsel = BitSel_spherepart;
+		name = pos->getName();
+		if(name.empty())name = "Sphere";
 		return;
 	}
 	if(dynamic_cast<PrismaticPart *>(pos))
@@ -105,9 +121,10 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_prismaticpart;
 		bitsel = BitSel_prismaticpart;
 		name = pos->getName();
-		if(name.empty())name = "Prismatic";
+		if(name.empty())name = "Prism";
 		return;
 	}
+	
 	if(dynamic_cast<LMS200Sim *>(pos))
 	{
 		pointer.lms200sim = dynamic_cast<LMS200Sim*>(pos);

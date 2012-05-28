@@ -54,27 +54,26 @@
 #include "bitmaps/robotSim.xpm"
 #include "bitmaps/robotSimSelect.xpm"
 
-
 class MainWindow;
 class SimulatedWorld;
 class Tree : public wxTreeCtrl
 {
-public:
-	Tree(wxWindow * parent, const wxWindowID id);
-	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
-	void AddNode(PositionableEntity * pos, wxTreeItemId parent);
-	void Parent(wxTreeItemId r);
-	void OnItemMenu(wxTreeEvent& event);
-	void OnShowCanvas(wxMouseEvent& event);
-	
-	MainWindow* m_mainWin;
-
 private:
 	wxString text;
 	wxTreeItemId root;
 	wxTreeItemId m_parent;
+	struct m_item {int id; string name; wxIcon icon;};
+	DECLARE_EVENT_TABLE();	
 
-	DECLARE_EVENT_TABLE();
+public:
+	Tree(wxWindow * parent, const wxWindowID id);
+	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
+	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent);
+	void Parent(wxTreeItemId r);
+	Tree::m_item SimplyItems(int id,string name, wxIcon icon);
+	void OnItemMenu(wxTreeEvent& event);
+	void OnShowCanvas(wxMouseEvent& event);
+	MainWindow* m_mainWin;
 };
 
 class TreeItemData : public wxTreeItemData

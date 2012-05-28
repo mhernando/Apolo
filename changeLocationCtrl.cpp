@@ -9,36 +9,41 @@ BEGIN_EVENT_TABLE(ChangeLocationCtrl, wxDialog)
 END_EVENT_TABLE()
 
 ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wxString& title)
-:wxDialog(parent, id, title, wxDefaultPosition, wxSize(525,300),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER) 
+:wxDialog(parent, id, title, wxDefaultPosition, wxSize(525,300),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
 	itemnode = 0;
 	winId = id;
 
 	panel = new wxPanel(this, wxID_ANY);
 
-	accept = new wxButton(panel,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxSize(40,25));
-	cancel = new wxButton(panel,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxSize(40,25));
+	accept = new wxButton(panel,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxSize(50,25));
+	cancel = new wxButton(panel,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxSize(50,25));
 
 	if(id == ID_ORI)//change orientation
 	{
-		control0 = new GenericSlider(panel,"Roll",wxDefaultPosition,wxSize(100,300),true);//true = vertical
-		control1 = new GenericSlider(panel,"Pitch",wxDefaultPosition,wxSize(100,300),true);
-		control2 = new GenericSlider(panel,"Yaw",wxDefaultPosition,wxSize(100,300),true);
+		control0 = new GenericSlider(panel,"Roll",wxDefaultPosition,wxDefaultSize,true);//true = vertical
+		control1 = new GenericSlider(panel,"Pitch",wxDefaultPosition,wxDefaultSize,true);
+		control2 = new GenericSlider(panel,"Yaw",wxDefaultPosition,wxDefaultSize,true);
 		control0->setProperties(-180,180);
 		control1->setProperties(-180,180);
 		control2->setProperties(-180,180);
 		
 	}
-	if(id == ID_POSIT)//change position
+	else//change position
 	{
-		control0 = new GenericSlider(panel,"X (m)",wxDefaultPosition,wxSize(100,300),true);
-		control1 = new GenericSlider(panel,"Y (m)",wxDefaultPosition,wxSize(100,300),true);
-		control2 = new GenericSlider(panel,"Z (m)",wxDefaultPosition,wxSize(100,300),true);
+		control0 = new GenericSlider(panel,"X (m)",wxDefaultPosition,wxDefaultSize,true);
+		control1 = new GenericSlider(panel,"Y (m)",wxDefaultPosition,wxDefaultSize,true);
+		control2 = new GenericSlider(panel,"Z (m)",wxDefaultPosition,wxDefaultSize,true);
 		control0->setProperties(-10,10);
 		control1->setProperties(-10,10);
 		control2->setProperties(-10,10);
 		
 	}
+
+	
+	
+	
+	
 	wxBoxSizer *hbbox = new wxBoxSizer(wxHORIZONTAL);
 	hbbox->Add(accept,0,wxALIGN_LEFT);
 	hbbox->AddSpacer(5);
@@ -53,11 +58,13 @@ ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wx
 	vbox->Add(hbox,1,wxEXPAND|wxALL,5);
 	vbox->Add(hbbox,wxSizerFlags(0).Align(wxALIGN_BOTTOM));
 	panel->SetSizer(vbox);
+	vbox->SetMinSize(300,300);
 	vbox->SetSizeHints(this);
 }
 void ChangeLocationCtrl::OnValueChanged(wxCommandEvent& event)
 {
 	Transformation3D t=itemnode->pointer.positionableentity->getRelativeT3D();
+	
 	if(winId == ID_ORI)
 	{
 		double roll,pitch,yaw;
@@ -66,7 +73,7 @@ void ChangeLocationCtrl::OnValueChanged(wxCommandEvent& event)
 		yaw=deg2rad(control2->getValue());
 		t.orientation.setRPY(roll,pitch,yaw);
 	}
-	else
+	else 
 	{//POS
 		double x,y,z;
 		x=control0->getValue();
@@ -74,6 +81,8 @@ void ChangeLocationCtrl::OnValueChanged(wxCommandEvent& event)
 		z=control2->getValue();
 		t.position=Vector3D(x,y,z);
 	}
+	
+
 	itemnode->pointer.positionableentity->setRelativeT3D(t);
 	itemnode->getSimu()->getChild()->RefreshChild();
 	event.Skip();
@@ -124,4 +133,5 @@ void ChangeLocationCtrl::setItemData(NodeTree * node)
 		control2->setProperties(t.position.z-5,t.position.z+5,false);
 		control2->setValue(t.position.z);
 	}
+	
 }

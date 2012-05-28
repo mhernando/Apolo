@@ -4,6 +4,7 @@
 
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
+	
 	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
 END_EVENT_TABLE()
 
@@ -12,7 +13,7 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 {
 	wxImageList *images = new wxImageList(16,16,true);
 	// should correspond to "bit" & "bitsel" enum 
-	wxIcon icons[44];
+	wxIcon icons[46];
 	icons[0] = wxIcon (universe_xpm); //universe
 	icons[1] = wxIcon (joint_xpm); //simple joint
 	icons[2] = wxIcon (jointSelect_xpm); //simple joint select 
@@ -56,7 +57,9 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	icons[40] = wxIcon (robotSimSelect_xpm); //robotSim select
 	icons[41] = wxIcon (scara_xpm); //adeptone
 	icons[42] = wxIcon (scaraSelect_xpm); //adeptone select
-	icons[43] = wxIcon (universeSelect_xpm);
+	icons[43] = wxIcon (sphere_xpm);
+    icons[44] = wxIcon (sphereSelect_xpm);
+	icons[45] = wxIcon (universeSelect_xpm);
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 	{
@@ -64,6 +67,8 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	}
 	AssignImageList(images);
 }
+
+
 
 void Tree::Parent(wxTreeItemId r)
 {
@@ -83,12 +88,14 @@ wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 	}
 	return node;
 }
-void Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
+
+wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 {
 	NodeTree *auxP = new NodeTree(pos);
 	
 	wxTreeItemId mynode = AppendItem(parent, auxP->getNameTree(), auxP->bit, auxP->bitsel, auxP);
 	auxP->SetId(mynode);
+	
 	auxP->simuWorld = ((NodeTree *)GetItemData(parent))->getSimu();
 	ComposedEntity * auxC = dynamic_cast<ComposedEntity *>(pos);
 	if(auxC)
@@ -98,7 +105,11 @@ void Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 			AddNode((*auxC)[j],mynode);
 		}
 	}
+	return mynode;
 }
+
+
+
 void Tree::OnItemMenu(wxTreeEvent& event)
 {
 	wxTreeItemId itemId = GetSelection();
@@ -118,12 +129,37 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 	else if(itemId.IsOk() && itemData->menus.menu_world)
 	{
 		wxMenu menuWorld(wxT("Menu of World"));
+		wxMenu *subMenu=new wxMenu;
+		wxMenu *basic=new wxMenu;
+		wxMenu *composed=new wxMenu;
+
 		menuWorld.Append(ID_NAME, wxT("Change name"));
 		menuWorld.AppendSeparator();
 		menuWorld.Append(ID_LOADOBJ, wxT("Load object"));
 		menuWorld.Append(ID_LOADMESH, wxT("Import .stl"));
 		menuWorld.Append(ID_SAVEWORLD, wxT("Save world"), wxT("Save this world"));
 		menuWorld.Append(ID_DELETE,wxT("Delete world"));
+		menuWorld.AppendSeparator();
+		menuWorld.AppendSubMenu(basic,wxT("Add Simples Entities"));
+		menuWorld.AppendSubMenu(composed,wxT("Add Composed Entities"));
+		
+		///Number of items for Simple Entities Menu///
+		#define NUMBER 3
+		m_item simples[NUMBER];
+		wxMenuItem *item[NUMBER];
+		
+		simples[0]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
+		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
+		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
+		//simples[3]=SimplyItems(ID_ADDFACE,"FaceSetPart",wxIcon(faceSetPart_xpm));
+					
+		for( int i=0; i<NUMBER;i++)
+		{
+			item[i] = new wxMenuItem(basic,simples[i].id,simples[i].name);
+			item[i]->SetBitmap(simples[i].icon);
+			basic->Append(item[i]);
+		}
+		
 		PopupMenu(&menuWorld,pt);
 	}
 	else
@@ -140,13 +176,15 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		wxMenu menuTree(title);
 		//if(itemData->menus.menu_composed) menuTree.Append(wxID_ANY, wxT("Menu composed"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
+		if(itemData->menus.menu_positionable) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
+		if(itemData->menus.menu_radius) menuTree.Append(ID_RAD, wxT("Change radio"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==1) menuTree.Append(ID_REFER, wxT("Undraw Reference System"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==0) menuTree.Append(ID_REFER, wxT("Draw Reference System"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_NAME, wxT("Change name"));
-		if(itemData->menus.menu_solid)menuTree.AppendSeparator();
+		if(itemData->menus.menu_positionable) menuTree.AppendSeparator();
 		if(itemData->menus.menu_solid)menuTree.Append(ID_COLOR, wxT("Change color"));
 		if(itemData->menus.menu_solid && itemData->pointer.solidentity->getDrawBox()==1)menuTree.Append(ID_BOX, wxT("Undraw box"));
 		if(itemData->menus.menu_solid && itemData->pointer.solidentity->getDrawBox()==0)menuTree.Append(ID_BOX, wxT("Draw box"));
@@ -173,5 +211,14 @@ void Tree::OnShowCanvas(wxMouseEvent& event)
 	else wxLogStatus(wxT("No item under mouse"));
 
 	event.Skip();
+}
+
+Tree::m_item Tree::SimplyItems(int id,string name, wxIcon icon)
+{
+			struct  m_item item;
+			item.id=id;
+			item.name=name;
+			item.icon=icon;
+			return item;
 }
 
