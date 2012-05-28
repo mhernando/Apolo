@@ -51,6 +51,12 @@ public:
 	void OnDrawBox(wxCommandEvent& event);
 	void OnDrawReference(wxCommandEvent& event);
 	void OnColor(wxCommandEvent& event);
+
+void OnRadius(wxCommandEvent& event);
+	
+void AddObject(wxCommandEvent& event);
+	
+		
 	void OnNewWorld(wxCommandEvent& event);
 	void OnLoadWorld(wxCommandEvent& event);
 	void OnLoadMesh(wxCommandEvent& event);
@@ -67,6 +73,7 @@ public:
 	void showTree(bool sh);
 	void ShowBox(bool box);
 	void ShowReference(bool refer);
+	void DeleteObject(wxCommandEvent& WXUNUSED(event));
 
 	bool checkPanelExist(NodeTree* node);
 	bool getTreeVisible(){return treeVisible;}
