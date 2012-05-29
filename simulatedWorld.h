@@ -3,6 +3,7 @@
 
 #include "mrcore.h"
 #include "initialProperties.h"
+
 #include "childView.h"
 #include "tree.h"
 #include <wx/wx.h>

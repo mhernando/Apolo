@@ -30,7 +30,8 @@ void Canvas::Paint(wxPaintEvent& event)
 		InitGL();
 		flag = true;
 	}
-	glViewport(0, 0, GetSize().x, GetSize().y);
+
+	scene.setViewSize(0,0,GetSize().x,GetSize().y);	
 	scene.Draw();
 	SwapBuffers();
 }
