@@ -59,7 +59,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	s=new wxSashLayoutWindow(this, ID_DRAG,wxDefaultPosition, wxDefaultSize, wxSW_3D | wxCLIP_CHILDREN);
 	
 	s->SetDefaultSize(wxSize(w/4, h));
-	s->SetOrientation(wxLAYOUT_VERTICAL);
+	//s->SetOrientation(wxLAYOUT_VERTICAL);
 	s->SetAlignment(wxLAYOUT_LEFT);
 	s->SetSashVisible(wxSASH_RIGHT, true); 
 	
@@ -166,8 +166,23 @@ void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 }
 void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 {
-	if(treeVisible)showTree(false);
-	else showTree(true);
+	if(treeVisible)
+	{
+		s->Show(false);
+		treeVisible=false;
+		wxLogStatus(wxT("Visible tree"));
+	}
+	else 
+	{
+		s->Show(true);
+		treeVisible=true;
+		wxLogStatus(wxT("Unvisible tree"));
+	}
+	
+	#if wxUSE_MDI_ARCHITECTURE
+    wxLayoutAlgorithm layout;
+    layout.LayoutMDIFrame(this);
+	#endif // wxUSE_MDI_ARCHITECTURE
 }
 
 void MainWindow::AddObject(wxCommandEvent& event)
@@ -555,6 +570,7 @@ void MainWindow::OnShowCanvas()
 		else listWorlds[i]->getChild()->Lower();
 	}
 }
+/*
 void MainWindow::showTree(bool sh)
 {
 	treeVisible=sh;
@@ -575,7 +591,7 @@ void MainWindow::showTree(bool sh)
 		Refresh(false);
 		wxLogStatus(wxT("Unvisible tree"));
 	}
-}
+}*/
 void MainWindow::ShowBox(bool box)
 {
 	drawBox = box;

@@ -70,7 +70,7 @@ void AddObject(wxCommandEvent& event);
 
 	void InitToolBar(wxToolBar* toolbar);
 	void OnShowCanvas();
-	void showTree(bool sh);
+	//void showTree(bool sh);
 	void ShowBox(bool box);
 	void ShowReference(bool refer);
 	void DeleteObject(wxCommandEvent& WXUNUSED(event));
