@@ -33,6 +33,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
 	EVT_UPDATE_UI(ID_SAVEWORLD,MainWindow::UpdateUISaveWorld)
+	EVT_SASH_DRAGGED(ID_DRAG, MainWindow::OnSashDrag)
 
 END_EVENT_TABLE()
 
@@ -40,6 +41,8 @@ END_EVENT_TABLE()
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
 {
+
+	
 	Centre();
 	treeVisible=true;
 	
@@ -50,12 +53,18 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 #endif // wxUSE_STATUSBAR
 
 	SetIcon(wxIcon(apolo_xpm));
-
+	GetClientSize(&w,&h);
 	CreateToolBar(wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL);
 	InitToolBar(GetToolBar());
-
+	s=new wxSashLayoutWindow(this, ID_DRAG,wxDefaultPosition, wxDefaultSize, wxSW_3D | wxCLIP_CHILDREN);
+	
+	s->SetDefaultSize(wxSize(w/4, h));
+	s->SetOrientation(wxLAYOUT_VERTICAL);
+	s->SetAlignment(wxLAYOUT_LEFT);
+	s->SetSashVisible(wxSASH_RIGHT, true); 
+	
 	//make a Aui Notebook
-	note = new wxAuiNotebook(this, wxID_ANY,wxDefaultPosition,wxSize(300,300), wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
+	note = new wxAuiNotebook(s, wxID_ANY,wxDefaultPosition,wxDefaultSize, wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
 	
 	tree = new Tree(note, ID_TREE);
 	tree->m_mainWin = this;
@@ -67,9 +76,23 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
-	
-	
+
 }
+
+void MainWindow::OnSashDrag(wxSashEvent& event)
+{
+  
+    s->SetDefaultSize(wxSize(event.GetDragRect().width, h));
+            
+	#if wxUSE_MDI_ARCHITECTURE
+    wxLayoutAlgorithm layout;
+    layout.LayoutMDIFrame(this);
+	#endif // wxUSE_MDI_ARCHITECTURE
+
+    // Leaves bits of itself behind sometimes
+    GetClientWindow()->Refresh();
+	
+    }
 void MainWindow::OnClose(wxCloseEvent& event)
 {
 	if ( event.CanVeto())
@@ -104,11 +127,11 @@ void MainWindow::InitToolBar(wxToolBar *toolbar)
 }
 void MainWindow::OnSize(wxSizeEvent& WXUNUSED (event))
 {
-	int w, h;
-	GetClientSize(&w,&h);
-	if(note)note->SetSize(0,0,230,h);
-	GetClientWindow()->SetSize(230,0,w-230,h);
-	Refresh(false);
+	#if wxUSE_MDI_ARCHITECTURE
+    wxLayoutAlgorithm layout;
+    layout.LayoutMDIFrame(this);
+	#endif 
+
 }
 void MainWindow::OnCloseNotebook(wxAuiNotebookEvent& event)
 {

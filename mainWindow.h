@@ -21,7 +21,7 @@
 #include <vector>
 #include <wx/colordlg.h> 
 #include <wx/aui/auibook.h>
-
+#include <wx/laywin.h>
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
 #include "bitmaps/loadWorld.xpm"
@@ -81,7 +81,8 @@ void AddObject(wxCommandEvent& event);
 	bool getReferenceVisible(){return referVisible;}
 	SimulatedWorld *GetSimulated(){return simuWorld;}
 	wxTreeItemId getRoot(){return m_root;}
-
+	void OnSashDrag(wxSashEvent& event);
+	
 	vector <SimulatedWorld *> listWorlds;
 	
 private:
@@ -99,7 +100,8 @@ private:
 	wxMenu* filesubmenu3;
 	wxMenuBar* menubar;
 	wxPanel* m_panel;
-
+	wxSashLayoutWindow *s;
+	int w, h;
 	DECLARE_EVENT_TABLE();
 
 };
