@@ -2,6 +2,8 @@
 
 
 BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
+	EVT_COMMAND(wxID_ANY, wxEVT_POSITIONABLE_WIDGET_CHANGE, InitialProperties::OnValueChanged)
+	EVT_COMMAND(wxID_ANY, wxEVT_POSITIONABLE_WIDGET_COLOR, InitialProperties::ChangeColor)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::OnValueChanged)
 	EVT_TEXT(ID_ENTER,InitialProperties::OnValueChanged)
 	EVT_BUTTON(ID_ACCEPT, InitialProperties::OnButton)
@@ -11,52 +13,21 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, PositionableEntity *obj,SimulatedWorld *s_world, const wxString& title)
-:wxDialog(parent,id, title, wxPoint(200,50), wxSize(500,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
+:wxDialog(parent,id, title, wxPoint(0,0), wxSize(500,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER) 
 {
 	b_sel=0;
 	S_G=true;
 	winId=id;
+
 	world=s_world;
 	pos=obj;
-
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
+	
+	pw=new PositionableWidget(this,wxDefaultPosition,wxDefaultSize);
 
 	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
+	
 	vbox->Add(df,0,wxEXPAND | wxALL ,12);
-	
-	//PositionableEntity`s Properties//
-	wxPanel *panel=new wxPanel(this,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_NONE);
-	
-	wxStaticBox *posi=new wxStaticBox(panel,-1,wxT("Position"),wxPoint(5,5),wxSize(305,50));
-	
-	x_text = new wxStaticText(panel, wxID_ANY, wxT("X :"),wxPoint(10,25),wxDefaultSize);
-	x_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(45,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	y_text = new wxStaticText(panel, wxID_ANY, wxT("Y :"),wxPoint(110,25),wxDefaultSize);
-	y_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(145,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	z_text = new wxStaticText(panel, wxID_ANY, wxT("Z :"),wxPoint(210,25),wxDefaultSize);
-	z_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(245,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-
-	wxStaticBox *ori=new wxStaticBox(panel,-1,wxT("Orientation"),wxPoint(5,65),wxSize(305,50));
-	
-	r_text = new wxStaticText(panel, wxID_ANY, wxT("Roll :"),wxPoint(10,85),wxDefaultSize);
-	r_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(45,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	p_text = new wxStaticText(panel, wxID_ANY, wxT("Pitch :"),wxPoint(110,85),wxDefaultSize);
-	p_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(145,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	yw_text = new wxStaticText(panel, wxID_ANY, wxT("Yaw :"),wxPoint(210,85),wxDefaultSize);
-	yw_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(245,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	
-	wxStaticBox *pers=new wxStaticBox(panel,-1,wxT("Personalitation"),wxPoint(5,125),wxSize(305,50));
-	name_text=new wxStaticText(panel,wxID_ANY, wxT("Name :"),wxPoint(10,145),wxDefaultSize);
-	name_box = new wxTextCtrl(panel,ID_ENTER,pos->getName(),wxPoint(60,145),wxSize(120,20),wxTE_PROCESS_ENTER);
-	//name_box->SetDefaultStyle(wxTextAttr(*wxBLUE)
-	color_text = new wxStaticText(panel,wxID_ANY, wxT("Color :"),wxPoint(210,145),wxDefaultSize);
-	color_box = new wxBitmapButton(panel,ID_COLOR,wxIcon(colour_xpm),wxPoint(260,140),wxSize(25,25));
-	
-	vbox->Add(panel,0 ,wxRIGHT,5);
-	vbox->AddSpacer(5);
-
-
-	
 	
 	
 	/////Object's Properties///
@@ -104,10 +75,15 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	b_box->Add(accept,1,wxALIGN_BOTTOM,5);
 	b_box->Add(cancel,1,wxALIGN_BOTTOM,5);	
 
+	
 	//Close Dialog Design//
-	vbox->Add(pbox,0,wxEXPAND | wxLEFT | wxRIGHT,5 );
+	
+	vbox->Add(pw,0,wxEXPAND);
+	vbox->Add(pbox,1,wxEXPAND | wxLEFT | wxRIGHT | wxTOP,5 );
 	vbox->AddSpacer(40);
-	vbox->Add(b_box,0,wxEXPAND | wxALL ,12);
+	vbox->Add(b_box,1,wxEXPAND | wxALL ,12);
+	
+	
 	vbox->SetSizeHints(this);
 	SetSizer(vbox);
 
@@ -115,28 +91,20 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 
 void InitialProperties::OnValueChanged(wxCommandEvent& event)
 {
-	
-	
-	double x,y,z,r,p,yw;
-	
 
-	x_box->GetValue().ToDouble(&x);
-	y_box->GetValue().ToDouble(&y);
-	z_box->GetValue().ToDouble(&z);
-	r_box->GetValue().ToDouble(&r);
-	p_box->GetValue().ToDouble(&p);
-	yw_box->GetValue().ToDouble(&yw);
+	pw->GetValues(x,y,z,r,p,yw,text);
 	t.position=Vector3D(x,y,z);
 	t.orientation.setRPY(r,p,yw);
-
-	text=name_box->GetValue();
 	pos->setRelativeT3D(t);
-		
+	GetSetSpecificValues(winId,object);
+	world->getChild()->UpdateWorld();
+}
 
-GetSetSpecificValues(winId,object);
-
-world->getChild()->UpdateWorld();
-
+void InitialProperties::ChangeColor(wxCommandEvent& event)
+{
+	pw->GetColor(red,green,blue);
+	object.solidentity->setColor(red/255,green/255,blue/255);
+	world->getChild()->UpdateWorld();
 }
 
 void InitialProperties::OnButton(wxCommandEvent& event)
@@ -161,19 +129,6 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		GetSetSpecificValues(winId,object);
 		b_sel=1;
 		Close(true);			
-	}
-
-	if(id == ID_COLOR)
-	{
-		wxColor color=wxGetColourFromUser(this);
-		if(color.IsOk())
-		{
-			double red,green,blue;
-			red = color.Red();
-			green = color.Green();
-			blue = color.Blue();
-			object.solidentity->setColor(red/255,green/255,blue/255);
-		}
 	}
 	
 	if(id==ID_CANCEL)
