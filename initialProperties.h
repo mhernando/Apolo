@@ -12,7 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/spinctrl.h>
 #include <wx/colordlg.h>
-
+#include "positionableWidget.h"
 //
 
 class InitialProperties:public wxDialog
@@ -25,11 +25,13 @@ public:
 	void OnValueChanged(wxCommandEvent& event);
 	void OnButton(wxCommandEvent& event);
 	int GetButtom(){return b_sel;};
+	void ChangeColor(wxCommandEvent& event);
 	
 	
 private:
 	 int b_sel;
 	 wxWindowID winId;
+	 
 	 wxStaticText *x_text;
 	 wxTextCtrl *x_box;
 	 wxStaticText *y_text;
@@ -46,6 +48,7 @@ private:
 	 wxTextCtrl *name_box;
 	 wxStaticText *color_text;
 	 wxBitmapButton *color_box;
+	 
 	 wxButton *accept;
 	 wxButton *cancel;
 	 wxButton *df;
@@ -57,6 +60,9 @@ private:
 	 bool S_G;
 	 Transformation3D t;
 	 string text;
+	 double x,y,z,r,p,yw;
+	 PositionableWidget *pw;
+	 double red,green,blue;
 	 
 	
 	union Object{
