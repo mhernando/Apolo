@@ -77,6 +77,7 @@ private:
 	wxMenu * file_menu2;
 	wxMenu * file_menu3;
 	wxMenu * file_menu4;
+	wxMenu * file_menu5;
 	wxMenuBar * menubar;
 	DECLARE_EVENT_TABLE()
 

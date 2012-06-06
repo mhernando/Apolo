@@ -34,9 +34,11 @@ using namespace std;
 class MainWindow : public wxMDIParentFrame
 {
 public:
+	static bool slider;
+	static bool orientation;
 	MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style);
 	
-	
+	void PropertiesDisplay(wxCommandEvent& event);
 	void OnClose(wxCloseEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnCloseNotebook(wxAuiNotebookEvent& event);

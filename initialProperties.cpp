@@ -6,6 +6,7 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_POSITIONABLE_WIDGET_COLOR, InitialProperties::ChangeColor)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::OnValueChanged)
 	EVT_TEXT(ID_ENTER,InitialProperties::OnValueChanged)
+	EVT_CLOSE(InitialProperties::OnClose)
 	EVT_BUTTON(ID_ACCEPT, InitialProperties::OnButton)
 	EVT_BUTTON(ID_CANCEL, InitialProperties::OnButton)
 	EVT_BUTTON(ID_DEFAULT, InitialProperties::OnButton)
@@ -13,7 +14,7 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, PositionableEntity *obj,SimulatedWorld *s_world, const wxString& title)
-:wxDialog(parent,id, title, wxPoint(0,0), wxSize(500,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER) 
+:wxDialog(parent,id, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER) 
 {
 	b_sel=0;
 	S_G=true;
@@ -23,7 +24,7 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	pos=obj;
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	
-	pw=new PositionableWidget(this,wxDefaultPosition,wxDefaultSize);
+	pw=new PositionableWidget(this,"Positionable Parameters",wxDefaultPosition,wxDefaultSize,MainWindow::slider,MainWindow::orientation);
 
 	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	
@@ -84,6 +85,8 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	vbox->Add(b_box,1,wxEXPAND | wxALL ,12);
 	
 	
+	
+	
 	vbox->SetSizeHints(this);
 	SetSizer(vbox);
 
@@ -131,7 +134,7 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		Close(true);			
 	}
 	
-	if(id==ID_CANCEL)
+	if(id==ID_CANCEL )
 	{
 		b_sel=2;
 		Close(true);	
@@ -169,5 +172,4 @@ if(id==ID_ADDPRI)
 				tobject.prismaticpart->setRegularPolygonBase(c_radio->getValue(),c_vertex->getValue());
 				tobject.prismaticpart->setHeight(c_height->getValue());			
 		}
-
 }

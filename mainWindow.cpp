@@ -18,6 +18,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_CLOSE(MainWindow::OnClose)
 	EVT_SIZE(MainWindow::OnSize)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
+	EVT_MENU(SLI_HOR,MainWindow::PropertiesDisplay)
+	EVT_MENU(SLI_VERT,MainWindow::PropertiesDisplay)
+	EVT_MENU(CONT_MENU,MainWindow::PropertiesDisplay)
+	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_RAD, MainWindow::OnRadius)
@@ -37,11 +41,13 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 
 END_EVENT_TABLE()
 
+bool MainWindow::slider=false;
+bool MainWindow::orientation=false;
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
 {
-
+	
 	
 	Centre();
 	treeVisible=true;
@@ -616,6 +622,26 @@ void MainWindow::ShowReference(bool refer)
 		for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
 	}	
 }
+
+void MainWindow::PropertiesDisplay(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	
+	if(id==SLI_VERT)
+	{
+		slider=true;
+		orientation=true;
+	}
+	if(id==SLI_HOR)
+	{
+		slider=true;
+		orientation=false;
+	}
+	if(id==CONT_MENU)
+		slider=false;
+}
+	
+
 
 
 

@@ -12,7 +12,7 @@ class PositionableWidget: public wxPanel
 
 {
 public:
-	PositionableWidget(wxWindow *window,const wxPoint& pos = wxDefaultPosition,
+	PositionableWidget(wxWindow *window,const wxString label,const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(60,200),bool sliders = false, bool orientation=false, bool solid=true);
 	void GetValues(double &xp,double &yp,double &zp, double &rp,double &pp,double &ywp,string &textp);
 	void  GetColor(double &red,double &green,double &blue);
@@ -54,6 +54,7 @@ private:
 	double x,y,z,r,p,yw;
 	wxWindow *parent;
 	string text;
+	wxString name;
 	double cred,cgreen,cblue;
 	DECLARE_EVENT_TABLE();
 	
