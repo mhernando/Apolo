@@ -101,8 +101,23 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	file_menu4 = new wxMenu;
 	file_menu4->Append(wxID_ABOUT, wxT("&About..."));
 
+	file_menu5=new wxMenu;
+	wxMenu *ipro=new wxMenu;
+	file_menu5->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
+	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
+	ipro->AppendCheckItem(SLI_VERT,wxT("Vertical Sliders"));
+	ipro->AppendCheckItem(SLI_HOR,wxT("Horizontal Sliders"));
+	
+	/////////////////// La llamada se debe hacer desde el evento, no desde aqui ,reprogramar///////
+	if(ipro->IsChecked(CONT_MENU)){ ipro->Check(SLI_VERT,false); ipro->Check(SLI_HOR,false); }
+	if(ipro->IsChecked(SLI_VERT)){ ipro->Check(CONT_MENU,false); ipro->Check(SLI_HOR,false); }
+	if(ipro->IsChecked(SLI_HOR)){ ipro->Check(SLI_VERT,false); ipro->Check(CONT_MENU,false); }
+	//////////////////
+
+
 	menubar = new wxMenuBar;
 	menubar->Append(file_menu, wxT("&File"));
+	menubar->Append(file_menu5, wxT("Edit") );
 	menubar->Append(file_menu2, wxT("Views") );
 	menubar->Append(file_menu3, wxT("Run"));
 	menubar->Append(file_menu4, wxT("About"));

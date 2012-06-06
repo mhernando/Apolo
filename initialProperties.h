@@ -3,6 +3,7 @@
 
 #include "definitions.h"
 #include "mrcore.h"
+#include "mainWindow.h"
 #include "nodeTree.h"
 #include "simulatedWorld.h"
 #include "tree.h"
@@ -17,7 +18,7 @@
 
 class InitialProperties:public wxDialog
 {
-private:
+
 
 
 public:
@@ -25,13 +26,13 @@ public:
 	void OnValueChanged(wxCommandEvent& event);
 	void OnButton(wxCommandEvent& event);
 	int GetButtom(){return b_sel;};
+	void OnClose(wxCloseEvent& event){b_sel=2; Destroy();};
 	void ChangeColor(wxCommandEvent& event);
 	
 	
 private:
 	 int b_sel;
 	 wxWindowID winId;
-	 
 	 wxStaticText *x_text;
 	 wxTextCtrl *x_box;
 	 wxStaticText *y_text;
