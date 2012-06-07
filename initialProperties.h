@@ -26,12 +26,12 @@ public:
 	void OnValueChanged(wxCommandEvent& event);
 	void OnButton(wxCommandEvent& event);
 	int GetButtom(){return b_sel;};
-	void OnClose(wxCloseEvent& event){b_sel=2; Destroy();};
+	void OnClose(wxCloseEvent& event){b_sel=false; Destroy();};
 	void ChangeColor(wxCommandEvent& event);
 	
 	
 private:
-	 int b_sel;
+	 bool b_sel;
 	 wxWindowID winId;
 	 wxStaticText *x_text;
 	 wxTextCtrl *x_box;
