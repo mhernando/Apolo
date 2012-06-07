@@ -79,4 +79,10 @@
 #define ID_OPEN 8000
 #define ID_SAVE 8001
 
+//FUNCTIONS OF EDIT WIDGETS 900X
+#define SLI_HOR 9000
+#define SLI_VERT 9001
+#define CONT_MENU 9002
+
+
 #endif //__APOLO__DEFINITIONS__H

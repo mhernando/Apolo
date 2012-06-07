@@ -9,13 +9,13 @@ BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, PositionableWidget::OnValuesChanged)
 END_EVENT_TABLE()
 
-PositionableWidget::PositionableWidget(wxWindow *window, const wxPoint& pos ,
+PositionableWidget::PositionableWidget(wxWindow *window,const wxString label, const wxPoint& pos ,
 									   const wxSize& size,bool sliders , bool orientation, bool solid): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
 	slider=sliders;
 	parent=window;
-
+	name=label;
 	CreatePanel(sliders,orientation,solid);	
 
 }
@@ -23,31 +23,63 @@ PositionableWidget::PositionableWidget(wxWindow *window, const wxPoint& pos ,
 void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 {
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
-	
-	wxPanel *panel=new wxPanel(this,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_NONE);
+	wxStaticBoxSizer *pE=new wxStaticBoxSizer(wxVERTICAL,this,name);
+	wxStaticBoxSizer *posi, *ori, *pers ;
 	if(sliders==false)
 	{
 		
 		
-		wxStaticBox *posi=new wxStaticBox(panel,-1,wxT("Position"),wxPoint(5,5),wxSize(305,50));
-	
-		x_text = new wxStaticText(panel, wxID_ANY, wxT("X :"),wxPoint(10,25),wxDefaultSize);
-		x_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(45,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-		y_text = new wxStaticText(panel, wxID_ANY, wxT("Y :"),wxPoint(110,25),wxDefaultSize);
-		y_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(145,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-		z_text = new wxStaticText(panel, wxID_ANY, wxT("Z :"),wxPoint(210,25),wxDefaultSize);
-		z_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(245,25),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-
-		wxStaticBox *ori=new wxStaticBox(panel,-1,wxT("Orientation"),wxPoint(5,65),wxSize(305,50));
-	
-		r_text = new wxStaticText(panel, wxID_ANY, wxT("Roll :"),wxPoint(10,85),wxDefaultSize);
-		r_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(45,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-		p_text = new wxStaticText(panel, wxID_ANY, wxT("Pitch :"),wxPoint(110,85),wxDefaultSize);
-		p_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(145,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
-		yw_text = new wxStaticText(panel, wxID_ANY, wxT("Yaw :"),wxPoint(210,85),wxDefaultSize);
-		yw_box = new wxTextCtrl(panel,ID_ENTER,"0",wxPoint(245,85),wxSize(50,20), wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
+		posi= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
 		
-		vbox->Add(panel,0);
+		x_text = new wxStaticText(this, wxID_ANY, wxT("X :    "),wxDefaultPosition,wxDefaultSize);
+		x_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		y_text = new wxStaticText(this, wxID_ANY, wxT("Y :      "),wxDefaultPosition,wxDefaultSize);
+		y_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		z_text = new wxStaticText(this, wxID_ANY, wxT("Z :    "),wxDefaultPosition,wxDefaultSize);
+		z_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+
+		pbox->Add(x_text,0,wxCENTRE);
+		pbox->AddSpacer(5);
+		pbox->Add(x_box,1,wxCENTRE);
+		pbox->AddSpacer(15);
+		pbox->Add(y_text,0,wxCENTRE);
+		pbox->AddSpacer(5);
+		pbox->Add(y_box,1,wxCENTRE);
+		pbox->AddSpacer(15);
+		pbox->Add(z_text,0,wxCENTRE);
+		pbox->AddSpacer(5);
+		pbox->Add(z_box,1,wxCENTRE);
+		posi->Add(pbox,1,wxEXPAND);
+
+
+		wxBoxSizer *qbox=new wxBoxSizer(wxHORIZONTAL);
+		ori= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
+		//wxStaticBox *ori=new wxStaticBox(panel,-1,wxT("Orientation"),wxPoint(5,65),wxSize(305,50));
+	
+		r_text = new wxStaticText(this, wxID_ANY, wxT("Roll :"),wxDefaultPosition,wxDefaultSize);
+		r_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		p_text = new wxStaticText(this, wxID_ANY, wxT("Pitch :"),wxDefaultPosition,wxDefaultSize);
+		p_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		yw_text = new wxStaticText(this, wxID_ANY, wxT("Yaw :"),wxDefaultPosition,wxDefaultSize);
+		yw_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		
+		qbox->Add(r_text,0,wxCENTRE);
+		qbox->AddSpacer(5);
+		qbox->Add(r_box,1,wxCENTRE);
+		qbox->AddSpacer(15);
+		qbox->Add(p_text,0,wxCENTRE);
+		qbox->AddSpacer(5);
+		qbox->Add(p_box,1,wxCENTRE);
+		qbox->AddSpacer(15);
+		qbox->Add(yw_text,0,wxCENTRE);
+		qbox->AddSpacer(5);
+		qbox->Add(yw_box,1,wxCENTRE);
+		ori->Add(qbox,1,wxEXPAND);
+
+		pE->Add(posi,0,wxEXPAND | wxALL,5); 
+		pE->Add(ori,0,wxEXPAND | wxALL,5);
+	
 	}
 
 	else
@@ -78,29 +110,33 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 		sbox->Add(ps,1,wxEXPAND);
 		sbox->Add(yws,1,wxEXPAND);
 		
-		vbox->Add(sbox,1,wxEXPAND);
+		pE->Add(sbox,1,wxEXPAND);
 		
 		}
 
 
-
-
-	wxPanel *panel2=new wxPanel(this,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_NONE);
-
-
-	wxStaticBox *pers=new wxStaticBox(panel2,-1,wxT("Personalitation"),wxPoint(5,5),wxSize(305,50));
-	name_text=new wxStaticText(panel2,wxID_ANY, wxT("Name :"),wxPoint(10,25),wxDefaultSize);
-	name_box = new wxTextCtrl(panel2,ID_ENTER,wxEmptyString,wxPoint(60,25),wxSize(120,20),wxTE_PROCESS_ENTER);
+	wxBoxSizer *rbox=new wxBoxSizer(wxHORIZONTAL);
+	pers= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Personalitation"));
+	name_text=new wxStaticText(this,wxID_ANY, wxT("Name :"),wxDefaultPosition,wxDefaultSize);
+	name_box = new wxTextCtrl(this,ID_ENTER,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	
 	if (solid==true)
 	{
-	color_text = new wxStaticText(panel2,wxID_ANY, wxT("Color :"),wxPoint(210,25),wxDefaultSize);
-	color_box = new wxBitmapButton(panel2,ID_COLOR,wxIcon(colour_xpm),wxPoint(260,20),wxSize(25,25));
+	color_text = new wxStaticText(this,wxID_ANY, wxT("Color :"),wxDefaultPosition,wxDefaultSize);
+	color_box = new wxBitmapButton(this,ID_COLOR,wxIcon(colour_xpm),wxDefaultPosition,wxDefaultSize);
 	}
 
+	rbox->Add(name_text,0,wxCENTRE);
+	rbox->AddSpacer(5);
+	rbox->Add(name_box,1,wxCENTRE);
+	rbox->AddSpacer(40);
+	rbox->Add(color_text,0,wxCENTRE);
+	rbox->AddSpacer(5);
+	rbox->Add(color_box,1,wxCENTRE);
+	pers->Add(rbox,1,wxEXPAND);
 
-	
-	vbox->Add(panel2,0,wxRIGHT | wxTOP,5);
+	pE->Add(pers,0,wxEXPAND | wxALL,5);
+	vbox->Add(pE,1,wxEXPAND | wxALL,5);
 	SetSizer(vbox);
 
 }
