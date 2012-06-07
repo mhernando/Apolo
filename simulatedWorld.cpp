@@ -45,13 +45,13 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 	ini->ShowModal();
 
 	
-	if(ini->GetButtom()==1)
+	if(ini->GetButtom())
 	{	
 		listObjects.push_back(obj);
 		objectNodes.push_back(tree->AddNode(obj,mainNode));
 	}
 		
-	if(ini->GetButtom()==2)
+	else
 		delete obj;
 		
 	

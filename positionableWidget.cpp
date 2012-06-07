@@ -4,7 +4,7 @@ DEFINE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_CHANGE)
 DEFINE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_COLOR)
 
 BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
-	EVT_TEXT(ID_ENTER,PositionableWidget::OnValuesChanged)
+	EVT_TEXT(wxID_ANY,PositionableWidget::OnValuesChanged)
 	EVT_BUTTON(ID_COLOR, PositionableWidget::ColorChanged)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, PositionableWidget::OnValuesChanged)
 END_EVENT_TABLE()
@@ -33,11 +33,11 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 		posi= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
 		
 		x_text = new wxStaticText(this, wxID_ANY, wxT("X :    "),wxDefaultPosition,wxDefaultSize);
-		x_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		x_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		y_text = new wxStaticText(this, wxID_ANY, wxT("Y :      "),wxDefaultPosition,wxDefaultSize);
-		y_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		y_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		z_text = new wxStaticText(this, wxID_ANY, wxT("Z :    "),wxDefaultPosition,wxDefaultSize);
-		z_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		z_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 
 		pbox->Add(x_text,0,wxCENTRE);
 		pbox->AddSpacer(5);
@@ -55,14 +55,14 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 
 		wxBoxSizer *qbox=new wxBoxSizer(wxHORIZONTAL);
 		ori= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
-		//wxStaticBox *ori=new wxStaticBox(panel,-1,wxT("Orientation"),wxPoint(5,65),wxSize(305,50));
+		
 	
 		r_text = new wxStaticText(this, wxID_ANY, wxT("Roll :"),wxDefaultPosition,wxDefaultSize);
-		r_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		r_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		p_text = new wxStaticText(this, wxID_ANY, wxT("Pitch :"),wxDefaultPosition,wxDefaultSize);
-		p_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		p_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		yw_text = new wxStaticText(this, wxID_ANY, wxT("Yaw :"),wxDefaultPosition,wxDefaultSize);
-		yw_box = new wxTextCtrl(this,ID_ENTER,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		yw_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		
 		qbox->Add(r_text,0,wxCENTRE);
 		qbox->AddSpacer(5);
@@ -118,7 +118,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 	wxBoxSizer *rbox=new wxBoxSizer(wxHORIZONTAL);
 	pers= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Personalitation"));
 	name_text=new wxStaticText(this,wxID_ANY, wxT("Name :"),wxDefaultPosition,wxDefaultSize);
-	name_box = new wxTextCtrl(this,ID_ENTER,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	name_box = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	
 	if (solid==true)
 	{
