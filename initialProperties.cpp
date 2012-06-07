@@ -16,7 +16,7 @@ END_EVENT_TABLE()
 InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, PositionableEntity *obj,SimulatedWorld *s_world, const wxString& title)
 :wxDialog(parent,id, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER) 
 {
-	b_sel=0;
+	b_sel=true;
 	S_G=true;
 	winId=id;
 
@@ -117,8 +117,7 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 	if(id == ID_ACCEPT)
 	{	
 		pos->setName(text);
-		b_sel=1;
-		Close(true);
+		Destroy();
 	}
 
 	if(id == ID_DEFAULT)
@@ -130,15 +129,12 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		pos->setName(pos->getName());
 		object.solidentity->setColor(128.0/255,128.0/255,128.0/255);
 		GetSetSpecificValues(winId,object);
-		b_sel=1;
-		Close(true);			
+		Destroy();			
 	}
 	
 	if(id==ID_CANCEL )
-	{
-		b_sel=2;
 		Close(true);	
-	}
+	
 
 }
 
