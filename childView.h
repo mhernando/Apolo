@@ -18,11 +18,15 @@
 #include "bitmaps/play.xpm"
 #include "bitmaps/stop2.xpm"
 
+using namespace std;
+
 class MainWindow;
 
 class ChildView: public wxMDIChildFrame
 {
 public:
+	static wxMenu *ipro;
+	static wxMenu *osel;
 	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
 
 	void InitToolBar(wxToolBar* toolbar);
@@ -80,7 +84,7 @@ private:
 	wxMenu * file_menu5;
 	wxMenuBar * menubar;
 	DECLARE_EVENT_TABLE()
-
+	
 };
 
 #endif // __APOLO__CHILD_VIEW__H

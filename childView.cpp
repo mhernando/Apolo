@@ -27,6 +27,9 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 
 END_EVENT_TABLE()
 
+wxMenu *ChildView::ipro;
+wxMenu *ChildView::osel;
+
 ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 : wxMDIChildFrame(parent, wxID_ANY, title, wxPoint(50,50), wxSize(500,400), wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE),m_timer(this,ID_TIMER)
 {
@@ -102,26 +105,24 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	file_menu4->Append(wxID_ABOUT, wxT("&About..."));
 
 	file_menu5=new wxMenu;
-	wxMenu *ipro=new wxMenu;
+	ipro=new wxMenu;
+	osel=new wxMenu;
+
 	file_menu5->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
 	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
 	ipro->AppendCheckItem(SLI_VERT,wxT("Vertical Sliders"));
-	ipro->AppendCheckItem(SLI_HOR,wxT("Horizontal Sliders"));
+	file_menu5->AppendSubMenu(osel,wxT("Object Selection"),wxT("Change display configuration of Positionable Properties"));
+	osel->AppendCheckItem(POP_MENU,wxT("Pop-Up Menu"));
+	osel->AppendCheckItem(DROP_MENU,wxT("Drop-Down Menu"));
 	
-	/////////////////// La llamada se debe hacer desde el evento, no desde aqui ,reprogramar///////
-	if(ipro->IsChecked(CONT_MENU)){ ipro->Check(SLI_VERT,false); ipro->Check(SLI_HOR,false); }
-	if(ipro->IsChecked(SLI_VERT)){ ipro->Check(CONT_MENU,false); ipro->Check(SLI_HOR,false); }
-	if(ipro->IsChecked(SLI_HOR)){ ipro->Check(SLI_VERT,false); ipro->Check(CONT_MENU,false); }
-	//////////////////
-
 
 	menubar = new wxMenuBar;
 	menubar->Append(file_menu, wxT("&File"));
-	menubar->Append(file_menu5, wxT("Edit") );
+	
 	menubar->Append(file_menu2, wxT("Views") );
 	menubar->Append(file_menu3, wxT("Run"));
 	menubar->Append(file_menu4, wxT("About"));
-
+	menubar->Append(file_menu5, wxT("Settings") );
 	SetMenuBar(menubar);
 	CreateSubWindows();
 
@@ -156,12 +157,16 @@ void ChildView::UpdateWorld()
 	canvas1->UpdateWorld(m_world);
 	canvas2->UpdateWorld(m_world);
 	canvas3->UpdateWorld(m_world);
+
 }
 void ChildView::RefreshChild()
 {
 	canvas1->Refresh(false);
 	canvas2->Refresh(false);
-	canvas3->Refresh(false);
+	canvas3->Refresh(false);	
+	
+	//if(ipro->IsChecked(CONT_MENU)){ ipro->Check(SLI_VERT,false); }
+	//if(ipro->IsChecked(SLI_VERT)){ ipro->Check(CONT_MENU,false); }
 }
 void ChildView::CreateSubWindows()
 {
@@ -181,7 +186,6 @@ void ChildView::CreateSubWindows()
 
 	m_splitter->Initialize(canvas1);
 	m_splitterSub->Show(false);
-
 	wxLogStatus(wxT("created a new window"));
 	Refresh(false);
 }

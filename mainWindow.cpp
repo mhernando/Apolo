@@ -2,7 +2,13 @@
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
+	EVT_MENU(ID_ADDOBJ, MainWindow::AddObject)
+	EVT_MENU(ID_ADDCOMP, MainWindow::AddObject)
 	EVT_MENU(ID_ADDSPHERE, MainWindow::AddObject)
+	EVT_MENU(ID_ADDSCARA, MainWindow::AddObject)
+	EVT_MENU(ID_ADDPUMA, MainWindow::AddObject)
+	EVT_MENU(ID_ADDASEA, MainWindow::AddObject)
+	EVT_MENU(ID_ADDNEO, MainWindow::AddObject)
 	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
 	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
 	EVT_MENU(ID_ADDFACE, MainWindow::AddObject)
@@ -18,9 +24,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_CLOSE(MainWindow::OnClose)
 	EVT_SIZE(MainWindow::OnSize)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
-	EVT_MENU(SLI_HOR,MainWindow::PropertiesDisplay)
 	EVT_MENU(SLI_VERT,MainWindow::PropertiesDisplay)
 	EVT_MENU(CONT_MENU,MainWindow::PropertiesDisplay)
+	EVT_MENU(DROP_MENU,MainWindow::PropertiesDisplay)
+	EVT_MENU(POP_MENU,MainWindow::PropertiesDisplay)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
@@ -42,7 +49,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 END_EVENT_TABLE()
 
 bool MainWindow::slider=false;
-bool MainWindow::orientation=false;
+bool MainWindow::popmenu=true;
+
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
@@ -79,10 +87,11 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	
 
 	note->AddPage(tree, wxT("Universe"));
+	
 
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
-
+	
 }
 
 void MainWindow::OnSashDrag(wxSashEvent& event)
@@ -194,8 +203,16 @@ void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 void MainWindow::AddObject(wxCommandEvent& event)
 {
 	int id= event.GetId();
-
 	
+	if(id==ID_ADDOBJ || id==ID_ADDCOMP)
+	{
+	ObjectSelection *ob_sel=new ObjectSelection(this,id,wxDefaultPosition,wxDefaultSize);
+	ob_sel->ShowModal();
+	id=ob_sel->GetObject();
+	if(id==0)return;
+		
+	}
+
 	for(int i=0;i<listWorlds.size();i++)	
 			if (listWorlds[i]->getTreeItem() == tree->GetSelection())
 		  			listWorlds[i]->AddObject(id);
@@ -372,6 +389,7 @@ void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
 	simuWorld = new SimulatedWorld(w);
 	listWorlds.push_back(simuWorld);
 	tree->ExpandAll();
+	CheckProperties();
 }
 void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
 {
@@ -626,19 +644,40 @@ void MainWindow::ShowReference(bool refer)
 void MainWindow::PropertiesDisplay(wxCommandEvent& event)
 {
 	int id=event.GetId();
+
+	if(id==SLI_VERT)slider=true;
+	if(id==CONT_MENU)slider=false;
+	if(id==POP_MENU)popmenu=true;
+	if(id==DROP_MENU)popmenu=false;
+	CheckProperties();
+}
+
+void MainWindow::CheckProperties()
+{
+
+	if(popmenu==true)
+	{
+		ChildView::osel->Check(POP_MENU,true);
+		ChildView::osel->Check(DROP_MENU,false);
+	}
+	else
+	{
+		ChildView::osel->Check(DROP_MENU,true);
+		ChildView::osel->Check(POP_MENU,false);
+		
+	}
 	
-	if(id==SLI_VERT)
+	
+	if(slider==true)
 	{
-		slider=true;
-		orientation=true;
+		ChildView::ipro->Check(SLI_VERT,true);
+		ChildView::ipro->Check(CONT_MENU,false);
 	}
-	if(id==SLI_HOR)
+	else
 	{
-		slider=true;
-		orientation=false;
+		ChildView::ipro->Check(SLI_VERT,false);
+		ChildView::ipro->Check(CONT_MENU,true);
 	}
-	if(id==CONT_MENU)
-		slider=false;
 }
 	
 
