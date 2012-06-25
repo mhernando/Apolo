@@ -15,20 +15,31 @@ GenericSlider::GenericSlider(wxWindow *window,const wxString label,const wxPoint
 {
 	title = label;
 	limited = false;
+	scroll=false;
+	value=0;
 	ticks=10;
 	parent = window;
+
+	currentMax=max=100;
+	currentMin=min=0;
 	createPanel(orientation);
+	
+	
+		
 }
 void GenericSlider::OnEnter(wxCommandEvent& event)
 {
+	
 	int a = event.GetId();
-	double val;
+	double val=0;
 		if(m_value->GetValue().ToDouble(&val))setValue(val);
 		else 
 		{
 			wxLogMessage(wxT("Write a number"));
 			setValue(value);
 		}
+	
+		
 }
 void GenericSlider::OnSliderProperties(wxCommandEvent& event)
 {
@@ -39,12 +50,14 @@ void GenericSlider::OnSliderProperties(wxCommandEvent& event)
 }
 void GenericSlider::OnScroll(wxScrollEvent& event)
 {
+	scroll=true;
 	value=currentMin+((m_slider->GetValue())*(currentMax-currentMin)/100.0);
 	setValue(value);
 	
 }
 void GenericSlider::createPanel(bool orientation)
 {
+	
 	if(orientation){V=8;H=4;}//(POSITION VERTICAL)
 	else {V=4;H=8;} //(POSITION HORIZONTAL)
 	
@@ -53,7 +66,7 @@ void GenericSlider::createPanel(bool orientation)
 	m_box=sbs->GetStaticBox();
 	
 	wxBoxSizer *horizontal_sizer = new wxBoxSizer(H);
-
+	
 	if(orientation)  m_slider = new wxSlider(this, ID_SLIDER, 0,0,100,wxDefaultPosition, wxSize(30,-1),wxSL_VERTICAL|wxSL_LEFT|wxSL_INVERSE);
 	else m_slider = new wxSlider(this, ID_SLIDER, 0,0,100,wxDefaultPosition, wxSize(30,-1));
 		
@@ -102,30 +115,43 @@ void GenericSlider::setValue(double val)
 	if(val<currentMin)currentMin=val;
 	value=val;
 	m_slider->SetValue((int)100*(val-currentMin)/(currentMax-currentMin));
-	m_value->Clear();
-	*m_value<<value;
+	
+	wxString w=wxString::Format("%.2f",value);
+	m_value->ChangeValue(wxEmptyString);
+	m_value->ChangeValue(w);
+	
+	
+
+	if(scroll)
+	{
+		
+	scroll=false;
 	//report to the parent window... a value have changed
-	wxCommandEvent sliderEvent( wxEVT_GENERIC_SLIDER_CHANGE, GetId() );
-    sliderEvent.SetEventObject( this );
+	wxCommandEvent sliderEvent( wxEVT_GENERIC_SLIDER_CHANGE,GetId() );
+	sliderEvent.SetEventObject( parent);
 	// Send it
-    parent->GetEventHandler()->ProcessEvent( sliderEvent );
+	parent->GetEventHandler()->ProcessEvent( sliderEvent );
+	
+	}
 }
 void GenericSlider::setCurrentMinMax(double _min, double _max)
 {
+	
 	if((limited)&&(_max>max))_max=max;
 	if((limited)&&(_min<min))_min=min;
 	if(_max<_min)return;
 	currentMax=_max;
 	currentMin=_min;
 	updateMinMax(currentMin,currentMax);
-	setValue(value);
+
 }
 void GenericSlider::setProperties(double _min, double _max, bool islimited)
 {
 	currentMax=max=_max; 
 	currentMin=min=_min;
 	limited=islimited;
-	updateMinMax(currentMin,currentMax);
+	setCurrentMinMax(currentMin,currentMax);
+
 }
 void GenericSlider::updateMinMax(double m_currentMin, double m_currentMax)
 {
@@ -140,4 +166,6 @@ void GenericSlider::updateMinMax(double m_currentMin, double m_currentMax)
 	m_min->SetLabel(aux1);
 	m_max->SetLabel(aux2);
 }
+
+
 

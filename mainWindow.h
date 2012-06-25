@@ -11,7 +11,7 @@
 #include "robotSimPanel.h"
 #include "converter.h"
 #include "apoloPanel.h"
-
+#include "objectSelection.h"
 #include <wx/wx.h>
 #include <wx/menu.h>
 #include <wx/splitter.h>
@@ -35,7 +35,7 @@ class MainWindow : public wxMDIParentFrame
 {
 public:
 	static bool slider;
-	static bool orientation;
+	static bool popmenu;
 	MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style);
 	
 	void PropertiesDisplay(wxCommandEvent& event);
@@ -84,7 +84,7 @@ void AddObject(wxCommandEvent& event);
 	SimulatedWorld *GetSimulated(){return simuWorld;}
 	wxTreeItemId getRoot(){return m_root;}
 	void OnSashDrag(wxSashEvent& event);
-	
+	void CheckProperties();
 	vector <SimulatedWorld *> listWorlds;
 	
 private:

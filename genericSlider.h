@@ -30,7 +30,6 @@ public:
 	void setCurrentMinMax(double _min, double _max);
 	void setProperties(double min, double max, bool islimited=true);
 	void updateMinMax(double _currentMin, double _currentMax);
-
 	double getValue(void){return value;}
 	double getMin(){return currentMin;}
 	double getMax(){return currentMax;}
@@ -52,6 +51,8 @@ private:
 	double max; //absolute max value
 	double min; //absolute min value
 	bool limited; //the absolute limits are activated
+	bool scroll;
+
 	double currentMax; //current maximun slider max
 	double currentMin; //current maximun slider min
 	double value; //the computed value

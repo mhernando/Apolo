@@ -10,17 +10,19 @@ BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 END_EVENT_TABLE()
 
 PositionableWidget::PositionableWidget(wxWindow *window,const wxString label, const wxPoint& pos ,
-									   const wxSize& size,bool sliders , bool orientation, bool solid): wxPanel( window, wxID_ANY, pos, size)
+									   const wxSize& size,bool sliders ,bool solid): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
 	slider=sliders;
 	parent=window;
 	name=label;
-	CreatePanel(sliders,orientation,solid);	
+	x=y=z=r=p=yw=0;
+	CreatePanel(sliders,solid);	
+	
 
 }
 
-void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
+void PositionableWidget::CreatePanel(bool sliders, bool solid)
 {
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *pE=new wxStaticBoxSizer(wxVERTICAL,this,name);
@@ -38,6 +40,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 		y_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 		z_text = new wxStaticText(this, wxID_ANY, wxT("Z :    "),wxDefaultPosition,wxDefaultSize);
 		z_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		
 
 		pbox->Add(x_text,0,wxCENTRE);
 		pbox->AddSpacer(5);
@@ -86,22 +89,21 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 	{
 		wxBoxSizer *sbox;
 
-		if(orientation)
-			sbox=new wxBoxSizer(wxHORIZONTAL);
-		else
-			sbox=new wxBoxSizer(wxVERTICAL);
 	
-		xs=new GenericSlider(this,"X position",wxDefaultPosition,wxDefaultSize,orientation);
-		ys=new GenericSlider(this,"Y position",wxDefaultPosition,wxDefaultSize,orientation);
-		zs=new GenericSlider(this,"Z position",wxDefaultPosition,wxDefaultSize,orientation);
-
-		rs=new GenericSlider(this,"Roll orientation",wxDefaultPosition,wxDefaultSize,orientation);
-		ps=new GenericSlider(this,"Pitch orientation",wxDefaultPosition,wxDefaultSize,orientation);
-		yws=new GenericSlider(this,"Yaw orientation",wxDefaultPosition,wxDefaultSize,orientation);
-
-		SliderLimits();
+		sbox=new wxBoxSizer(wxHORIZONTAL);
 		
-		//SliderInitial();
+	
+		xs=new GenericSlider(this,"X position",wxDefaultPosition,wxDefaultSize,true);
+		ys=new GenericSlider(this,"Y position",wxDefaultPosition,wxDefaultSize,true);
+		zs=new GenericSlider(this,"Z position",wxDefaultPosition,wxDefaultSize,true);
+
+		rs=new GenericSlider(this,"Roll orientation",wxDefaultPosition,wxDefaultSize,true);
+		ps=new GenericSlider(this,"Pitch orientation",wxDefaultPosition,wxDefaultSize,true);
+		yws=new GenericSlider(this,"Yaw orientation",wxDefaultPosition,wxDefaultSize,true);
+		
+		
+		SliderLimits();
+		SliderInitial();
 
 		sbox->Add(xs,1,wxEXPAND);
 		sbox->Add(ys,1,wxEXPAND);
@@ -143,6 +145,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool orientation,bool solid)
 
 void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 {
+	
 	if(slider==false)
 	{
 		x_box->GetValue().ToDouble(&x);

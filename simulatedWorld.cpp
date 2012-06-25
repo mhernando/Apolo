@@ -38,13 +38,24 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj=new PrismaticPart;
 	if(id==ID_ADDFACE)
 		obj=new FaceSetPart;
+	if(id==ID_ADDNEO)
+		obj=new  Pioneer3ATSim;
+	if(id==ID_ADDSCARA)
+		obj=new AdeptOneSim;
+	if(id==ID_ADDPUMA)
+		obj=new  Puma560Sim;
+	if(id==ID_ADDASEA)
+		obj=new AseaIRB2000Sim;
+	
+	
+
 	
 	(*m_world)+=obj;
 	
 	InitialProperties *ini= new InitialProperties(mainWin,id,obj,this,wxT("Properties")); 
 	ini->ShowModal();
 
-	
+
 	if(ini->GetButtom())
 	{	
 		listObjects.push_back(obj);
@@ -56,10 +67,11 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		
 	
 	
-	tree->ExpandAll();
+	tree->Expand(mainNode);
 	
 	childView->UpdateWorld();
-	childView ->RefreshChild();
+
+	
 }
 
 void SimulatedWorld::DeleteObject(wxTreeItemId itemId)

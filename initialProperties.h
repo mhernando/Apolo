@@ -28,7 +28,8 @@ public:
 	int GetButtom(){return b_sel;};
 	void OnClose(wxCloseEvent& event){b_sel=false; Destroy();};
 	void ChangeColor(wxCommandEvent& event);
-	
+	void Update(wxWindowCreateEvent& event);
+	void CreatePanel();
 	
 private:
 	 bool b_sel;
@@ -64,6 +65,7 @@ private:
 	 double x,y,z,r,p,yw;
 	 PositionableWidget *pw;
 	 double red,green,blue;
+	 double defRadio,defHeight,defVertex;
 	 
 	
 	union Object{
