@@ -5,12 +5,12 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_POSITIONABLE_WIDGET_CHANGE, InitialProperties::OnValueChanged)
 	EVT_COMMAND(wxID_ANY, wxEVT_POSITIONABLE_WIDGET_COLOR, InitialProperties::ChangeColor)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::OnValueChanged)
-	EVT_TEXT(ID_ENTER,InitialProperties::OnValueChanged)
+	EVT_TEXT(wxID_ANY,InitialProperties::OnValueChanged)
 	EVT_CLOSE(InitialProperties::OnClose)
 	EVT_BUTTON(ID_ACCEPT, InitialProperties::OnButton)
 	EVT_BUTTON(ID_CANCEL, InitialProperties::OnButton)
 	EVT_BUTTON(ID_DEFAULT, InitialProperties::OnButton)
-	EVT_BUTTON(ID_COLOR, InitialProperties::OnButton)
+//	EVT_WINDOW_CREATE(InitialProperties::Update)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, PositionableEntity *obj,SimulatedWorld *s_world, const wxString& title)
@@ -19,12 +19,23 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	b_sel=true;
 	S_G=true;
 	winId=id;
-
 	world=s_world;
+	defRadio=1;
+	defHeight=1;
+	defVertex=6;
 	pos=obj;
+	CreatePanel();
+	GetSetSpecificValues(winId, object);
+	
+	
+}
+
+void InitialProperties::CreatePanel()
+{
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	
-	pw=new PositionableWidget(this,"Positionable Parameters",wxDefaultPosition,wxDefaultSize,MainWindow::slider,MainWindow::orientation);
+	pw=new PositionableWidget(this,"Positionable Parameters",wxDefaultPosition,wxDefaultSize,MainWindow::slider);
+
 
 	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	
@@ -38,25 +49,25 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	c_height=new GenericSlider(this,"Height",wxDefaultPosition,wxDefaultSize,false);
 	c_vertex=new GenericSlider(this,"BaseVertex",wxDefaultPosition,wxDefaultSize,false);
 
-	if(id==ID_ADDSPHERE || id==ID_ADDCYL || id==ID_ADDPRI)
+	if(winId==ID_ADDSPHERE || winId==ID_ADDCYL || winId==ID_ADDPRI)
 	{
 		c_radio->setProperties(0,10,false);
-		c_radio->setValue(1);
+		c_radio->setValue(defRadio);
 		pbox->Add(c_radio,0,wxEXPAND );
 	}
 
-	if(id==ID_ADDCYL || id==ID_ADDPRI)
+	if(winId==ID_ADDCYL || winId==ID_ADDPRI)
 	{
 		c_height->setProperties(0,10,false);
-		c_height->setValue(1);
+		c_height->setValue(defHeight);
 		pbox->Add(c_height,0,wxEXPAND);
 		
 	}
 
-	if(id==ID_ADDPRI)
+	if(winId==ID_ADDPRI)
 	{	
 		c_vertex->setProperties(0,12,false);
-		c_vertex->setValue(6);
+		c_vertex->setValue(defVertex);
 		pbox->Add(c_vertex,0,wxEXPAND);
 	}
 	
@@ -85,11 +96,8 @@ InitialProperties::InitialProperties(wxWindow *parent,wxWindowID id, Positionabl
 	vbox->Add(b_box,1,wxEXPAND | wxALL ,12);
 	
 	
-	
-	
 	vbox->SetSizeHints(this);
 	SetSizer(vbox);
-
 }
 
 void InitialProperties::OnValueChanged(wxCommandEvent& event)
@@ -127,8 +135,9 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		t.orientation.setRPY(0,0,0);
 		pos->setRelativeT3D(t);
 		pos->setName(pos->getName());
-		object.solidentity->setColor(128.0/255,128.0/255,128.0/255);
+		
 		GetSetSpecificValues(winId,object);
+		object.solidentity->setColor(128.0/255,128.0/255,128.0/255);
 		Destroy();			
 	}
 	
@@ -143,29 +152,34 @@ void InitialProperties::GetSetSpecificValues(wxWindowID id, Object &tobject)
 {
 if(id==ID_ADDSPHERE)
 		{
+			tobject.spherepart=dynamic_cast<SpherePart *>(pos);
 			if(S_G)
-				{
-				tobject.spherepart=dynamic_cast<SpherePart *>(pos);
 				tobject.spherepart->setRadius(c_radio->getValue());
-				}
 			else
-				tobject.spherepart->setRadius(1);
+				tobject.spherepart->setRadius(defRadio);
 			
 		}
 if(id==ID_ADDCYL)
 {
+			tobject.cylindricalpart=dynamic_cast<CylindricalPart *>(pos);
 			if(S_G)
-			{
-				tobject.cylindricalpart=dynamic_cast<CylindricalPart *>(pos);
 				tobject.cylindricalpart->setHeightAndRadius(c_height->getValue(),c_radio->getValue());
-			}
 			else
-				tobject.cylindricalpart->setHeightAndRadius(1,1);
+				tobject.cylindricalpart->setHeightAndRadius(defHeight,defRadio);
 		}
 if(id==ID_ADDPRI)
 		{
 				tobject.prismaticpart=dynamic_cast<PrismaticPart *>(pos);
+				if(S_G)
+				{
 				tobject.prismaticpart->setRegularPolygonBase(c_radio->getValue(),c_vertex->getValue());
-				tobject.prismaticpart->setHeight(c_height->getValue());			
+				tobject.prismaticpart->setHeight(c_height->getValue());		
+				}
+				else
+				{
+				tobject.prismaticpart->setRegularPolygonBase(defRadio,defVertex);
+				tobject.prismaticpart->setHeight(defHeight);	
+				}
+
 		}
 }

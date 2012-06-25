@@ -3,7 +3,7 @@
 
 #include "mrcore.h"
 #include "initialProperties.h"
-
+#include "objectSelection.h"
 #include "childView.h"
 #include "tree.h"
 #include <wx/wx.h>
@@ -17,7 +17,7 @@ class SimulatedWorld
 public:
 	SimulatedWorld(World *world);
 	~SimulatedWorld();
-
+	ObjectSelection *sel;
 	wxTreeItemId getTreeItem(){return mainNode;}
 	void AddObject(wxWindowID  	id);
 	void DeleteObject(wxTreeItemId itemId);
@@ -34,7 +34,7 @@ private:
 
 	vector <PositionableEntity*> listObjects;
 	vector <wxTreeItemId> objectNodes;
-	
+	int cont;
 	wxTreeItemId mainNode;
 	ChildView* childView;
 	World* m_world;

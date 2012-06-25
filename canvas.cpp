@@ -18,6 +18,7 @@ Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const 
 void Canvas::InitGL()
 {
 	SetCurrent();
+	scene.SetViewPoint(10,45,45);
 	scene.init();
 }
 void Canvas::Paint(wxPaintEvent& event)
@@ -30,8 +31,9 @@ void Canvas::Paint(wxPaintEvent& event)
 		InitGL();
 		flag = true;
 	}
-
+	
 	scene.setViewSize(0,0,GetSize().x,GetSize().y);	
+	
 	scene.Draw();
 	SwapBuffers();
 }

@@ -4,7 +4,6 @@
 
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
-	
 	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
 END_EVENT_TABLE()
 
@@ -140,26 +139,56 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.Append(ID_SAVEWORLD, wxT("Save world"), wxT("Save this world"));
 		menuWorld.Append(ID_DELETE,wxT("Delete world"));
 		menuWorld.AppendSeparator();
+		
+		if(MainWindow::popmenu)
+		{
+		menuWorld.Append(ID_ADDOBJ,wxT("Add Simples Entities"));
+		menuWorld.Append(ID_ADDCOMP,wxT("Add Composed Entities"));
+		}
+		else
+		{
 		menuWorld.AppendSubMenu(basic,wxT("Add Simples Entities"));
 		menuWorld.AppendSubMenu(composed,wxT("Add Composed Entities"));
 		
 		///Number of items for Simple Entities Menu///
-		#define NUMBER 3
-		m_item simples[NUMBER];
-		wxMenuItem *item[NUMBER];
+		#define NUMBER_S 3
+		#define NUMBER_C 4
+		m_item simples[NUMBER_S];
+		m_item compos[NUMBER_C];
+		wxMenuItem *item_s[NUMBER_S];
+		wxMenuItem *item_c[NUMBER_C];
 		
 		simples[0]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
 		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
 		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
-		//simples[3]=SimplyItems(ID_ADDFACE,"FaceSetPart",wxIcon(faceSetPart_xpm));
-					
-		for( int i=0; i<NUMBER;i++)
-		{
-			item[i] = new wxMenuItem(basic,simples[i].id,simples[i].name);
-			item[i]->SetBitmap(simples[i].icon);
-			basic->Append(item[i]);
-		}
 		
+		
+		compos[0]=SimplyItems(ID_ADDSCARA,"Robot SCARA",wxIcon(scara_xpm));
+		compos[1]=SimplyItems(ID_ADDNEO,"Robot PIONEER",wxIcon(pioneer_xpm));
+		compos[2]=SimplyItems(ID_ADDPUMA,"Robot PUMA",wxIcon(robotSim_xpm));
+		compos[3]=SimplyItems(ID_ADDASEA,"Robot ASEA",wxIcon(robotSim_xpm));
+	
+					
+		for( int i=0; i<NUMBER_S;i++)
+		{
+		
+			item_s[i] = new wxMenuItem(basic,simples[i].id,simples[i].name);
+			item_s[i]->SetBitmap(simples[i].icon);
+			basic->Append(item_s[i]);
+
+			
+		}
+
+		for( int j=0; j<NUMBER_C;j++)
+		{
+		
+			item_c[j] = new wxMenuItem(composed,compos[j].id,compos[j].name);
+			item_c[j]->SetBitmap(compos[j].icon);
+			composed->Append(item_c[j]);
+		}
+		}
+
+	
 		PopupMenu(&menuWorld,pt);
 	}
 	else
