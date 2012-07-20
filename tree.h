@@ -66,13 +66,16 @@ private:
 	DECLARE_EVENT_TABLE();	
 
 public:
+	wxTreeItemId GetWorld(wxTreeItemId i);
 	Tree(wxWindow * parent, const wxWindowID id);
 	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
-	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent);
+	void AddNode(PositionableEntity * pos, wxTreeItemId parent);
 	void Parent(wxTreeItemId r);
 	Tree::m_item SimplyItems(int id,string name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);
+	wxTreeItemId GenerateSubTree(ComposedEntity* w,SimulatedWorld* simu);
 	void OnShowCanvas(wxMouseEvent& event);
+	void ShowSelection(wxTreeEvent& event);
 	MainWindow* m_mainWin;
 };
 

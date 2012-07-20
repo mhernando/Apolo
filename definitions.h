@@ -22,7 +22,7 @@
 #define ID_ROBOT 1017
 #define ID_CONVER 1018
 #define ID_CONVERMESH 1019
-#define ID_RAD 1020
+#define ID_DIS 1020
 #define ID_ADDSPHERE 1021
 #define ID_ADDCYL 1022
 #define ID_ADDPRI 1023
@@ -35,6 +35,8 @@
 #define ID_ADDPUMA 1030
 #define ID_ADDASEA 1031
 #define ID_ADDCOMP 1032
+#define ID_ADDCUSTOM 1033
+
 
 
 //FUNCTIONS OF CHILDFRAME 200X
@@ -92,6 +94,8 @@
 #define CONT_MENU 9001
 #define POP_MENU 9002
 #define DROP_MENU 9003
+#define DIS_SLI 9004
+#define DIS_CONT 9005
 
 
 

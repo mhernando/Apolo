@@ -1,7 +1,6 @@
 #include "positionableWidget.h"
 
-DEFINE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_CHANGE)
-DEFINE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_COLOR)
+
 
 BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 	EVT_TEXT(wxID_ANY,PositionableWidget::OnValuesChanged)
@@ -9,37 +8,43 @@ BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, PositionableWidget::OnValuesChanged)
 END_EVENT_TABLE()
 
-PositionableWidget::PositionableWidget(wxWindow *window,const wxString label, const wxPoint& pos ,
-									   const wxSize& size,bool sliders ,bool solid): wxPanel( window, wxID_ANY, pos, size)
+PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,SimulatedWorld *world,const wxString label, const wxPoint& pos ,
+									   const wxSize& size,bool sliders ,bool color_w): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
+	s_world=world;
 	slider=sliders;
 	parent=window;
 	name=label;
-	x=y=z=r=p=yw=0;
-	CreatePanel(sliders,solid);	
+	position=obj->pointer.positionableentity->getRelativePosition();
+	obj->pointer.positionableentity->getRelativeOrientation(orientation.x,orientation.y,orientation.z);
+	node=obj;
+	CreatePanel(sliders,color_w);	
 	
 
 }
 
-void PositionableWidget::CreatePanel(bool sliders, bool solid)
+void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 {
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *pE=new wxStaticBoxSizer(wxVERTICAL,this,name);
 	wxStaticBoxSizer *posi, *ori, *pers ;
 	if(sliders==false)
 	{
-		
+		wxString defValue;
 		
 		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
 		posi= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
 		
 		x_text = new wxStaticText(this, wxID_ANY, wxT("X :    "),wxDefaultPosition,wxDefaultSize);
-		x_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		x_box = new wxTextCtrl(this,wxID_ANY,defValue<<position.x,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		y_text = new wxStaticText(this, wxID_ANY, wxT("Y :      "),wxDefaultPosition,wxDefaultSize);
-		y_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		y_box = new wxTextCtrl(this,wxID_ANY,defValue<<position.y,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		z_text = new wxStaticText(this, wxID_ANY, wxT("Z :    "),wxDefaultPosition,wxDefaultSize);
-		z_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		z_box = new wxTextCtrl(this,wxID_ANY,defValue<<position.z,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		
 
 		pbox->Add(x_text,0,wxCENTRE);
@@ -61,11 +66,14 @@ void PositionableWidget::CreatePanel(bool sliders, bool solid)
 		
 	
 		r_text = new wxStaticText(this, wxID_ANY, wxT("Roll :"),wxDefaultPosition,wxDefaultSize);
-		r_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		r_box = new wxTextCtrl(this,wxID_ANY,defValue<<orientation.x,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		p_text = new wxStaticText(this, wxID_ANY, wxT("Pitch :"),wxDefaultPosition,wxDefaultSize);
-		p_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		p_box = new wxTextCtrl(this,wxID_ANY,defValue<<orientation.y,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		yw_text = new wxStaticText(this, wxID_ANY, wxT("Yaw :"),wxDefaultPosition,wxDefaultSize);
-		yw_box = new wxTextCtrl(this,wxID_ANY,"0",wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		yw_box = new wxTextCtrl(this,wxID_ANY,defValue<<orientation.z,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+		defValue.clear();
 		
 		qbox->Add(r_text,0,wxCENTRE);
 		qbox->AddSpacer(5);
@@ -103,7 +111,13 @@ void PositionableWidget::CreatePanel(bool sliders, bool solid)
 		
 		
 		SliderLimits();
-		SliderInitial();
+		
+		xs->setValue(position.x);
+		ys->setValue(position.y);
+		zs->setValue(position.z);
+		rs->setValue(orientation.x);
+		ps->setValue(orientation.y);
+		yws->setValue(orientation.z);
 
 		sbox->Add(xs,1,wxEXPAND);
 		sbox->Add(ys,1,wxEXPAND);
@@ -122,21 +136,27 @@ void PositionableWidget::CreatePanel(bool sliders, bool solid)
 	name_text=new wxStaticText(this,wxID_ANY, wxT("Name :"),wxDefaultPosition,wxDefaultSize);
 	name_box = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	
-	if (solid==true)
-	{
-	color_text = new wxStaticText(this,wxID_ANY, wxT("Color :"),wxDefaultPosition,wxDefaultSize);
-	color_box = new wxBitmapButton(this,ID_COLOR,wxIcon(colour_xpm),wxDefaultPosition,wxDefaultSize);
-	}
-
+	
 	rbox->Add(name_text,0,wxCENTRE);
 	rbox->AddSpacer(5);
 	rbox->Add(name_box,1,wxCENTRE);
+	
+	
+	if (color_w==true)
+	{
+	color_text = new wxStaticText(this,wxID_ANY, wxT("Color :"),wxDefaultPosition,wxDefaultSize);
+	color_box = new wxBitmapButton(this,ID_COLOR,wxIcon(colour_xpm),wxDefaultPosition,wxDefaultSize);
+
 	rbox->AddSpacer(40);
 	rbox->Add(color_text,0,wxCENTRE);
 	rbox->AddSpacer(5);
 	rbox->Add(color_box,1,wxCENTRE);
-	pers->Add(rbox,1,wxEXPAND);
+	}
 
+	
+	
+	
+	pers->Add(rbox,1,wxEXPAND);
 	pE->Add(pers,0,wxEXPAND | wxALL,5);
 	vbox->Add(pE,1,wxEXPAND | wxALL,5);
 	SetSizer(vbox);
@@ -148,41 +168,31 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	
 	if(slider==false)
 	{
-		x_box->GetValue().ToDouble(&x);
-		y_box->GetValue().ToDouble(&y);
-		z_box->GetValue().ToDouble(&z);
-		r_box->GetValue().ToDouble(&r);
-		p_box->GetValue().ToDouble(&p);
-		yw_box->GetValue().ToDouble(&yw);
+		x_box->GetValue().ToDouble(&position.x);
+		y_box->GetValue().ToDouble(&position.y);
+		z_box->GetValue().ToDouble(&position.z);
+		r_box->GetValue().ToDouble(&orientation.x);
+		p_box->GetValue().ToDouble(&orientation.y);
+		yw_box->GetValue().ToDouble(&orientation.z);
 	}
 	else
 	{
-		x=xs->getValue();
-		y=ys->getValue();
-		z=zs->getValue();
-		r=rs->getValue();
-		p=ps->getValue();
-		yw=yws->getValue();
+		position.x=xs->getValue();
+		position.y=ys->getValue();
+		position.z=zs->getValue();
+		orientation.x=rs->getValue();
+		orientation.y=ps->getValue();
+		orientation.z=yws->getValue();
 	}
+	
 	text=name_box->GetValue();
-	
-	//report to the parent window... a value have changed
-	wxCommandEvent positionableEvent( wxEVT_POSITIONABLE_WIDGET_CHANGE, GetId() );
-    positionableEvent.SetEventObject( this );
-	// Send it
-    parent->GetEventHandler()->ProcessEvent( positionableEvent );
-	
-}
+	Transformation3D t;
+	t.position=position;
+	t.orientation.setRPY(orientation.x,orientation.y,orientation.z);
+	node->pointer.positionableentity->setRelativeT3D(t);
+	node->pointer.positionableentity->setName(text);
+	s_world->getChild()->UpdateWorld();
 
-void PositionableWidget::GetValues(double &xp,double &yp,double &zp, double &rp,double &pp,double &ywp,string &textp)
-{
-		xp=x;
-		yp=y;
-		zp=z;
-		rp=r;
-		pp=p;
-		ywp=yw;
-		textp=text;
 }
 
 void  PositionableWidget::ColorChanged(wxCommandEvent& event)
@@ -191,25 +201,17 @@ void  PositionableWidget::ColorChanged(wxCommandEvent& event)
 		color=wxGetColourFromUser(this);
 		if(color.IsOk())
 		{
-			
-			cred = color.Red();
-			cgreen = color.Green();
-			cblue = color.Blue();
+			double red,green,blue;
+			red = color.Red();
+			green = color.Green();
+			blue = color.Blue();
 
-			//report to the parent window... a value have changed
-			wxCommandEvent positionableEvent( wxEVT_POSITIONABLE_WIDGET_COLOR, GetId() );
-			positionableEvent.SetEventObject( this );
-			// Send it
-			parent->GetEventHandler()->ProcessEvent( positionableEvent );
+			node->pointer.solidentity->setColor(red/255,green/255,blue/255);
+			s_world->getChild()->UpdateWorld();
+		
 		}		
 }
 
-void  PositionableWidget::GetColor(double &red, double &green,double &blue)
-{
-blue=cblue;
-red=cred;
-green=cgreen;		
-}
 
 void  PositionableWidget::SliderLimits(double posup,double posdown,double oriup,double oridown,bool limit)
 {
@@ -222,16 +224,11 @@ void  PositionableWidget::SliderLimits(double posup,double posdown,double oriup,
 
 }
 
-void  PositionableWidget::SliderInitial(double inpos,double inori)
-{
-	xs->setValue(inpos);
-	ys->setValue(inpos);
-	zs->setValue(inpos);
-	rs->setValue(inori);
-	ps->setValue(inori);
-	yws->setValue(inori);
 
-}
+
+	
+
+
 
 
 	

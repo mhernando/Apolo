@@ -24,6 +24,8 @@ void ObjectSelection::CreateList(){
 
 wxListItem item;
 
+int index=0;
+
     
 ob_list=new wxListCtrl(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_REPORT);
 wxImageList *im_list=new wxImageList(16,16);
@@ -58,19 +60,21 @@ ob_list->InsertColumn(1,item);
 
 if(type==ID_ADDOBJ)
 {
-ob_list->InsertItem(0,wxT("Sphere"),0);		ob_list->SetItem(0,1,wxT("Add a  spheric  object")); 
-ob_list->InsertItem(1,wxT("Cylinder"),2);	ob_list->SetItem(1,1,wxT("Add a cylindric object"));
-ob_list->InsertItem(2,wxT("Prism"),4);		ob_list->SetItem(2,1,wxT("Add a prismatic object"));
+ob_list->InsertItem(index,wxT("Prism"),4);		ob_list->SetItem(index,1,wxT("Add a prismatic object"));
+ob_list->InsertItem(index,wxT("Cylinder"),2);	ob_list->SetItem(index,1,wxT("Add a cylindric object"));
+ob_list->InsertItem(index,wxT("Sphere"),0);		ob_list->SetItem(index,1,wxT("Add a  spheric  object")); 
+
 
 
 }
-else if(type==ID_ADDCOMP)
+if(type==ID_ADDCOMP)
 {
 
-ob_list->InsertItem(0,wxT("Robot NEO"),1);		ob_list->SetItem(0,1,wxT("Add PIONEER 3-AT, a versatile four wheel drive robotic platform")); 
-ob_list->InsertItem(1,wxT("Robot SCARA"),3);	ob_list->SetItem(1,1,wxT("Add ADEPTONE-MV,a robot with 3 rotational and 1 translational joints"));
-ob_list->InsertItem(2,wxT("Robot PUMA"),5);		ob_list->SetItem(2,1,wxT("Add PUMA560, a 6 degrees of freedom robot due to 6 revolution joints"));
-ob_list->InsertItem(3,wxT("Robot ASEA"),5);		ob_list->SetItem(3,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
+ob_list->InsertItem(index,wxT("Robot ASEA"),5);		ob_list->SetItem(index,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
+ob_list->InsertItem(index,wxT("Robot PUMA"),5);		ob_list->SetItem(index,1,wxT("Add PUMA560, a 6 degrees of freedom robot due to 6 revolution joints"));
+ob_list->InsertItem(index,wxT("Robot SCARA"),3);	ob_list->SetItem(index,1,wxT("Add ADEPTONE-MV,a robot with 3 rotational and 1 translational joints"));
+ob_list->InsertItem(index,wxT("Robot NEO"),1);		ob_list->SetItem(index,1,wxT("Add PIONEER 3-AT, a versatile four wheel drive robotic platform")); 
+
 }
 
 
@@ -88,7 +92,7 @@ void ObjectSelection::ObjectSelected(wxListEvent &event)
 		if(itemIndex==2)ident=ID_ADDPRI;
 	}
 	
-	else if(type==ID_ADDCOMP)
+	else if(type==ID_ADDCOMP )
 	{
 		if(itemIndex==0)ident=ID_ADDNEO;
 		if(itemIndex==1)ident=ID_ADDSCARA;
