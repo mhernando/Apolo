@@ -4,7 +4,8 @@
 
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
-	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
+	EVT_TREE_SEL_CHANGED(wxID_ANY,Tree::ShowSelection)
+EVT_LEFT_DCLICK(Tree::OnShowCanvas)
 END_EVENT_TABLE()
 
 Tree::Tree(wxWindow * parent, const wxWindowID id)
@@ -66,7 +67,16 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	}
 	AssignImageList(images);
 }
-
+ wxTreeItemId Tree::GetWorld(wxTreeItemId i)
+{
+	wxTreeItemId world=i;
+	if(GetItemParent(world)==root)
+		return world;
+	else if(GetItemParent(world)==NULL)
+		return 0;
+	else
+		GetWorld(GetItemParent(world));
+}
 
 
 void Tree::Parent(wxTreeItemId r)
@@ -88,7 +98,9 @@ wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 	return node;
 }
 
-wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
+
+
+void Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 {
 	NodeTree *auxP = new NodeTree(pos);
 	
@@ -98,13 +110,9 @@ wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 	auxP->simuWorld = ((NodeTree *)GetItemData(parent))->getSimu();
 	ComposedEntity * auxC = dynamic_cast<ComposedEntity *>(pos);
 	if(auxC)
-	{
 		for(int j=0;j<auxC->getNumObjects();j++)
-		{
 			AddNode((*auxC)[j],mynode);
-		}
-	}
-	return mynode;
+	
 }
 
 
@@ -113,6 +121,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 {
 	wxTreeItemId itemId = GetSelection();
 	itemId = event.GetItem();
+	SelectItem(itemId);
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
 	wxPoint pt = event.GetPoint();
@@ -143,15 +152,15 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(MainWindow::popmenu)
 		{
 		menuWorld.Append(ID_ADDOBJ,wxT("Add Simples Entities"));
-		menuWorld.Append(ID_ADDCOMP,wxT("Add Composed Entities"));
+		menuWorld.Append(ID_ADDCOMP,wxT("Add Complex Entities"));
 		}
 		else
 		{
 		menuWorld.AppendSubMenu(basic,wxT("Add Simples Entities"));
-		menuWorld.AppendSubMenu(composed,wxT("Add Composed Entities"));
+		menuWorld.AppendSubMenu(composed,wxT("Add Complex Entities"));
 		
 		///Number of items for Simple Entities Menu///
-		#define NUMBER_S 3
+		#define NUMBER_S 4
 		#define NUMBER_C 4
 		m_item simples[NUMBER_S];
 		m_item compos[NUMBER_C];
@@ -161,6 +170,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		simples[0]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
 		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
 		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
+		simples[3]=SimplyItems(ID_ADDFACE,"Face Set",wxIcon(faceSetPart_xpm));
 		
 		
 		compos[0]=SimplyItems(ID_ADDSCARA,"Robot SCARA",wxIcon(scara_xpm));
@@ -185,9 +195,9 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 			item_c[j] = new wxMenuItem(composed,compos[j].id,compos[j].name);
 			item_c[j]->SetBitmap(compos[j].icon);
 			composed->Append(item_c[j]);
+		}	
 		}
-		}
-
+		menuWorld.Append(ID_ADDCUSTOM,wxT("Add Composed Entity"));
 	
 		PopupMenu(&menuWorld,pt);
 	}
@@ -202,14 +212,17 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		{
 			title = wxT("Menu empty");
 		}
+		
 		wxMenu menuTree(title);
-		//if(itemData->menus.menu_composed) menuTree.Append(wxID_ANY, wxT("Menu composed"));
+		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
+		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
+		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
-		if(itemData->menus.menu_radius) menuTree.Append(ID_RAD, wxT("Change radio"));
+		if(itemData->menus.menu_solid && itemData->menus.menu_composed==false) menuTree.Append(ID_DIS, wxT("Change design properties"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==1) menuTree.Append(ID_REFER, wxT("Undraw Reference System"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==0) menuTree.Append(ID_REFER, wxT("Draw Reference System"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_NAME, wxT("Change name"));
@@ -250,4 +263,34 @@ Tree::m_item Tree::SimplyItems(int id,string name, wxIcon icon)
 			item.icon=icon;
 			return item;
 }
+
+void Tree::ShowSelection(wxTreeEvent& event)
+{
+
+	wxTreeItemId itemId = GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
+										:NULL;
+
+		if(itemData->menus.menu_world==false)
+		{
+			itemData->pointer.solidentity->setDrawBox();
+			itemData->getSimu()->getChild()->UpdateWorld();
+		}
+		if(event.GetOldItem()!=NULL)
+		{
+			itemId=event.GetOldItem();
+			itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
+										:NULL;
+			if(itemData->menus.menu_world==false)
+			{
+				itemData->pointer.solidentity->setDrawBox(false);
+				itemData->getSimu()->getChild()->UpdateWorld();
+			}
+		}
+}
+
+		
+	
+	
+	
 

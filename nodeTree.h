@@ -118,7 +118,7 @@ struct ContextualMenu
 	bool menu_robotsim;
 	bool menu_world;
 	bool menu_meshpart;
-	bool menu_radius;
+	
 };
 class SimulatedWorld;
 

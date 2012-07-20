@@ -6,6 +6,7 @@
 #include "simulatedWorld.h"
 #include "changeLocationCtrl.h"
 #include "wheeledBasePanel.h"
+#include "designProperties.h"
 #include "childView.h"
 #include "tree.h"
 #include "robotSimPanel.h"
@@ -36,6 +37,7 @@ class MainWindow : public wxMDIParentFrame
 public:
 	static bool slider;
 	static bool popmenu;
+	static bool design_slider;
 	MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style);
 	
 	void PropertiesDisplay(wxCommandEvent& event);
@@ -54,7 +56,7 @@ public:
 	void OnDrawReference(wxCommandEvent& event);
 	void OnColor(wxCommandEvent& event);
 
-void OnRadius(wxCommandEvent& event);
+void OnDesign(wxCommandEvent& event);
 	
 void AddObject(wxCommandEvent& event);
 	

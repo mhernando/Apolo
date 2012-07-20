@@ -5,6 +5,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_ADDOBJ, MainWindow::AddObject)
 	EVT_MENU(ID_ADDCOMP, MainWindow::AddObject)
 	EVT_MENU(ID_ADDSPHERE, MainWindow::AddObject)
+	EVT_MENU(ID_ADDCUSTOM, MainWindow::AddObject)
 	EVT_MENU(ID_ADDSCARA, MainWindow::AddObject)
 	EVT_MENU(ID_ADDPUMA, MainWindow::AddObject)
 	EVT_MENU(ID_ADDASEA, MainWindow::AddObject)
@@ -28,10 +29,12 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(CONT_MENU,MainWindow::PropertiesDisplay)
 	EVT_MENU(DROP_MENU,MainWindow::PropertiesDisplay)
 	EVT_MENU(POP_MENU,MainWindow::PropertiesDisplay)
+	EVT_MENU(DIS_SLI,MainWindow::PropertiesDisplay)
+	EVT_MENU(DIS_CONT,MainWindow::PropertiesDisplay)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
-	EVT_MENU(ID_RAD, MainWindow::OnRadius)
+	EVT_MENU(ID_DIS, MainWindow::OnDesign)
 	EVT_MENU(ID_COLOR, MainWindow::OnColor)
 	EVT_MENU(ID_BOX, MainWindow::OnDrawBox)
 	EVT_MENU(ID_REFER, MainWindow::OnDrawReference)
@@ -50,7 +53,7 @@ END_EVENT_TABLE()
 
 bool MainWindow::slider=false;
 bool MainWindow::popmenu=true;
-
+bool MainWindow::design_slider=true;
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
@@ -84,7 +87,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	tree->m_mainWin = this;
 	m_root = tree->AddRoot(wxT("Universe"), 0, 45, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
-	
+
 
 	note->AddPage(tree, wxT("Universe"));
 	
@@ -203,19 +206,18 @@ void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 void MainWindow::AddObject(wxCommandEvent& event)
 {
 	int id= event.GetId();
-	
-	if(id==ID_ADDOBJ || id==ID_ADDCOMP)
-	{
-	ObjectSelection *ob_sel=new ObjectSelection(this,id,wxDefaultPosition,wxDefaultSize);
-	ob_sel->ShowModal();
-	id=ob_sel->GetObject();
-	if(id==0)return;
 		
+	if(id!=ID_ADDCUSTOM && popmenu==true)
+	{
+		ObjectSelection *ob_sel=new ObjectSelection(this,id,wxDefaultPosition,wxDefaultSize);
+		ob_sel->ShowModal();
+		id=ob_sel->GetObject();
+			if(id==0)return;
 	}
-
 	for(int i=0;i<listWorlds.size();i++)	
-			if (listWorlds[i]->getTreeItem() == tree->GetSelection())
+		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
 		  			listWorlds[i]->AddObject(id);
+	
 	
 	
 }
@@ -226,11 +228,13 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
         msg.Printf(wxT("Are you sure you want to delete this object?"));
         if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
         else
-		{
-		for(int i=0;i<listWorlds.size();i++)
-			if(listWorlds[i]->getTreeItem()==tree->GetItemParent(tree->GetSelection()))
-				listWorlds[i]->DeleteObject(tree->GetSelection());
-		}
+			for(int i=0;i<listWorlds.size();i++)
+				if(listWorlds[i]->getTreeItem()==tree->GetWorld(tree->GetSelection()))
+					listWorlds[i]->DeleteObject(tree->GetSelection());
+					
+			
+				
+		
 		
 }
 
@@ -347,26 +351,28 @@ void MainWindow::OnDrawReference(wxCommandEvent& WXUNUSED(event))
 	else ShowReference(false);
 }
 
-void MainWindow::OnRadius(wxCommandEvent& WXUNUSED(event))
+void MainWindow::OnDesign(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
-	static wxString s_text;
-    s_text = wxGetTextFromUser(wxT("New radius:"), wxT("Change Radius"),s_text, this);
-	if(itemData->pointer.spherepart)
+
+	for(int i= 0; i<listWorlds.size(); i++)
 	{
-		double valor;
-		s_text.ToDouble(&valor);
-		itemData->pointer.spherepart->setRadius(valor);
+		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
+		{	
+			DesignProperties *design=new DesignProperties(this,itemData,listWorlds[i],wxT("Design Properties"));
+			design->ShowModal();
+			
+		}
 	}
-	for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
+		  			
 }
 
 void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
-	if(itemData->pointer.solidentity)
+	if(itemData->pointer.solidentity) 
 	{
 		double _r,_g,_b;
 		itemData->pointer.solidentity->getColor(_r,_g,_b);
@@ -649,6 +655,8 @@ void MainWindow::PropertiesDisplay(wxCommandEvent& event)
 	if(id==CONT_MENU)slider=false;
 	if(id==POP_MENU)popmenu=true;
 	if(id==DROP_MENU)popmenu=false;
+	if(id==DIS_CONT)design_slider=false;
+	if(id==DIS_SLI)design_slider=true;
 	CheckProperties();
 }
 
@@ -666,7 +674,17 @@ void MainWindow::CheckProperties()
 		ChildView::osel->Check(POP_MENU,false);
 		
 	}
-	
+	if(design_slider==true)
+	{
+		ChildView::dwid->Check(DIS_SLI,true);
+		ChildView::dwid->Check(DIS_CONT,false);
+	}
+	else
+	{
+		ChildView::dwid->Check(DIS_SLI,false);
+		ChildView::dwid->Check(DIS_CONT,true);
+		
+	}
 	
 	if(slider==true)
 	{

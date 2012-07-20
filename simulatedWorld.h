@@ -21,7 +21,6 @@ public:
 	wxTreeItemId getTreeItem(){return mainNode;}
 	void AddObject(wxWindowID  	id);
 	void DeleteObject(wxTreeItemId itemId);
-
 	World *getWorld(){return m_world;}
 	ChildView* getChild(){return childView;}
 
@@ -31,9 +30,6 @@ public:
 	static Tree *tree;
 	
 private:
-
-	vector <PositionableEntity*> listObjects;
-	vector <wxTreeItemId> objectNodes;
 	int cont;
 	wxTreeItemId mainNode;
 	ChildView* childView;

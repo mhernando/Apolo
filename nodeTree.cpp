@@ -12,48 +12,21 @@ NodeTree::NodeTree(PositionableEntity* pos)
 	menus.menu_world = false;
 	menus.menu_robotsim = false;
 	menus.menu_meshpart = false;
-	menus.menu_radius=false;
+
 
 
 	//primero las clases bases que pueden ser compuestas
 	if(dynamic_cast<PositionableEntity *>(pos))	menus.menu_positionable = true;
-	if(dynamic_cast<SolidEntity *>(pos))	menus.menu_solid = true;
+	if(dynamic_cast<SolidEntity *>(pos))	menus.menu_solid = true; 
 	if(dynamic_cast<ComposedEntity *>(pos))	menus.menu_composed = true;
 	if(dynamic_cast<WheeledBaseSim *>(pos))	menus.menu_wheeledbased = true;	
 	if(dynamic_cast<RobotSim *>(pos)) menus.menu_robotsim = true;
 	if(dynamic_cast<MeshPart *>(pos)) menus.menu_meshpart = true;
-	if(dynamic_cast<SpherePart *>(pos)) menus.menu_radius = true;
+
 
 	//Ahora los punteros a las clases base que pueden ser parte
 	//de una herencia multiple, los cuales no retornan directamente y son no exclusivos
 	//orden de herencia
-	if(dynamic_cast<WheeledBaseSim *>(pos))
-	{
-		pointer.wheeledbasesim = dynamic_cast<WheeledBaseSim *>(pos);
-		tipo = N_WheeledBaseSim;
-		bit = Bit_wheeledbasesim;
-		bitsel = BitSel_wheeledbasesim;
-		name = pos->getName();
-		if(name.empty())name = "Wheeled Base";
-	}
-	if(dynamic_cast<ComposedEntity *>(pos))
-	{
-		pointer.composedentity = dynamic_cast<ComposedEntity *>(pos);
-		tipo = N_ComposedEntity;
-		bit = Bit_composedentity;
-		bitsel = BitSel_composedentity;
-		name = pos->getName();
-		if(name.empty())name = "Composed Entity";
-	}
-	if(dynamic_cast<SolidEntity *>(pos))
-	{
-		pointer.solidentity = dynamic_cast<SolidEntity *>(pos);
-		tipo = N_SolidEntity;
-		bit = Bit_solidentity;
-		bitsel = BitSel_solidentity;
-		name = pos->getName();
-		if(name.empty())name = "Solid Entity";
-	}
 	if(dynamic_cast<PositionableEntity *>(pos))
 	{
 		pointer.positionableentity = dynamic_cast<PositionableEntity *>(pos);
@@ -63,6 +36,39 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		name = pos->getName();
 		if(name.empty())name = "Positionable Entity";
 	}
+
+	if(dynamic_cast<SolidEntity *>(pos))
+	{
+		pointer.solidentity = dynamic_cast<SolidEntity *>(pos);
+		tipo = N_SolidEntity;
+		bit = Bit_solidentity;
+		bitsel = BitSel_solidentity;
+		name = pos->getName();
+		if(name.empty())name = "Solid Entity";
+	}
+
+	if(dynamic_cast<ComposedEntity *>(pos))
+	{
+		pointer.composedentity = dynamic_cast<ComposedEntity *>(pos);
+		tipo = N_ComposedEntity;
+		bit = Bit_composedentity;
+		bitsel = BitSel_composedentity;
+		name = pos->getName();
+		if(name.empty())name = "Composed Entity";
+	}
+	
+	if(dynamic_cast<WheeledBaseSim *>(pos))
+	{
+		pointer.wheeledbasesim = dynamic_cast<WheeledBaseSim *>(pos);
+		tipo = N_WheeledBaseSim;
+		bit = Bit_wheeledbasesim;
+		bitsel = BitSel_wheeledbasesim;
+		name = pos->getName();
+		if(name.empty())name = "Wheeled Base";
+	}
+	
+	
+	
 	if(dynamic_cast<RobotSim *>(pos))
 	{
 		pointer.robotsim = dynamic_cast<RobotSim *>(pos);
