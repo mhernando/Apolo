@@ -1,25 +1,23 @@
 #ifndef __APOLO__POSITIONABLE_WIDGET__H
 #define __APOLO__POSITIONABLE_WIDGET__H
 
+
+#include "nodeTree.h"
+#include "simulatedWorld.h"
 #include <string>
 #include "genericSlider.h"
-using namespace std;
 
-DECLARE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_CHANGE, -1)
-DECLARE_EVENT_TYPE(wxEVT_POSITIONABLE_WIDGET_COLOR, -1)
 
 class PositionableWidget: public wxPanel
 
 {
 public:
-	PositionableWidget(wxWindow *window,const wxString label,const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(60,200),bool sliders = false, bool solid=true);
-	void GetValues(double &xp,double &yp,double &zp, double &rp,double &pp,double &ywp,string &textp);
-	void  GetColor(double &red,double &green,double &blue);
+	PositionableWidget(wxWindow *window,NodeTree *obj,SimulatedWorld *world,const wxString label,const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(60,200),bool sliders = false, bool color_w=true);
+	
 	void OnValuesChanged(wxCommandEvent& event);
-	void  ColorChanged(wxCommandEvent& event);
+	void ColorChanged(wxCommandEvent& event);
 	void SliderLimits(double posup=20,double posdown=-20,double oriup=180,double oridown=-180,bool limit=false);
-	void SliderInitial(double inpos=0.0,double inori=0.0);
 	void CreatePanel(bool sliders, bool solid);
 
 
@@ -47,13 +45,14 @@ private:
 	GenericSlider *rs;
 	GenericSlider *ps;
 	GenericSlider *yws;
-	bool solid;
 	bool slider;
 	wxString title;
 	wxColor color;
-	double x,y,z,r,p,yw;
+	Vector3D position,orientation;
 	wxWindow *parent;
 	string text;
+	NodeTree *node;
+	SimulatedWorld *s_world;
 	wxString name;
 	double cred,cgreen,cblue;
 	DECLARE_EVENT_TABLE();

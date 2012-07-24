@@ -27,6 +27,7 @@ class ChildView: public wxMDIChildFrame
 public:
 	static wxMenu *ipro;
 	static wxMenu *osel;
+	static wxMenu *dwid;
 	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
 
 	void InitToolBar(wxToolBar* toolbar);

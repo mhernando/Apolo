@@ -7,7 +7,6 @@ Tree * SimulatedWorld::tree = 0;
 
 SimulatedWorld::SimulatedWorld(World *world)
 {
-	
 	static int numWorld = 0;
 	childView = new ChildView(mainWin, wxT("WORLD"), world);
 	mainNode = tree->GenerateSubTree(world,this);
@@ -28,46 +27,61 @@ SimulatedWorld::SimulatedWorld(World *world)
 
 void SimulatedWorld::AddObject(wxWindowID  	id)
 {	
-	PositionableEntity *obj;
-	
-	if(id==ID_ADDSPHERE)
-		obj=new SpherePart;
-	if(id==ID_ADDCYL)
-		obj=new CylindricalPart;
-	if(id==ID_ADDPRI)
-		obj=new PrismaticPart;
-	if(id==ID_ADDFACE)
-		obj=new FaceSetPart;
-	if(id==ID_ADDNEO)
-		obj=new  Pioneer3ATSim;
-	if(id==ID_ADDSCARA)
-		obj=new AdeptOneSim;
-	if(id==ID_ADDPUMA)
-		obj=new  Puma560Sim;
-	if(id==ID_ADDASEA)
-		obj=new AseaIRB2000Sim;
-	
-	
+	NodeTree *obj=new NodeTree(new PositionableEntity);
+	wxTreeItemId composedItem=tree->GetSelection();
+	NodeTree *itemData = composedItem.IsOk() ? (NodeTree *) tree->GetItemData(composedItem):NULL;
 
+
+// Object Selected////
+
+	if(id==ID_ADDSPHERE)
+		obj->pointer.positionableentity=new SpherePart;
+	if(id==ID_ADDCYL)
+		obj->pointer.positionableentity=new CylindricalPart;
+	if(id==ID_ADDPRI)
+		obj->pointer.positionableentity=new PrismaticPart;
+	if(id==ID_ADDFACE)
+		obj->pointer.positionableentity=new FaceSetPart;
+	if(id==ID_ADDNEO)
+		obj->pointer.positionableentity=new  Pioneer3ATSim;
+	if(id==ID_ADDSCARA)
+		obj->pointer.positionableentity=new AdeptOneSim;
+	if(id==ID_ADDPUMA)
+		obj->pointer.positionableentity=new  Puma560Sim;
+	if(id==ID_ADDASEA)
+		obj->pointer.positionableentity=new AseaIRB2000Sim;
+	if(id==ID_ADDCUSTOM)
+		obj->pointer.positionableentity=new ComposedEntity;
+
+	// Object addition or world addition//
 	
-	(*m_world)+=obj;
+	if(tree->GetSelection()!=mainNode)
+		itemData->pointer.composedentity->addObject(obj->pointer.positionableentity);
+	else
+		(*m_world)+=obj->pointer.positionableentity;
 	
-	InitialProperties *ini= new InitialProperties(mainWin,id,obj,this,wxT("Properties")); 
+	
+	// Initial Properties //
+	InitialProperties *ini= new InitialProperties(mainWin,obj,this,wxT("Properties")); 
 	ini->ShowModal();
 
 
 	if(ini->GetButtom())
-	{	
-		listObjects.push_back(obj);
-		objectNodes.push_back(tree->AddNode(obj,mainNode));
-	}
-		
+	{
+		if(tree->GetSelection()!=mainNode)
+		{
+			tree->AddNode(itemData->pointer.composedentity,tree->GetItemParent(tree->GetSelection()));
+			tree->Delete(composedItem);
+		}
+	
+		else
+			tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
+	}	
 	else
-		delete obj;
+		delete obj->pointer.positionableentity;
 		
-	
-	
-	tree->Expand(mainNode);
+		
+	tree->Expand(tree->GetSelection());
 	
 	childView->UpdateWorld();
 
@@ -77,25 +91,21 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 {
 	
-	for(int i=0 ;i<listObjects.size();i++)
-	{
-		if(objectNodes[i]==itemId)
-		{
-			delete listObjects[i];
-			listObjects.erase(listObjects.begin()+i);
-			tree->Delete(objectNodes[i]);
-			objectNodes.erase(objectNodes.begin()+i);	
-			
-		}
-	}
+	wxTreeItemId parentItem=tree->GetItemParent(itemId);
+	wxTreeItemId objectItem=itemId;
+	NodeTree *objectData = objectItem.IsOk() ? (NodeTree *) tree->GetItemData(objectItem):NULL;
+	NodeTree *parentData = parentItem.IsOk() ? (NodeTree *) tree->GetItemData(parentItem):NULL;
+	
+	if(parentItem!=mainNode)
+		parentData->pointer.composedentity->remove(objectData->pointer.positionableentity);//->erase(parentData->pointer.composedentity->getIndexOf(objectData->pointer.positionableentity));
+	else 
+		delete objectData->pointer.positionableentity;
+	
+	tree->Delete(objectItem);
+	
 	childView->UpdateWorld();
-
+	
 }
-	
-
-
-	
-
 
 SimulatedWorld::~SimulatedWorld()
 {

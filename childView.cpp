@@ -29,6 +29,7 @@ END_EVENT_TABLE()
 
 wxMenu *ChildView::ipro;
 wxMenu *ChildView::osel;
+wxMenu *ChildView::dwid;
 
 ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 : wxMDIChildFrame(parent, wxID_ANY, title, wxPoint(50,50), wxSize(500,400), wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE),m_timer(this,ID_TIMER)
@@ -107,6 +108,7 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	file_menu5=new wxMenu;
 	ipro=new wxMenu;
 	osel=new wxMenu;
+	dwid=new wxMenu;
 
 	file_menu5->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
 	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
@@ -114,6 +116,10 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	file_menu5->AppendSubMenu(osel,wxT("Object Selection"),wxT("Change display configuration of Positionable Properties"));
 	osel->AppendCheckItem(POP_MENU,wxT("Pop-Up Menu"));
 	osel->AppendCheckItem(DROP_MENU,wxT("Drop-Down Menu"));
+	file_menu5->AppendSubMenu(dwid,wxT("Design Widget"),wxT("Change display configuration of Design Properties"));
+	dwid->AppendCheckItem(DIS_SLI,wxT("Slider Menu"));
+	dwid->AppendCheckItem(DIS_CONT,wxT("Contextual Menu"));
+	
 	
 
 	menubar = new wxMenuBar;
