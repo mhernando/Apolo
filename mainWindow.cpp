@@ -156,7 +156,7 @@ void MainWindow::InitToolBar(wxToolBar *tool)
 	toolbar->AddTool(ID_SAVEOBJ, bitmaps[4], wxT("Save Object"));
 	toolbar->AddSeparator();
 	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxString("Show Item Selected"));
-	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxString("Show Item Selected"));
+	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxString("Show Reference System of main objects and composed objects"));
 	toolbar->AddSeparator();
 	toolbar->Realize();
 }
