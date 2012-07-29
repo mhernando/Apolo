@@ -13,6 +13,14 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
 	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
 	EVT_MENU(ID_ADDFACE, MainWindow::AddObject)
+	EVT_MENU(ID_POWERCUBE, MainWindow::AddObject)
+	EVT_MENU(ID_LMS200, MainWindow::AddObject)
+	EVT_MENU(ID_PATROL, MainWindow::AddObject)
+	EVT_MENU(ID_LMS100, MainWindow::AddObject)
+	EVT_MENU(ID_WHEEL, MainWindow::AddObject)
+	EVT_MENU(ID_LASER, MainWindow::AddObject)
+	EVT_MENU(ID_LASER3D, MainWindow::AddObject)
+	EVT_MENU(ID_NEMOLASER, MainWindow::AddObject)
 	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
 	EVT_MENU(wxID_EXIT, MainWindow::OnQuit)
 	EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
@@ -22,6 +30,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_SAVEOBJ, MainWindow::OnSaveObject)
 	EVT_MENU(ID_SAVEWORLD, MainWindow::OnSaveWorld)
 	EVT_MENU(ID_DELETE, MainWindow::OnDeleteWorld)
+	EVT_MENU(ID_DRAWBOX,MainWindow::ShowSelection)
+	EVT_MENU(ID_COMPRS,MainWindow::ShowReferenceComposed)
 	EVT_CLOSE(MainWindow::OnClose)
 	EVT_SIZE(MainWindow::OnSize)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
@@ -51,7 +61,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 
 END_EVENT_TABLE()
 
-bool MainWindow::slider=false;
+bool MainWindow::slider=true;
 bool MainWindow::popmenu=true;
 bool MainWindow::design_slider=true;
 
@@ -85,13 +95,13 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	
 	tree = new Tree(note, ID_TREE);
 	tree->m_mainWin = this;
-	m_root = tree->AddRoot(wxT("Universe"), 0, 45, new TreeItemData(wxT("Root item")));
+	m_root = tree->AddRoot(wxT("Universe"), 0, 47, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
 
 
 	note->AddPage(tree, wxT("Universe"));
 	
-
+	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
 	
@@ -101,7 +111,7 @@ void MainWindow::OnSashDrag(wxSashEvent& event)
 {
   
     s->SetDefaultSize(wxSize(event.GetDragRect().width, h));
-            
+           
 	#if wxUSE_MDI_ARCHITECTURE
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
@@ -127,20 +137,27 @@ void MainWindow::OnClose(wxCloseEvent& event)
 	Destroy();
 	event.Skip();
 }
-void MainWindow::InitToolBar(wxToolBar *toolbar)
+void MainWindow::InitToolBar(wxToolBar *tool)
 {
-	wxBitmap bitmaps[5];
+	toolbar=tool;
+	wxBitmap bitmaps[7];
 	bitmaps[0] = wxBitmap (new_xpm);
 	bitmaps[1] = wxBitmap (loadWorld_xpm);
 	bitmaps[2] = wxBitmap (loadObject_xpm);
 	bitmaps[3] = wxBitmap (saveWorld_xpm);
 	bitmaps[4] = wxBitmap (saveObject_xpm);
+	bitmaps[5] = wxBitmap (box_xpm);
+	bitmaps[6] = wxBitmap (positionable_xpm);
 
 	toolbar->AddTool(ID_NEW, bitmaps[0], wxT("New World"));
 	toolbar->AddTool(ID_LOADWORLD, bitmaps[1], wxT("Load World"));
 	toolbar->AddTool(ID_SAVEWORLD, bitmaps[3], wxT("Save World")); 
 	toolbar->AddTool(ID_LOADOBJ, bitmaps[2], wxT("Load Object"));
 	toolbar->AddTool(ID_SAVEOBJ, bitmaps[4], wxT("Save Object"));
+	toolbar->AddSeparator();
+	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxString("Show Item Selected"));
+	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxString("Show Item Selected"));
+	toolbar->AddSeparator();
 	toolbar->Realize();
 }
 void MainWindow::OnSize(wxSizeEvent& WXUNUSED (event))
@@ -391,7 +408,7 @@ void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
 }
 void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
 {
-	World *w = new World;
+	World *w = new World();
 	simuWorld = new SimulatedWorld(w);
 	listWorlds.push_back(simuWorld);
 	tree->ExpandAll();
@@ -568,6 +585,7 @@ void MainWindow::OnDeleteWorld(wxCommandEvent& WXUNUSED(event))
 				SimulatedWorld* b = listWorlds[i];
 				if(a == b)note->DeletePage(j);
 			}
+			
 		}
 	}
 	delete (listWorlds[deletePartWorld]);
@@ -592,6 +610,8 @@ void MainWindow::OnShowCanvas()
 	{
 		if(listWorlds[i]->getTreeItem()==itemId)
 		{
+			if(listWorlds[i]->getChild()->IsShown()==false)
+				listWorlds[i]->getChild()->Show();
 			listWorlds[i]->getChild()->Restore();
 			listWorlds[i]->getChild()->Raise();
 			listWorlds[i]->getChild()->Update();
@@ -697,7 +717,84 @@ void MainWindow::CheckProperties()
 		ChildView::ipro->Check(CONT_MENU,true);
 	}
 }
+void MainWindow::ShowSelection(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	bool d_box=toolbar->GetToolState(id);
+	NodeTree *itemData = tree->GetSelection().IsOk() ? (NodeTree *) tree->GetItemData(tree->GetSelection())
+										:NULL;
+		
+	if(d_box)
+	{
+		tree->SetShowSelection(true);
+		if(itemData->menus.menu_solid  && tree->GetSelection()!=tree->GetRootItem())
+		{
+			itemData->pointer.solidentity->setDrawBox(true);
+			itemData->getSimu()->getChild()->Refresh();
+		}
+	}
+	else
+	{
+		tree->SetShowSelection(false);
+		if(itemData->menus.menu_solid && tree->GetSelection()!=tree->GetRootItem())
+		{
+			itemData->pointer.solidentity->setDrawBox(false);
+			itemData->getSimu()->getChild()->Refresh();
+		}
+		
+	}
 	
+		
+}
+
+void MainWindow::ShowReferenceComposed(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	rToogle=toolbar->GetToolState(id);
+	Search(tree->GetRootItem(),rToogle);
+}
+
+void  MainWindow::Search(wxTreeItemId search,bool toogle)
+{
+	wxTreeItemIdValue value;
+	wxTreeItemId item;
+	
+	if(tree->HasChildren(search))
+	{
+		item=tree->GetFirstChild(search,value);
+		Search(item,toogle);
+	}
+	
+	NodeTree *itemData = search.IsOk() ? (NodeTree *) tree->GetItemData(search)
+		:NULL;
+	NodeTree *parentData=tree->GetItemParent(search).IsOk() ? (NodeTree *) tree->GetItemData(tree->GetItemParent(search))
+		:NULL;
+	
+	if((itemData->menus.menu_composed || parentData->getTipo()==N_World) && search!=tree->GetRootItem())
+	{
+		if(toogle)
+			itemData->pointer.positionableentity->setDrawReferenceSystem();
+		else
+			itemData->pointer.positionableentity->setDrawReferenceSystem(false);
+
+		itemData->getSimu()->getChild()->Refresh();
+	}
+	
+	if(search==tree->GetRootItem() || search==tree->GetLastChild(tree->GetRootItem()) )
+		return;
+
+
+	if(search==tree->GetLastChild(tree->GetItemParent(search)))
+		if(tree->GetNextSibling(tree->GetItemParent(search))==NULL)
+			return;
+		else
+			Search(tree->GetNextSibling(tree->GetItemParent(search)),toogle);
+	else
+		Search(tree->GetNextSibling(search),toogle);
+}
+
+
+
 
 
 

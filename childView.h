@@ -17,7 +17,7 @@
 #include "bitmaps/V5.xpm"
 #include "bitmaps/play.xpm"
 #include "bitmaps/stop2.xpm"
-
+#include "bitmaps/box.xpm"
 using namespace std;
 
 class MainWindow;
