@@ -11,7 +11,7 @@ class InitialProperties:public wxDialog
 {
 
 public:
-	InitialProperties(wxWindow *parent,NodeTree *obj, SimulatedWorld *s_world, const wxString& title);
+	InitialProperties(wxWindow *parent,NodeTree *obj,SimulatedWorld *s_world, const wxString& title);
 	void OnButton(wxCommandEvent& event);
 	int GetButtom(){return b_sel;};
 	void OnClose(wxCloseEvent& event){b_sel=false; Destroy();};

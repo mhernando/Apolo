@@ -6,7 +6,6 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 	EVT_MENU(ID_HIDE, ChildView::OnHideChild)
 	EVT_CLOSE(ChildView::OnClose)
 	EVT_TIMER(ID_TIMER, ChildView::OnTimer)
-
 	EVT_MENU(ID_SPLITHF, ChildView::SplitHorizontalFirst)
 	EVT_MENU(ID_SPLITHS, ChildView::SplitHorizontalSecond)
 	EVT_MENU(ID_SPLITVF, ChildView::SplitVerticalFirst)
@@ -15,7 +14,6 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 	EVT_MENU(ID_UNSPLITS, ChildView::UnSplitSecond)
 	EVT_MENU(ID_PLAY, ChildView::OnSimulator)
 	EVT_MENU(ID_STOP2, ChildView::OnSimulator)
-
 	EVT_UPDATE_UI(ID_SPLITHF, ChildView::UpdateUIHorizontalFirst)
 	EVT_UPDATE_UI(ID_SPLITHS, ChildView::UpdateUIHorizontalSecond)
 	EVT_UPDATE_UI(ID_SPLITVF, ChildView::UpdateUIVerticalFirst)
@@ -145,6 +143,7 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	bitmaps[5] = wxBitmap ( play_xpm);
 	bitmaps[6] = wxBitmap ( stop2_xpm);
 
+
 	toolbar->AddTool(ID_UNSPLITF, bitmaps[4], wxT("view unsplit simple"));
 	toolbar->AddTool(ID_SPLITHF, bitmaps[0], wxT("view horizontal simple"));
 	toolbar->AddTool(ID_SPLITVF, bitmaps[1], wxT("view vertical simple"));
@@ -170,9 +169,6 @@ void ChildView::RefreshChild()
 	canvas1->Refresh(false);
 	canvas2->Refresh(false);
 	canvas3->Refresh(false);	
-	
-	//if(ipro->IsChecked(CONT_MENU)){ ipro->Check(SLI_VERT,false); }
-	//if(ipro->IsChecked(SLI_VERT)){ ipro->Check(CONT_MENU,false); }
 }
 void ChildView::CreateSubWindows()
 {

@@ -26,11 +26,15 @@ void InitialProperties::CreatePanel()
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	bool color=true;
 	
-	if(dynamic_cast<ComposedEntity *>(pos->pointer.positionableentity))
-	{	
+	
+	if(pos->getSimu()->mainWin->getToogleReference())
+		pos->getSimu()->mainWin->Search(world->getNewNode(),true);
+		
+
+	if(dynamic_cast<ComposedEntity *>(pos->pointer.positionableentity))	
 		color=false;
-		pos->pointer.positionableentity->setDrawReferenceSystem();
-	}
+		
+	
 		
 	
 	
@@ -68,7 +72,7 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	
-	if(id == ID_ACCEPT)	
+	if(id == ID_ACCEPT)
 		Destroy();
 	
 

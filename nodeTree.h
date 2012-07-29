@@ -29,6 +29,7 @@ enum TypeNode
 	N_RobotSim,
 	N_AdeptOneSim,
 	N_SpherePart,
+	N_AseaIRB2000,
 };
 enum Bitmap 
 {
@@ -54,6 +55,8 @@ enum Bitmap
 	Bit_robotsim=39,
 	Bit_adeptonesim=41,
 	Bit_spherepart=43,
+	Bit_asea=45,
+
 };
 enum BitmapSelect
 {
@@ -79,6 +82,7 @@ enum BitmapSelect
 	BitSel_robotsim=40,
 	BitSel_adeptonesim=42,
 	BitSel_spherepart=44,
+	BitSel_asea=46,
 
 };
 struct MRPointer
@@ -100,6 +104,7 @@ struct MRPointer
 	MeshPart* meshpart;
 	AdeptOneSim* adeptone;
 	SpherePart * spherepart;
+	AseaIRB2000Sim *aseaIRB2000Sim;
 	};
 	WheeledBaseSim* wheeledbasesim;
 	ComposedEntity* composedentity;
