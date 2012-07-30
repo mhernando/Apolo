@@ -190,7 +190,7 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	t.position=position;
 	t.orientation.setRPY(orientation.x,orientation.y,orientation.z);
 	node->pointer.positionableentity->setRelativeT3D(t);
-	node->pointer.positionableentity->setName(text);
+	node->getSimu()->tree->SetItemText(s_world->getNewNode(),text);
 	s_world->getChild()->UpdateWorld();
 
 }

@@ -22,6 +22,7 @@ public:
 	void AddObject(wxWindowID  	id);
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
+	wxTreeItemId getNewNode(){return newNode;};
 	ChildView* getChild(){return childView;}
 
 
@@ -32,6 +33,7 @@ public:
 private:
 	int cont;
 	wxTreeItemId mainNode;
+	wxTreeItemId newNode;
 	ChildView* childView;
 	World* m_world;
 	

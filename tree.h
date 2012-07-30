@@ -53,6 +53,8 @@
 #include "bitmaps/wheeledBaseSelect.xpm"
 #include "bitmaps/robotSim.xpm"
 #include "bitmaps/robotSimSelect.xpm"
+#include "bitmaps/asea.xpm"
+#include "bitmaps/aseaSelect.xpm"
 
 class MainWindow;
 class SimulatedWorld;
@@ -62,6 +64,7 @@ private:
 	wxString text;
 	wxTreeItemId root;
 	wxTreeItemId m_parent;
+	bool sel;
 	struct m_item {int id; string name; wxIcon icon;};
 	DECLARE_EVENT_TABLE();	
 
@@ -69,14 +72,16 @@ public:
 	wxTreeItemId GetWorld(wxTreeItemId i);
 	Tree(wxWindow * parent, const wxWindowID id);
 	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
-	void AddNode(PositionableEntity * pos, wxTreeItemId parent);
+	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent);
 	void Parent(wxTreeItemId r);
 	Tree::m_item SimplyItems(int id,string name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);
 	wxTreeItemId GenerateSubTree(ComposedEntity* w,SimulatedWorld* simu);
 	void OnShowCanvas(wxMouseEvent& event);
 	void ShowSelection(wxTreeEvent& event);
+	void SetShowSelection(bool show){sel=show;};
 	MainWindow* m_mainWin;
+
 };
 
 class TreeItemData : public wxTreeItemData

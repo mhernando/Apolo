@@ -39,10 +39,10 @@ RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,NodeTree* itemData)
 }
 void RobotSimPanel::OnValueChanged(wxCommandEvent& event)
 {
-	wxObject* obj = event.GetEventObject();
+	
 	for(int i=0;i<numJoints;i++)
 	{
-		if(obj == listJoints[i])
+		if(listJoints[i]->IsMouseInWindow())
 		{
 			double value = listJoints[i]->getValue();
 			itemnode->pointer.robotsim->setJointValue(i,value);

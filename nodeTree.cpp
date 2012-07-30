@@ -240,17 +240,32 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		name = pos->getName();
 		if(name.empty())name = "Scara Adept One";
 		return;
+		
+	}
+
+	if(dynamic_cast<AseaIRB2000Sim *>(pos))
+	{
+		pointer.aseaIRB2000Sim = dynamic_cast<AseaIRB2000Sim *>(pos);
+		tipo = N_AseaIRB2000;
+		bit = Bit_asea;
+		bitsel = BitSel_asea;
+		name = pos->getName();
+		if(name.empty())name = "Asea IRB2000";
+		return;
 	}
 	else return;
 	
 }
 NodeTree::NodeTree(World *world)
 {
+	
 	menus.menu_world = true;
 	menus.menu_composed = false;
 	menus.menu_positionable = false;
 	menus.menu_solid = false;
 	menus.menu_wheeledbased = false;
+	menus.menu_robotsim=false;
+	menus.menu_meshpart=false;
 
 	pointer.world = world;
 	tipo = N_World;

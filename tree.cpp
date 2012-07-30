@@ -5,7 +5,7 @@
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
 	EVT_TREE_SEL_CHANGED(wxID_ANY,Tree::ShowSelection)
-EVT_LEFT_DCLICK(Tree::OnShowCanvas)
+	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
 END_EVENT_TABLE()
 
 Tree::Tree(wxWindow * parent, const wxWindowID id)
@@ -13,7 +13,7 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 {
 	wxImageList *images = new wxImageList(16,16,true);
 	// should correspond to "bit" & "bitsel" enum 
-	wxIcon icons[46];
+	wxIcon icons[48];
 	icons[0] = wxIcon (universe_xpm); //universe
 	icons[1] = wxIcon (joint_xpm); //simple joint
 	icons[2] = wxIcon (jointSelect_xpm); //simple joint select 
@@ -59,13 +59,16 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	icons[42] = wxIcon (scaraSelect_xpm); //adeptone select
 	icons[43] = wxIcon (sphere_xpm);
     icons[44] = wxIcon (sphereSelect_xpm);
-	icons[45] = wxIcon (universeSelect_xpm);
+	icons[45] = wxIcon (asea_xpm);
+	icons[46] = wxIcon (aseaSelect_xpm);
+	icons[47] = wxIcon (universeSelect_xpm);
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 	{
 		images->Add(icons[i]);
 	}
 	AssignImageList(images);
+	sel=false;
 }
  wxTreeItemId Tree::GetWorld(wxTreeItemId i)
 {
@@ -100,7 +103,7 @@ wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 
 
 
-void Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
+wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 {
 	NodeTree *auxP = new NodeTree(pos);
 	
@@ -112,6 +115,11 @@ void Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
 	if(auxC)
 		for(int j=0;j<auxC->getNumObjects();j++)
 			AddNode((*auxC)[j],mynode);
+		
+	
+	return mynode;
+
+	
 	
 }
 
@@ -160,8 +168,8 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.AppendSubMenu(composed,wxT("Add Complex Entities"));
 		
 		///Number of items for Simple Entities Menu///
-		#define NUMBER_S 4
-		#define NUMBER_C 4
+		#define NUMBER_S 7
+		#define NUMBER_C 9
 		m_item simples[NUMBER_S];
 		m_item compos[NUMBER_C];
 		wxMenuItem *item_s[NUMBER_S];
@@ -171,12 +179,19 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
 		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
 		simples[3]=SimplyItems(ID_ADDFACE,"Face Set",wxIcon(faceSetPart_xpm));
-		
+		simples[4]=SimplyItems(ID_WHEEL,"Wheeled Base",wxIcon(wheeledBase_xpm));
+		simples[5]=SimplyItems(ID_LASER,"Laser Sensor",wxIcon(laser_xpm));
+		simples[6]=SimplyItems(ID_LASER3D,"Laser Sensor 3D",wxIcon(laser_xpm));
 		
 		compos[0]=SimplyItems(ID_ADDSCARA,"Robot SCARA",wxIcon(scara_xpm));
 		compos[1]=SimplyItems(ID_ADDNEO,"Robot PIONEER",wxIcon(pioneer_xpm));
 		compos[2]=SimplyItems(ID_ADDPUMA,"Robot PUMA",wxIcon(robotSim_xpm));
-		compos[3]=SimplyItems(ID_ADDASEA,"Robot ASEA",wxIcon(robotSim_xpm));
+		compos[3]=SimplyItems(ID_ADDASEA,"Robot ASEA",wxIcon(asea_xpm));
+		compos[4]=SimplyItems(ID_PATROL,"Robot PatrolBot",wxIcon(wheeledBase_xpm));
+		compos[5]=SimplyItems(ID_LMS100,"LMS100",wxIcon(sickLms_xpm));
+		compos[6]=SimplyItems(ID_LMS200,"LMS200",wxIcon(sickLms_xpm));
+		compos[7]=SimplyItems(ID_POWERCUBE,"PowerCube",wxIcon(powercube_xpm));
+		compos[8]=SimplyItems(ID_NEMOLASER,"NemoLaser Sensor 3D ",wxIcon(nemolaser_xpm));
 	
 					
 		for( int i=0; i<NUMBER_S;i++)
@@ -214,7 +229,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		}
 		
 		wxMenu menuTree(title);
-		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
+		if(itemData->menus.menu_composed ) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
 		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
@@ -267,27 +282,34 @@ Tree::m_item Tree::SimplyItems(int id,string name, wxIcon icon)
 void Tree::ShowSelection(wxTreeEvent& event)
 {
 
+	if(sel)
+	{
 	wxTreeItemId itemId = GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
 
-		if(itemData->menus.menu_world==false)
+	if(itemData->menus.menu_solid && root!=itemId)
 		{
 			itemData->pointer.solidentity->setDrawBox();
 			itemData->getSimu()->getChild()->UpdateWorld();
 		}
-		if(event.GetOldItem()!=NULL)
+	if(event.GetOldItem()!=NULL)
 		{
 			itemId=event.GetOldItem();
 			itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
-			if(itemData->menus.menu_world==false)
+			if(itemData->menus.menu_solid && root!=itemId)
 			{
 				itemData->pointer.solidentity->setDrawBox(false);
 				itemData->getSimu()->getChild()->UpdateWorld();
 			}
 		}
+	}
+
 }
+
+
+
 
 		
 	

@@ -55,12 +55,8 @@ public:
 	void OnDrawBox(wxCommandEvent& event);
 	void OnDrawReference(wxCommandEvent& event);
 	void OnColor(wxCommandEvent& event);
-
-void OnDesign(wxCommandEvent& event);
-	
-void AddObject(wxCommandEvent& event);
-	
-		
+	void OnDesign(wxCommandEvent& event);
+	void AddObject(wxCommandEvent& event);
 	void OnNewWorld(wxCommandEvent& event);
 	void OnLoadWorld(wxCommandEvent& event);
 	void OnLoadMesh(wxCommandEvent& event);
@@ -72,12 +68,15 @@ void AddObject(wxCommandEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
 
-	void InitToolBar(wxToolBar* toolbar);
+	void InitToolBar(wxToolBar* tool);
 	void OnShowCanvas();
-	//void showTree(bool sh);
+	void ShowSelection(wxCommandEvent& event);
+	void Search(wxTreeItemId item,bool toogle);
+	void ShowReferenceComposed(wxCommandEvent& event);
 	void ShowBox(bool box);
 	void ShowReference(bool refer);
 	void DeleteObject(wxCommandEvent& WXUNUSED(event));
+	bool getToogleReference(){return rToogle;};
 
 	bool checkPanelExist(NodeTree* node);
 	bool getTreeVisible(){return treeVisible;}
@@ -91,8 +90,9 @@ void AddObject(wxCommandEvent& event);
 	
 private:
 	bool treeVisible;
-	bool drawBox;
 	bool referVisible;
+	bool drawBox;
+	bool rToogle;
 	SimulatedWorld* simuWorld;
 	Tree* tree;
 	wxTreeItemId m_root;

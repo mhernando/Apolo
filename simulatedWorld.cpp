@@ -27,9 +27,9 @@ SimulatedWorld::SimulatedWorld(World *world)
 
 void SimulatedWorld::AddObject(wxWindowID  	id)
 {	
+
 	NodeTree *obj=new NodeTree(new PositionableEntity);
-	wxTreeItemId composedItem=tree->GetSelection();
-	NodeTree *itemData = composedItem.IsOk() ? (NodeTree *) tree->GetItemData(composedItem):NULL;
+	NodeTree *itemData = tree->GetSelection().IsOk() ? (NodeTree *) tree->GetItemData(tree->GetSelection()):NULL;
 
 
 // Object Selected////
@@ -52,36 +52,48 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj->pointer.positionableentity=new AseaIRB2000Sim;
 	if(id==ID_ADDCUSTOM)
 		obj->pointer.positionableentity=new ComposedEntity;
+	if(id==ID_WHEEL)
+		obj->pointer.positionableentity=new WheeledBaseSim;
+	if(id==ID_LMS200)
+		obj->pointer.positionableentity=new LMS200Sim;
+	if(id==ID_PATROL)
+		obj->pointer.positionableentity=new PatrolbotSim;
+	if(id==ID_LMS100)
+		obj->pointer.positionableentity=new LMS100Sim;
+	if(id==ID_POWERCUBE)
+		obj->pointer.positionableentity=new PowerCube70Sim;
+	if(id==ID_LASER)
+		obj->pointer.positionableentity=new LaserSensorSim;
+	if(id==ID_LASER3D)
+		obj->pointer.positionableentity=new LaserSensor3DSim;
+	if(id==ID_NEMOLASER)
+		obj->pointer.positionableentity=new NemoLaserSensor3DSim;
 
 	// Object addition or world addition//
 	
 	if(tree->GetSelection()!=mainNode)
+	{
+		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
 		itemData->pointer.composedentity->addObject(obj->pointer.positionableentity);
+	}
 	else
+	{
 		(*m_world)+=obj->pointer.positionableentity;
+		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
+	}
 	
-	
+	tree->Expand(tree->GetSelection());
+
 	// Initial Properties //
 	InitialProperties *ini= new InitialProperties(mainWin,obj,this,wxT("Properties")); 
 	ini->ShowModal();
 
 
-	if(ini->GetButtom())
+	if(ini->GetButtom()==false)
 	{
-		if(tree->GetSelection()!=mainNode)
-		{
-			tree->AddNode(itemData->pointer.composedentity,tree->GetItemParent(tree->GetSelection()));
-			tree->Delete(composedItem);
-		}
-	
-		else
-			tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
-	}	
-	else
 		delete obj->pointer.positionableentity;
-		
-		
-	tree->Expand(tree->GetSelection());
+		tree->Delete(newNode);
+	}
 	
 	childView->UpdateWorld();
 
