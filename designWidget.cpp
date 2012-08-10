@@ -18,7 +18,7 @@ DesignWidget::DesignWidget(wxWindow *window,wxWindowID id,NodeTree *node,Simulat
 	defHeight=1;
 	ObjectConversion();
 	CreatePanel(sliders,orientation);	
-	GetSpecificValues(true);
+	//GetSpecificValues(true);
 	
 
 }
@@ -189,6 +189,6 @@ void DesignWidget::ObjectConversion()
 
 	
 	nodeW->pointer.solidentity=dynamic_cast<SolidEntity*>(nodeW->pointer.positionableentity);
-	
+	GetSpecificValues(true);
 }
 

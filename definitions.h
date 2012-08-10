@@ -25,6 +25,7 @@
 #define ID_DRAG 1020
 #define ID_DRAWBOX 1021
 #define ID_COMPRS 1022
+#define ID_POS 1023
 
 
 //OBJECTS ID 15XX
@@ -49,6 +50,7 @@
 #define ID_LASER 1518
 #define ID_NEMOLASER 1519
 #define ID_LASER3D 1520
+#define ID_ADDFACESET 1521
 
 
 
@@ -77,6 +79,7 @@
 #define ID_ACCEPT 4005 
 #define ID_CANCEL 4006 
 #define ID_DEFAULT 4007 
+#define ID_OTHERFACE 4008
 
 // Define  for wxwigets reseved 50XX
 //wxID_EXIT 5006

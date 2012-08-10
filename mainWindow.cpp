@@ -12,7 +12,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_ADDNEO, MainWindow::AddObject)
 	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
 	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
-	EVT_MENU(ID_ADDFACE, MainWindow::AddObject)
+	EVT_MENU(ID_ADDFACESET, MainWindow::AddObject)
 	EVT_MENU(ID_POWERCUBE, MainWindow::AddObject)
 	EVT_MENU(ID_LMS200, MainWindow::AddObject)
 	EVT_MENU(ID_PATROL, MainWindow::AddObject)
@@ -62,7 +62,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 END_EVENT_TABLE()
 
 bool MainWindow::slider=true;
-bool MainWindow::popmenu=true;
+bool MainWindow::popmenu=false;
 bool MainWindow::design_slider=true;
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
@@ -411,7 +411,7 @@ void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
 	World *w = new World();
 	simuWorld = new SimulatedWorld(w);
 	listWorlds.push_back(simuWorld);
-	tree->ExpandAll();
+	tree->Expand(tree->GetRootItem());
 	CheckProperties();
 }
 void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
@@ -445,6 +445,9 @@ void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
 		wxLogError(wxT("Cannot open file %s"), openFile.GetPath().c_str());
 		return;
 	}
+	tree->Expand(tree->GetRootItem());
+	tree->Expand(tree->GetLastChild(tree->GetRootItem()));
+	Search(tree->GetLastChild(tree->GetRootItem()),toolbar->GetToolState(ID_COMPRS));
 }
 void MainWindow::OnLoadMesh(wxCommandEvent& WXUNUSED(event))
 {
@@ -751,48 +754,53 @@ void MainWindow::ShowReferenceComposed(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	rToogle=toolbar->GetToolState(id);
-	Search(tree->GetRootItem(),rToogle);
+	wxTreeItemIdValue value;
+	if(tree->HasChildren(tree->GetRootItem()))
+	{
+		Search(tree->GetFirstChild(tree->GetRootItem(),value),rToogle);
+		(this)->GetSimulated()->getChild()->Refresh();
+	}
+	
 }
 
 void  MainWindow::Search(wxTreeItemId search,bool toogle)
 {
-	wxTreeItemIdValue value;
-	wxTreeItemId item;
-	
-	if(tree->HasChildren(search))
-	{
-		item=tree->GetFirstChild(search,value);
-		Search(item,toogle);
-	}
-	
+	wxTreeItemIdValue cookie;
 	NodeTree *itemData = search.IsOk() ? (NodeTree *) tree->GetItemData(search)
 		:NULL;
-	NodeTree *parentData=tree->GetItemParent(search).IsOk() ? (NodeTree *) tree->GetItemData(tree->GetItemParent(search))
-		:NULL;
+
+	if(itemData->getTipo()==N_World )
+		if(itemData->pointer.world->getNumObjects()!=0)
+			Search(tree->GetFirstChild(search,cookie),toogle);
 	
-	if((itemData->menus.menu_composed || parentData->getTipo()==N_World) && search!=tree->GetRootItem())
+	if(itemData->menus.menu_positionable)
 	{
-		if(toogle)
-			itemData->pointer.positionableentity->setDrawReferenceSystem();
-		else
-			itemData->pointer.positionableentity->setDrawReferenceSystem(false);
-
-		itemData->getSimu()->getChild()->Refresh();
+		if(itemData->menus.menu_composed || itemData->pointer.positionableentity->getOwner()->getClassName()==wxT("World"))
+		{
+			if(toogle)
+				itemData->pointer.positionableentity->setDrawReferenceSystem();
+			else
+				itemData->pointer.positionableentity->setDrawReferenceSystem(false);
+		
+			if(itemData->menus.menu_composed)
+				if(itemData->pointer.composedentity->getNumObjects()>0)
+					Search(tree->GetFirstChild(search,cookie),toogle);
+		}
 	}
-	
-	if(search==tree->GetRootItem() || search==tree->GetLastChild(tree->GetRootItem()) )
+	if(tree->GetLastChild(tree->GetItemParent(search))==search)
 		return;
+	
+	Search(tree->GetNextSibling(search),toogle);
 
-
-	if(search==tree->GetLastChild(tree->GetItemParent(search)))
-		if(tree->GetNextSibling(tree->GetItemParent(search))==NULL)
-			return;
-		else
-			Search(tree->GetNextSibling(tree->GetItemParent(search)),toogle);
-	else
-		Search(tree->GetNextSibling(search),toogle);
 }
+	
+	
+		
+	
 
+	
+		
+	
 
 
 
