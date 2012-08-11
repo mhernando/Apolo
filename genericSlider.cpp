@@ -67,7 +67,7 @@ void GenericSlider::createPanel(bool orientation)
 	
 	wxBoxSizer *horizontal_sizer = new wxBoxSizer(H);
 	
-	if(orientation)  m_slider = new wxSlider(this, ID_SLIDER, 0,0,100,wxDefaultPosition, wxSize(30,-1),wxSL_VERTICAL);
+	if(orientation)  m_slider = new wxSlider(this, ID_SLIDER, 0,0,100,wxDefaultPosition, wxSize(30,-1),wxSL_VERTICAL | wxSL_INVERSE);
 	else m_slider = new wxSlider(this, ID_SLIDER, 0,0,100,wxDefaultPosition, wxSize(30,-1));
 		
 	horizontal_sizer->Add(m_slider,wxSizerFlags(0).Expand().Border(wxALL, 1));
@@ -79,6 +79,7 @@ void GenericSlider::createPanel(bool orientation)
 		m_max=new wxStaticText(this,wxID_ANY,"¿?",wxDefaultPosition,wxSize(34,20),wxALIGN_LEFT);
 		minmaxbs->Add(m_max,wxSizerFlags(1).Align(wxALIGN_LEFT));
 		minmaxbs->Add(m_min,wxSizerFlags(0).Align(wxALIGN_LEFT));
+		
 	}
 	else
 	{

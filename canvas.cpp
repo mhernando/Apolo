@@ -1,5 +1,7 @@
 #include "canvas.h"
 
+DEFINE_EVENT_TYPE(wxEVT_FACEVERTEX_ADDED)
+
 BEGIN_EVENT_TABLE(Canvas, wxGLCanvas)
 	EVT_PAINT(Canvas::Paint)
 	EVT_SIZE(Canvas::Resized)
@@ -8,17 +10,24 @@ BEGIN_EVENT_TABLE(Canvas, wxGLCanvas)
 	EVT_RIGHT_UP(Canvas::OnMouse)
 	EVT_LEFT_DOWN(Canvas::OnMouse)
 	EVT_LEFT_UP(Canvas::OnMouse)
+	EVT_CHAR(Canvas::OnKey)
 END_EVENT_TABLE()
 
-Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size)
+Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size,bool triD)
 :wxGLCanvas(parent, id, pos, size,0)
 {
+	window=parent;
+	dimension=triD;
 	flag = false;
+	scene2D.SetViewPoint(-5,-5,5,5);
+	Scale2D();
+	
 }
 void Canvas::InitGL()
 {
 	SetCurrent();
-	scene.init();
+	if(dimension) scene.init();
+	else scene2D.init();
 }
 void Canvas::Paint(wxPaintEvent& event)
 {
@@ -31,22 +40,42 @@ void Canvas::Paint(wxPaintEvent& event)
 		flag = true;
 	}
 	
+	if(dimension)
+	{
 	scene.setViewSize(0,0,GetSize().x,GetSize().y);	
-	
 	scene.Draw();
+	}
+	else scene2D.Draw();
 	SwapBuffers();
 }
 
 void Canvas::UpdateWorld(World* w)
 {
-	this->scene.clearObjects();
-	this->scene.addObject(w);
+	if(dimension)
+	{
+		this->scene.clearObjects();
+		this->scene.addObject(w);
+	}
+	else
+	{
+		this->scene2D.clearObjects();
+		this->scene2D.addObject(w);
+	}
 	Refresh(false);
 }
 void Canvas::UpdateMeshpart(MeshPart* m)
 {
+	if(dimension)
+	{
 	this->scene.clearObjects();
 	this->scene.addObject(m);
+	}
+	else
+	{
+		this->scene2D.clearObjects();
+		this->scene2D.addObject(m);
+	}
+
 	Refresh(false);
 
 }
@@ -61,7 +90,8 @@ void Canvas::OnMouseM(wxMouseEvent& event)
 
 	if(event.RightIsDown()||event.LeftIsDown())
 	{
-		scene.MouseMove(pt.x,pt.y); 
+		if(dimension)scene.MouseMove(pt.x,pt.y); 
+		else scene2D.MouseMove(pt.x,pt.y); 
 		Refresh(false);
 	}
 	event.Skip();
@@ -69,9 +99,55 @@ void Canvas::OnMouseM(wxMouseEvent& event)
 
 void Canvas::OnMouse(wxMouseEvent& event)
 {
-	wxPoint pt = event.GetPosition(); 
-	scene.MouseButton(pt.x,pt.y,2,event.RightIsDown(),event.ShiftDown(),event.ControlDown()); 
-	scene.MouseButton(pt.x,pt.y,0,event.LeftIsDown(),event.ShiftDown(),event.ControlDown());
+	pt = event.GetPosition();
+	
+	
+
+	if(dimension)
+	{
+		scene.MouseButton(pt.x,pt.y,2,event.RightIsDown(),event.ShiftDown(),event.ControlDown()); 
+		scene.MouseButton(pt.x,pt.y,0,event.LeftIsDown(),event.ShiftDown(),event.ControlDown());
+	}
+	else
+	{
+		//scene2D.MouseButton(pt.x,pt.y,2,event.RightIsDown(),event.ShiftDown(),event.ControlDown()); 
+		//scene2D.MouseButton(pt.x,pt.y,0,event.LeftIsDown(),event.ShiftDown(),event.ControlDown());
+		if(event.LeftDown())
+		{
+		wxCommandEvent CanvasEvent( wxEVT_FACEVERTEX_ADDED,GetId() );
+		CanvasEvent.SetEventObject( window);
+		GetEventHandler()->ProcessEvent(CanvasEvent);
+		}
+	}
+
 	SetFocus();
 	event.Skip();
+}
+
+void Canvas::OnKey(wxKeyEvent& event)
+{
+	if(dimension)
+	{
+		scene.KeyDown(event.GetUnicodeKey());
+		scene.SpecialKeyDown(event.GetUnicodeKey());
+	}
+	else
+	{
+		
+		scene2D.KeyDown(event.GetUnicodeKey());
+		if(event.GetUnicodeKey()=='+')
+			Scale2D();
+		if(event.GetUnicodeKey()=='-')
+			Scale2D();
+	
+	}
+	SetFocus();
+	Refresh();
+}
+
+void Canvas::Scale2D()
+{
+	scene2D.GetViewPoint(x2Di,y2Di,x2Df,y2Df);
+	scale2D.x=x2Df-x2Di;
+	scale2D.y=y2Df-y2Di;
 }

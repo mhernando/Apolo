@@ -178,7 +178,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		simples[0]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
 		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
 		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
-		simples[3]=SimplyItems(ID_ADDFACE,"Face Set",wxIcon(faceSetPart_xpm));
+		simples[3]=SimplyItems(ID_ADDFACESET,"Face Set",wxIcon(faceSetPart_xpm));
 		simples[4]=SimplyItems(ID_WHEEL,"Wheeled Base",wxIcon(wheeledBase_xpm));
 		simples[5]=SimplyItems(ID_LASER,"Laser Sensor",wxIcon(laser_xpm));
 		simples[6]=SimplyItems(ID_LASER3D,"Laser Sensor 3D",wxIcon(laser_xpm));

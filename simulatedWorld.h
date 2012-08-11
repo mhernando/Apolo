@@ -2,6 +2,7 @@
 #define __APOLO__SIMULATED_WORLD__H
 
 #include "mrcore.h"
+#include "faceWindow.h"
 #include "initialProperties.h"
 #include "objectSelection.h"
 #include "childView.h"

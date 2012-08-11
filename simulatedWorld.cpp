@@ -14,7 +14,7 @@ SimulatedWorld::SimulatedWorld(World *world)
 
 	m_world = world;
 	
-
+	
 	wxString title;
 	title.Printf(wxT("World %d"), ++numWorld);
 	childView ->SetTitle(title);
@@ -40,7 +40,7 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj->pointer.positionableentity=new CylindricalPart;
 	if(id==ID_ADDPRI)
 		obj->pointer.positionableentity=new PrismaticPart;
-	if(id==ID_ADDFACE)
+	if(id==ID_ADDFACESET)
 		obj->pointer.positionableentity=new FaceSetPart;
 	if(id==ID_ADDNEO)
 		obj->pointer.positionableentity=new  Pioneer3ATSim;
@@ -83,6 +83,9 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 	}
 	
 	tree->Expand(tree->GetSelection());
+
+
+
 
 	// Initial Properties //
 	InitialProperties *ini= new InitialProperties(mainWin,obj,this,wxT("Properties")); 
