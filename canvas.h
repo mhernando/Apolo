@@ -22,10 +22,13 @@ public:
 	void UpdateMeshpart(MeshPart* m);
 	void OnKey(wxKeyEvent& event);
 	wxPoint getCursorPosition(){return pt;};
+	Vector2D getViewScale2D(){return scale2D;};
+	void Scale2D();
 
 	
 private:
-
+	Vector2D scale2D;
+	double x2Di,y2Di,x2Df,y2Df;
 	wxPoint pt;
 	wxWindow *window;
 	bool flag;

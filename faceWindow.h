@@ -3,6 +3,7 @@
 
 #include "mainWindow.h"
 #include <wx/wx.h>
+#include <wx/tglbtn.h>
 #include <wx/splitter.h>
 #include "nodeTree.h"
 #include "simulatedWorld.h"
@@ -17,21 +18,19 @@ class FaceWindow : public wxPanel
 {
 public:
 	FaceWindow(wxWindow *parent,NodeTree *obj,SimulatedWorld *simu, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size);
-	///void OnSashDrag(wxSashEvent& event);
+	wxWindow *GetParentWorld(){ return parentCurrentWorld;};
 	void CreatePanel();
 	void GetPoint(wxCommandEvent& event);
-	wxWindow *GetParentWorld(){ return parentCurrentWorld;};
 	void AddVertex(wxCommandEvent &event);
 	void FaceOrientation(wxCommandEvent& WXUNUSED(event));
 	void CreateFace();
 	void FaceButton(wxCommandEvent& event);
-	//void  RadioClicked(wxRadioEvent& event)
 	void  ColorChanged(wxCommandEvent& event);
 	
 private:
 
-	wxRadioBox *radio;
-	GenericSlider *roll,*pitch;
+	wxRadioBox *trans,*align;
+	GenericSlider *roll,*pitch,*plane_dis;
 	wxTextCtrl *transp_box;
 	wxButton *af;
 	wxPoint point;

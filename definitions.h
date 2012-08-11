@@ -80,7 +80,7 @@
 #define ID_CANCEL 4006 
 #define ID_DEFAULT 4007 
 #define ID_OTHERFACE 4008
-
+#define ID_ALIGN 4009
 // Define  for wxwigets reseved 50XX
 //wxID_EXIT 5006
 //wxID_ABOUT 5013

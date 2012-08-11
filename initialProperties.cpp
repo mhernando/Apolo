@@ -12,7 +12,7 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj,SimulatedWorld *s_world, const wxString& title)
-:wxDialog(parent,wxID_ANY, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX| wxRESIZE_BORDER ) 
+:wxDialog(parent,wxID_ANY, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX ) 
 {
 	b_sel=true;
 	world=s_world;

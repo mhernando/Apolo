@@ -42,8 +42,7 @@ void PointsList::SetPoints(double x,double y)
 {	
 	wxString value;
 
-
-	grid->SetCellValue(row,col,value<<x);
+	grid->SetCellValue(row,col,(value<<x));
 	value.Clear();
 
 	grid->SetCellValue(row,++col,value<<y);
@@ -68,10 +67,10 @@ void PointsList::SetVertex(int r)
 	{
 		wxString value;
 		value=grid->GetCellValue(r,0);
-		lastPoint.x=wxAtoi(value);
+		value.ToDouble(&lastPoint.x);
 		value.Clear();
 		value=grid->GetCellValue(r,1);
-		lastPoint.y=wxAtoi(value);
+		value.ToDouble(&lastPoint.y);
 		value.Clear();
 		grid->SetCellBackgroundColour(r,0,*wxGREEN);
 		grid->SetCellBackgroundColour(r,1,*wxGREEN);

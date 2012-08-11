@@ -1,8 +1,10 @@
 #ifndef __APOLO__POINTS_LIST__H
 #define __APOLO__POINTS_LIST__H
 
+#include "mrcore.h"
 #include "wx/grid.h"
 #include "wx/wx.h"
+
 
 DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 
@@ -15,7 +17,7 @@ public:
 	void SetPoints(double x, double y);
 	void SetVertex(int r);
 	void OnChange(wxGridEvent& event);
-	wxPoint getLastPointAdded(){return lastPoint;};
+	Vector2D getLastPointAdded(){return lastPoint;};
 	void RefreshGrid();
 	wxGrid *grid;
 
@@ -24,7 +26,7 @@ private:
 	wxString name;
 	wxWindow *parent;
 	double row,col;
-	wxPoint lastPoint;
+	Vector2D lastPoint;
 	DECLARE_EVENT_TABLE();
 	
 };

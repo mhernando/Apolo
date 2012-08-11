@@ -20,6 +20,8 @@ Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const 
 	dimension=triD;
 	flag = false;
 	scene2D.SetViewPoint(-5,-5,5,5);
+	Scale2D();
+	
 }
 void Canvas::InitGL()
 {
@@ -131,11 +133,21 @@ void Canvas::OnKey(wxKeyEvent& event)
 	}
 	else
 	{
+		
 		scene2D.KeyDown(event.GetUnicodeKey());
-		//scene2D.KeyDown(event.GetKeyCode());
+		if(event.GetUnicodeKey()=='+')
+			Scale2D();
+		if(event.GetUnicodeKey()=='-')
+			Scale2D();
 	
 	}
 	SetFocus();
 	Refresh();
 }
 
+void Canvas::Scale2D()
+{
+	scene2D.GetViewPoint(x2Di,y2Di,x2Df,y2Df);
+	scale2D.x=x2Df-x2Di;
+	scale2D.y=y2Df-y2Di;
+}
