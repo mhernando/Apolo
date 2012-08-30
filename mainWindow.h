@@ -1,6 +1,7 @@
 #ifndef __APOLO__MAINWINDOW__H
 #define __APOLO__MAINWINDOW__H
 
+
 #include "mrcore.h"
 #include "definitions.h"
 #include "simulatedWorld.h"
@@ -89,6 +90,7 @@ public:
 	vector <SimulatedWorld *> listWorlds;
 	
 private:
+
 	bool treeVisible;
 	bool referVisible;
 	bool drawBox;

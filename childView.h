@@ -60,7 +60,7 @@ public:
 	void UpdateUIUnsplitSecond(wxUpdateUIEvent& event);
 	void UpdateUIPlay(wxUpdateUIEvent& event);
 	void UpdateUIStop(wxUpdateUIEvent& event);
-
+	Canvas* getCanvas(){return canvas1;};
 	void SetPlaySimu(bool play){playsimu=play;}
 	bool getPlaysimu(){return playsimu;}
 	

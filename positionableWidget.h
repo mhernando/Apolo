@@ -19,6 +19,11 @@ public:
 	void ColorChanged(wxCommandEvent& event);
 	void SliderLimits(double posup=20,double posdown=-20,double oriup=180,double oridown=-180,bool limit=false);
 	void CreatePanel(bool sliders, bool solid);
+	Vector3D getDefPosition(){return defPosition;};
+	Vector3D getDefOrientation(){return defOrientation;};
+	double getDefRedColor(){return defRed;};
+	double getDefGreenColor(){return defGreen;};
+	double getDefBlueColor(){return defBlue;};
 
 
 private:
@@ -48,7 +53,8 @@ private:
 	bool slider;
 	wxString title;
 	wxColor color;
-	Vector3D position,orientation;
+	double defRed,defGreen,defBlue;
+	Vector3D defPosition,defOrientation,position,orientation;
 	wxWindow *parent;
 	string text;
 	NodeTree *node;

@@ -16,8 +16,8 @@ PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,SimulatedW
 	slider=sliders;
 	parent=window;
 	name=label;
-	position=obj->pointer.positionableentity->getRelativePosition();
-	obj->pointer.positionableentity->getRelativeOrientation(orientation.x,orientation.y,orientation.z);
+	defPosition=obj->pointer.positionableentity->getRelativePosition();
+	obj->pointer.positionableentity->getRelativeOrientation(defOrientation.x,defOrientation.y,defOrientation.z);
 	node=obj;
 	CreatePanel(sliders,color_w);	
 	
@@ -32,6 +32,9 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 	if(sliders==false)
 	{
 		wxString defValue;
+	
+		
+		
 		
 		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
 		posi= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
@@ -59,8 +62,10 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		pbox->AddSpacer(5);
 		pbox->Add(z_box,1,wxCENTRE);
 		posi->Add(pbox,1,wxEXPAND);
+		pE->Add(posi,0,wxEXPAND | wxALL,5); 
+	
 
-
+		
 		wxBoxSizer *qbox=new wxBoxSizer(wxHORIZONTAL);
 		ori= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Orientation"));
 		
@@ -87,12 +92,13 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		qbox->AddSpacer(5);
 		qbox->Add(yw_box,1,wxCENTRE);
 		ori->Add(qbox,1,wxEXPAND);
-
-		pE->Add(posi,0,wxEXPAND | wxALL,5); 
 		pE->Add(ori,0,wxEXPAND | wxALL,5);
+		
+		
+		
+	
 	
 	}
-
 	else
 	{
 		wxBoxSizer *sbox;
@@ -126,7 +132,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		sbox->Add(ps,1,wxEXPAND);
 		sbox->Add(yws,1,wxEXPAND);
 		
-		pE->Add(sbox,1,wxEXPAND);
+		pE->Add(sbox,0,wxEXPAND);
 		
 		}
 
@@ -159,6 +165,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 	pers->Add(rbox,1,wxEXPAND);
 	pE->Add(pers,0,wxEXPAND | wxALL,5);
 	vbox->Add(pE,1,wxEXPAND | wxALL,5);
+	vbox->SetSizeHints(this);
 	SetSizer(vbox);
 
 }
@@ -184,13 +191,16 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 		orientation.y=ps->getValue();
 		orientation.z=yws->getValue();
 	}
-	
-	text=name_box->GetValue();
+	if(name_box->GetValue()!=wxEmptyString)
+	{
+		text=name_box->GetValue();
+		node->getSimu()->tree->SetItemText(s_world->getNewNode(),text);
+	}
 	Transformation3D t;
 	t.position=position;
 	t.orientation.setRPY(orientation.x,orientation.y,orientation.z);
 	node->pointer.positionableentity->setRelativeT3D(t);
-	node->getSimu()->tree->SetItemText(s_world->getNewNode(),text);
+	
 	s_world->getChild()->UpdateWorld();
 
 }
