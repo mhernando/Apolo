@@ -3,6 +3,7 @@
 
 
 #include "mrcore.h"
+#include "robotConnection.h"
 #include "definitions.h"
 #include "simulatedWorld.h"
 #include "changeLocationCtrl.h"
@@ -65,6 +66,7 @@ public:
 	void OnSaveWorld(wxCommandEvent& event);
 	void OnSaveObject(wxCommandEvent& event);
 	void OnDeleteWorld(wxCommandEvent& event);
+	void OnConnection(wxCommandEvent& event);
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
@@ -82,6 +84,7 @@ public:
 	bool checkPanelExist(NodeTree* node);
 	bool getTreeVisible(){return treeVisible;}
 	bool getBoxVisible(){return drawBox;}
+	void OnVisibleConnectionLog(wxCommandEvent& event);
 	bool getReferenceVisible(){return referVisible;}
 	SimulatedWorld *GetSimulated(){return simuWorld;}
 	wxTreeItemId getRoot(){return m_root;}
@@ -96,6 +99,7 @@ private:
 	bool drawBox;
 	bool rToogle;
 	SimulatedWorld* simuWorld;
+	RobotConnection *connection;
 	Tree* tree;
 	wxTreeItemId m_root;
 	wxToolBar* toolbar;

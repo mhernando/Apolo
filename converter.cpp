@@ -146,7 +146,7 @@ void Converter::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 }
 void Converter::ClearAll()
 {
-	m_canvas->scene.clearObjects();
+	m_canvas->ClearObjects();
 	m_canvas->Refresh(false);
 	delete tmesh;
 	tmesh = 0;

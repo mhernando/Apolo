@@ -1,7 +1,7 @@
 #include "pointsList.h"
 
 
-DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
+//DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
 
 BEGIN_EVENT_TABLE(PointsList, wxPanel)
 
@@ -10,10 +10,11 @@ EVT_GRID_CMD_CELL_CHANGE(wxID_ANY,PointsList::OnChange)
 	
 END_EVENT_TABLE()
 
-PointsList::PointsList(wxWindow *window,wxWindowID id,const wxString label ,const wxPoint& pos ,const wxSize& size)
-		:wxPanel(window,id ,pos, size) 
+PointsList::PointsList(wxWindow *window,const wxString label ,const wxPoint& pos ,const wxSize& size)
+		:wxPanel(window,wxID_ANY ,pos, size) 
 									   
 {
+	facesAssociated=false;
 	parent=window;
 	col=0;
 	row=0;
@@ -27,29 +28,40 @@ PointsList::PointsList(wxWindow *window,wxWindowID id,const wxString label ,cons
 void PointsList::CreatePanel()
 {
 
-	wxStaticBoxSizer *pbox=new wxStaticBoxSizer(wxVERTICAL,this,name);
+	 wxBoxSizer *pbox=new wxBoxSizer(wxVERTICAL);
+	 wxStaticBoxSizer *cbox=new wxStaticBoxSizer(wxVERTICAL,this,name);
 
 	grid=new wxGrid( this, -1, wxDefaultPosition,wxDefaultSize);
 	grid->CreateGrid(1,2);
 	grid->SetColLabelValue(0,wxT("X"));
 	grid->SetColLabelValue(1,wxT("Y"));
-	pbox->Add(grid,0);
-	SetSizer(pbox);
+	
+	if(name==wxEmptyString)
+	{
+		pbox->Add(grid,0);
+		SetSizer(pbox);
+	}
+	else
+	{
+		cbox->Add(grid,0);
+		SetSizer(cbox);
+	}
+
 	
 }
 
 void PointsList::SetPoints(double x,double y)
 {	
-	wxString value;
-
-	grid->SetCellValue(row,col,(value<<x));
+	wxString value=wxEmptyString;
+	grid->SetCellValue(row,col,value);
+	grid->SetCellValue(row,col,value<<x);
 	value.Clear();
-
-	grid->SetCellValue(row,++col,value<<y);
+	grid->SetCellValue(row,++col,value);
+	grid->SetCellValue(row,col,value<<y);
 	value.Clear();
+	col=0;
 	SetVertex(row);
 	
-	col=0;
 
 }
 void PointsList::OnChange(wxGridEvent& event)
@@ -65,6 +77,9 @@ void PointsList::SetVertex(int r)
 {
 	if(grid->GetCellValue(r,0)!=wxEmptyString && grid->GetCellValue(r,1)!=wxEmptyString)
 	{
+		if(col==0) // We do this to overwrite te cell values if you select a point from the 2D map,
+				   //otherwise, i doesn't work correctly
+		{
 		wxString value;
 		value=grid->GetCellValue(r,0);
 		value.ToDouble(&lastPoint.x);
@@ -74,18 +89,30 @@ void PointsList::SetVertex(int r)
 		value.Clear();
 		grid->SetCellBackgroundColour(r,0,*wxGREEN);
 		grid->SetCellBackgroundColour(r,1,*wxGREEN);
+		grid->SetReadOnly(row,0);
+		grid->SetReadOnly(row,1);
 		grid->AppendRows(1);
 		row++;
+		if(facesAssociated) faces->AddVertex();
+		/*
 		wxCommandEvent PointEvent( wxEVT_POINT_ADDED,GetId() );
-		PointEvent.SetEventObject( parent);
+		PointEvent.SetEventObject(parent);
 		parent->GetEventHandler()->ProcessEvent(PointEvent);
-		grid->GetParent()->SendSizeEvent();
+		
+		*/
+		GetParent()->SendSizeEvent();
+		}
 		
 	}
 	
 	
 }
+void PointsList::AssociateFace(FaceWidget *face)
+{
+	faces=face;
+	facesAssociated=true;
 
+}
 void PointsList::RefreshGrid()
 {
 	grid->DeleteRows(0,grid->GetNumberRows());

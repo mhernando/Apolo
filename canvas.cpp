@@ -23,11 +23,50 @@ Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const 
 	Scale2D();
 	
 }
+void Canvas::AddObject(GLObject * obj)
+{
+	if(dimension) scene.addObject(obj);
+	else scene2D.addObject(obj);
+}
+
 void Canvas::InitGL()
 {
 	SetCurrent();
 	if(dimension) scene.init();
 	else scene2D.init();
+}
+double Canvas::GetViewPoint(double &dist_or_2Dx,double &rot_or_2Dy,double &elv_or_2Dfx,double s2Dfy)
+{
+	if(dimension) 
+	{
+		scene.GetViewPoint(dist_or_2Dx,rot_or_2Dy,elv_or_2Dfx);
+		return 0;
+	}
+	else 
+	{
+		scene2D.GetViewPoint(dist_or_2Dx,rot_or_2Dy,elv_or_2Dfx,s2Dfy);
+		return s2Dfy;
+	}
+}
+void Canvas::SetViewPoint(double dist_or_2Dx,double rot_or_2Dy,double elv_or_2Dfx,double s2Dfy)
+{
+	if(dimension) scene.SetViewPoint(dist_or_2Dx,rot_or_2Dy,elv_or_2Dfx);
+	else 
+		scene2D.SetViewPoint(dist_or_2Dx,rot_or_2Dy,elv_or_2Dfx,s2Dfy);
+	
+}
+void Canvas::ClearObjects()
+{
+	if(dimension)
+		scene.clearObjects();
+	else
+		scene2D.clearObjects();
+}
+void Canvas::SetViewCenter(double x, double y, double z)
+{
+	if(dimension)
+		scene.SetViewCenter(x,y,z);
+
 }
 void Canvas::Paint(wxPaintEvent& event)
 {
@@ -74,6 +113,7 @@ void Canvas::UpdateMeshpart(MeshPart* m)
 	{
 		this->scene2D.clearObjects();
 		this->scene2D.addObject(m);
+	
 	}
 
 	Refresh(false);
@@ -144,6 +184,8 @@ void Canvas::OnKey(wxKeyEvent& event)
 	SetFocus();
 	Refresh();
 }
+
+
 
 void Canvas::Scale2D()
 {
