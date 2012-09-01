@@ -3,7 +3,6 @@
 
 #include "definitions.h"
 #include "canvas.h"
-#include "pthread.h"
 #include <wx/listctrl.h>
 #include <wx/wx.h>
 #include <wx/splitter.h>
@@ -12,13 +11,11 @@
 class ObjectSelection:public wxDialog
 {
 
-	
-
 public:
-	 ObjectSelection(wxWindow *parent,const wxWindowID id, const wxPoint& pos,const wxSize& size);
+	ObjectSelection(wxWindow *parent,const wxWindowID id, const wxPoint& pos,const wxSize& size);
     void ObjectSelected(wxListEvent &event);
 	wxWindowID GetObject(){return ident;};
-	static void*  RotationalView(void* canvas1);
+	void*  RotationalView(void* canvas1);
 	void PreliminarView(wxListEvent &event);
 	void OnClose(wxCloseEvent &event);
 	void CreateList();
@@ -26,7 +23,6 @@ public:
 	
 private:
 	Canvas *preView;
-	pthread_t thid;
 	PrismaticPart p;
 	Face face,face1,face2,face3;
 	FaceSetPart set;

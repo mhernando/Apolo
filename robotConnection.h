@@ -20,7 +20,7 @@ public:
 	void CreatePanel();
 	void OnClose(wxCloseEvent& event);
 	void OnButton(wxCommandEvent& event);
-	static 	void *ConnectClient(void* client);
+	void *ConnectClient(void* client);
 	bool getLogVisible(){return logVisible;}
 	void ShowConnLog(bool showLog);
 	void DisconnectClient(NodeTree *robot);
@@ -35,8 +35,8 @@ private:
 	wxWindow *window;
 	LaserSensorServer *laser_serv;
 	LaserSensor3DServer *laser3D_serv;
-	static ConnectionLog *connectionLog;
-	static wxTextCtrl *port_box, *adress_box,*clients_box;
+	ConnectionLog *connectionLog;
+	wxTextCtrl *port_box, *adress_box,*clients_box;
 	wxButton *b_accept,*b_cancel,*b_default;
 	wxDialog *dialog;
 	wxString defPort,defAdress,defClients;

@@ -208,8 +208,9 @@ void ObjectSelection::CreateList()
 
 	}
 	
+	Thread<ObjectSelection> rotationalView_Thid;
+	rotationalView_Thid.Start(&ObjectSelection::RotationalView,this,preView);
 	
-	pthread_create(&thid,NULL,RotationalView,preView);
 	rbox->Add(ob_list,1,wxEXPAND);
 	rbox->Add(preView,1,wxEXPAND);
 	SetSizer(rbox);
@@ -244,6 +245,6 @@ void ObjectSelection::ObjectSelected(wxListEvent &event)
 void ObjectSelection::OnClose(wxCloseEvent &event)
 {
 	delete preliminar;
-	pthread_cancel(thid);
+	//pthread_cancel(thid);
 	Destroy();
 }

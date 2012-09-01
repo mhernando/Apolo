@@ -1,6 +1,6 @@
 #include "robotConnection.h"
-#include "simulatedWorld.h"
-#include "pthread.h"
+
+
 
 BEGIN_EVENT_TABLE(RobotConnection,wxDialog)
 	EVT_BUTTON(ID_ACCEPT, RobotConnection::OnButton)
@@ -8,14 +8,6 @@ BEGIN_EVENT_TABLE(RobotConnection,wxDialog)
 	EVT_BUTTON(ID_DEFAULT, RobotConnection::OnButton)
 	EVT_CLOSE(RobotConnection::OnClose)
 END_EVENT_TABLE()
-
-wxTextCtrl *RobotConnection::adress_box;
-wxTextCtrl *RobotConnection::port_box;
-wxTextCtrl *RobotConnection::clients_box;
-ConnectionLog *RobotConnection::connectionLog;
-
-
-//void* RobotConnection::ConnectClient(void* client);
 
 
 RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
@@ -109,25 +101,26 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 		return;
 	
 	robot->typeConnection=2;
-	pthread_t thid;
-	pthread_create(&thid,NULL,ConnectClient,robot);
+	Thread<RobotConnection> client_Thid;
+	client_Thid.Start(&RobotConnection::ConnectClient,this,robot);
 	ShowConnLog(logVisible);
 	
 	
 }
- void*  RobotConnection::ConnectClient(void *client)
+void*  RobotConnection::ConnectClient(void *client)
 {
 	NodeTree* robot=(NodeTree*)client;
 	
 	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim )
 	{
-		robot->pointer.lms100sim->setLaserProperties(0,0,0,0,0);
+		
 		connectionLog->AddConnection(robot);
 		LaserData data;
 		while(1)
 		{
 			if(robot->client.laserSensor->connect(adress_box->GetValue(),atoi(port_box->GetValue()),false))
 			{
+				robot->pointer.lms100sim->setLaserProperties(0,0,0,0,0);
 				robot->client.getAddress=robot->client.laserSensor->getAddress();
 				robot->client.getPort=robot->client.laserSensor->getPort();
 				robot->client.getHost=robot->client.laserSensor->getHost();
@@ -142,7 +135,7 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 					}
 					
 					robot->client.laserSensor->getData(data);
-					Sleep(1000);
+					//Sleep(1000);
 					
 					robot->pointer.lms100sim->setData(data);
 					

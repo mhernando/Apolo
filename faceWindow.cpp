@@ -1,7 +1,5 @@
 #include "faceWindow.h"
 
-#include <wx/splitter.h>
-
 
 
 
