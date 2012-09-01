@@ -1,10 +1,13 @@
 #include "nodeTree.h"
 #include "simulatedWorld.h"
 
-NodeTree::NodeTree(PositionableEntity* pos)
+NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 {
 	
+	//simuWorld= new SimulatedWorld(pos->getWorld());
 	/////
+	simuWorld=simu;
+	typeConnection=0;
 	menus.menu_positionable = false;
 	menus.menu_solid = false;
 	menus.menu_composed = false;
@@ -12,6 +15,7 @@ NodeTree::NodeTree(PositionableEntity* pos)
 	menus.menu_world = false;
 	menus.menu_robotsim = false;
 	menus.menu_meshpart = false;
+	menus.menu_server = false;
 
 
 
@@ -64,7 +68,13 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_wheeledbasesim;
 		bitsel = BitSel_wheeledbasesim;
 		name = pos->getName();
+		menus.menu_server=true;
 		if(name.empty())name = "Wheeled Base";
+		server.wheeledBase=new WheeledBaseServer(pointer.wheeledbasesim,name);
+		client.wheeledBase=new WheeledBaseClient();
+		client.getAddress=client.wheeledBase->getAddress();
+		client.getHost=client.wheeledBase->getHost();
+		client.getPort=client.wheeledBase->getPort();
 	}
 	
 	
@@ -79,6 +89,38 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		if(name.empty())name = "Robot"; 
 	}
    //Ahora las clases específicas o simples que no tienen herencia multiple
+	
+	if(dynamic_cast<LaserSensor3DSim *>(pos))
+	{
+		pointer.lasersensor3dsim = dynamic_cast<LaserSensor3DSim *>(pos);
+		tipo = N_LaserSensor3DSim;
+		bit = Bit_lasersensor3dsim;
+		bitsel = BitSel_lasersensor3dsim;
+		name = pos->getName();
+		if(name.empty())name = "Laser Sensor 3D";
+		server.laserSensor3D=new LaserSensor3DServer(pointer.lasersensor3dsim,name);
+		client.laserSensor3D=new LaserSensor3DClient();
+		client.getAddress=client.laserSensor3D->getAddress();
+		client.getHost=client.laserSensor3D->getHost();
+		client.getPort=client.laserSensor3D->getPort();
+		
+	}
+	if(dynamic_cast<LaserSensorSim *>(pos))
+	{
+		pointer.lasersensorsim = dynamic_cast<LaserSensorSim *>(pos);
+		tipo = N_LaserSensorSim;
+		bit = Bit_lasersensorsim;
+		bitsel = BitSel_lasersensorsim;
+		name = pos->getName();
+		if(name.empty())name = "Laser Sensor";
+		server.laserSensor=new LaserSensorServer(pointer.lasersensorsim,name);
+		client.laserSensor=new LaserSensorClient();
+		
+		
+	}
+	
+	
+	
 	if(dynamic_cast<Joint *>(pos))
 	{
 		pointer.joint = dynamic_cast<Joint*>(pos);
@@ -130,6 +172,16 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		if(name.empty())name = "Prism";
 		return;
 	}
+	if(dynamic_cast<NemoLaserSensor3DSim *>(pos))
+	{
+		pointer.nemolasersensor3dsim = dynamic_cast<NemoLaserSensor3DSim *>(pos);
+		tipo = N_NemoLaserSensor3DSim;
+		bit = Bit_nemolasersensor3dsim;
+		bitsel = BitSel_nemolasersensor3dsim;
+		name = pos->getName();
+		if(name.empty())name = "Nemo Laser Sensor";
+		return;
+	}
 	
 	if(dynamic_cast<LMS200Sim *>(pos))
 	{
@@ -138,6 +190,8 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_lms200sim;
 		bitsel = BitSel_lms200sim;
 		name = pos->getName();
+		menus.menu_server=true;
+		
 		if(name.empty())name = "Sick LMS200";
 		return;
 	}
@@ -148,6 +202,7 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_lms100sim;
 		bitsel = BitSel_lms100sim;
 		name = pos->getName();
+		menus.menu_server=true;
 		if(name.empty())name = "Sick LMS100";
 		return;
 	}
@@ -188,39 +243,11 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		bit = Bit_powercube70sim;
 		bitsel = BitSel_powercube70sim;
 		name = pos->getName();
+		menus.menu_server=true;
 		if(name.empty())name = "Power Cube";
 		return;
 	}
-	if(dynamic_cast<NemoLaserSensor3DSim *>(pos))
-	{
-		pointer.nemolasersensor3dsim = dynamic_cast<NemoLaserSensor3DSim *>(pos);
-		tipo = N_NemoLaserSensor3DSim;
-		bit = Bit_nemolasersensor3dsim;
-		bitsel = BitSel_nemolasersensor3dsim;
-		name = pos->getName();
-		if(name.empty())name = "Nemo Laser Sensor";
-		return;
-	}
-	if(dynamic_cast<LaserSensor3DSim *>(pos))
-	{
-		pointer.lasersensor3dsim = dynamic_cast<LaserSensor3DSim *>(pos);
-		tipo = N_LaserSensor3DSim;
-		bit = Bit_lasersensor3dsim;
-		bitsel = BitSel_lasersensor3dsim;
-		name = pos->getName();
-		if(name.empty())name = "Laser Sensor 3D";
-		return;
-	}
-	if(dynamic_cast<LaserSensorSim *>(pos))
-	{
-		pointer.lasersensorsim = dynamic_cast<LaserSensorSim *>(pos);
-		tipo = N_LaserSensorSim;
-		bit = Bit_lasersensorsim;
-		bitsel = BitSel_lasersensorsim;
-		name = pos->getName();
-		if(name.empty())name = "Laser Sensor";
-		return;
-	}
+	
 	if(dynamic_cast<MeshPart *>(pos))
 	{
 		pointer.meshpart = dynamic_cast<MeshPart *>(pos);
@@ -242,7 +269,65 @@ NodeTree::NodeTree(PositionableEntity* pos)
 		return;
 		
 	}
-
+	if(dynamic_cast<PersonSim *>(pos))
+	{
+		pointer.personSim = dynamic_cast<PersonSim*>(pos);
+		tipo = N_PersonSim;
+		bit = Bit_lms200sim;
+		bitsel = BitSel_lms200sim;
+		name = pos->getName();
+		
+		if(name.empty())name = "Person";
+		return;
+	}
+	if(dynamic_cast<QuadrotorSim *>(pos))
+	{
+		pointer.quadrotorSim = dynamic_cast<QuadrotorSim*>(pos);
+		tipo = N_QuadrotorSim;
+		bit = Bit_lms200sim;
+		bitsel = BitSel_lms200sim;
+		name = pos->getName();
+		menus.menu_server=true;
+		
+		if(name.empty())name = "Quadrotor";
+		return;
+	}
+	if(dynamic_cast<CameraSim *>(pos))
+	{
+		pointer.cameraSim = dynamic_cast<CameraSim*>(pos);
+		tipo = N_CameraSim;
+		bit = Bit_lms200sim;
+		bitsel = BitSel_lms200sim;
+		name = pos->getName();
+		menus.menu_server=true;
+		
+		if(name.empty())name = "Camera";
+		return;
+	}
+	if(dynamic_cast<KinectSim *>(pos))
+	{
+		pointer.kinectSim = dynamic_cast<KinectSim*>(pos);
+		tipo = N_KinectSim;
+		bit = Bit_lms200sim;
+		bitsel = BitSel_lms200sim;
+		name = pos->getName();
+		menus.menu_server=true;
+		
+		if(name.empty())name = "Kinect";
+		return;
+	}
+	if(dynamic_cast<MobileRobot *>(pos))
+	{
+		pointer.mobileRobot = dynamic_cast<MobileRobot*>(pos);
+		tipo = N_MobileRobot;
+		bit = Bit_lms200sim;
+		bitsel = BitSel_lms200sim;
+		name = pos->getName();
+		menus.menu_server=true;
+		
+		if(name.empty())name = "MobileRobot";
+		return;
+	}
 	if(dynamic_cast<AseaIRB2000Sim *>(pos))
 	{
 		pointer.aseaIRB2000Sim = dynamic_cast<AseaIRB2000Sim *>(pos);
@@ -256,7 +341,8 @@ NodeTree::NodeTree(PositionableEntity* pos)
 	else return;
 	
 }
-NodeTree::NodeTree(World *world)
+
+NodeTree::NodeTree(World *world,SimulatedWorld *simu)
 {
 	
 	menus.menu_world = true;
@@ -266,7 +352,7 @@ NodeTree::NodeTree(World *world)
 	menus.menu_wheeledbased = false;
 	menus.menu_robotsim=false;
 	menus.menu_meshpart=false;
-
+	simuWorld=simu;
 	pointer.world = world;
 	tipo = N_World;
 	bit = Bit_world;

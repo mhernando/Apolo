@@ -26,6 +26,7 @@
 #define ID_DRAWBOX 1021
 #define ID_COMPRS 1022
 #define ID_POS 1023
+#define ID_VIS_CONNLOG 1024
 
 
 //OBJECTS ID 15XX
@@ -51,6 +52,13 @@
 #define ID_NEMOLASER 1519
 #define ID_LASER3D 1520
 #define ID_ADDFACESET 1521
+#define ID_QUADROTOR 1522
+#define ID_CAMERA 1523
+#define ID_KINECT 1524
+#define ID_PERSON 1525
+#define ID_MOBILEROBOT 1526
+#define ID_ADDIRRPRI 1527
+
 
 
 
@@ -81,6 +89,8 @@
 #define ID_DEFAULT 4007 
 #define ID_OTHERFACE 4008
 #define ID_ALIGN 4009
+#define ID_PRIBASE 4010
+
 // Define  for wxwigets reseved 50XX
 //wxID_EXIT 5006
 //wxID_ABOUT 5013
@@ -114,6 +124,13 @@
 #define DROP_MENU 9003
 #define DIS_SLI 9004
 #define DIS_CONT 9005
+
+
+//SERVERS 95XX
+#define ID_LNSERVER 9500
+#define ID_STSERVER 9501
+#define ID_LNCLIENT 9502
+#define ID_STCLIENT 9503
 
 
 

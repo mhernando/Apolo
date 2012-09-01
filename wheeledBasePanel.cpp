@@ -36,6 +36,7 @@ WheeledBasePanel::WheeledBasePanel(wxWindow *parent, wxWindowID id,NodeTree* ite
 
 	wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
 	vbox->Add(title,0,wxLEFT|wxTOP,10);
+	vbox->AddSpacer(15);
 	vbox->Add(up,0,wxCENTRE|wxALL,1);
 	vbox->Add(hbox,0,wxCENTRE|wxALL,1);
 	vbox->Add(down,0,wxCENTRE|wxALL,1);

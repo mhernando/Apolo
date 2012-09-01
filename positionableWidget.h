@@ -12,7 +12,7 @@ class PositionableWidget: public wxPanel
 
 {
 public:
-	PositionableWidget(wxWindow *window,NodeTree *obj,SimulatedWorld *world,const wxString label,const wxPoint& pos = wxDefaultPosition,
+	PositionableWidget(wxWindow *window,NodeTree *obj,const wxString label,const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(60,200),bool sliders = false, bool color_w=true);
 	
 	void OnValuesChanged(wxCommandEvent& event);

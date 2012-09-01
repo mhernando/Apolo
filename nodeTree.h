@@ -5,12 +5,15 @@
 #include <wx/treebase.h>
 #include <iostream>
 
+
+
 enum TypeNode 
 {
 	N_SimpleJoint,
 	N_Joint,
 	N_CylindricalPart,
 	N_PrismaticPart,
+	N_IrregularPrismaticPart,
 	N_LMS200Sim,
 	N_LMS100Sim,
 	N_FaceSetPart,
@@ -29,6 +32,11 @@ enum TypeNode
 	N_RobotSim,
 	N_AdeptOneSim,
 	N_SpherePart,
+	N_CameraSim,
+	N_KinectSim,
+	N_MobileRobot,
+	N_PersonSim,
+	N_QuadrotorSim,
 	N_AseaIRB2000,
 };
 enum Bitmap 
@@ -98,6 +106,11 @@ struct MRPointer
 	PatrolbotSim* patrolbotsim;
 	Pioneer3ATSim* pioneer3atsim;
 	PowerCube70Sim* powercube70sim;
+	PersonSim* personSim;
+	QuadrotorSim* quadrotorSim;
+	MobileRobot* mobileRobot;
+	CameraSim* cameraSim;
+	KinectSim* kinectSim;
 	NemoLaserSensor3DSim* nemolasersensor3dsim;
 	LaserSensor3DSim* lasersensor3dsim;
 	LaserSensorSim* lasersensorsim;
@@ -113,6 +126,41 @@ struct MRPointer
 	World* world;
 	RobotSim* robotsim;
 };
+struct MRServer
+{
+	union
+	{
+	LaserSensorServer *laserSensor;
+	LaserSensor3DServer *laserSensor3D;
+	WheeledBaseServer *wheeledBase;
+	CameraServer *camera;
+	KinectServer *kinect;
+	VoiceTTSServer *voiceTTS;
+	QuadrotorServer *quadrotor;
+	};
+	int getClients;
+
+};
+
+struct MRClient
+{
+
+	union 
+	{
+	LaserSensorClient *laserSensor;
+	LaserSensor3DClient *laserSensor3D;
+	WheeledBaseClient *wheeledBase;
+	CameraClient *camera;
+	KinectClient *kinect;
+	VoiceTTSClient *voiceTTS;
+	QuadrotorClient *quadrotor;
+	};
+	wxString getHost;
+	wxString getAddress;
+	int getPort;
+
+};
+
 struct ContextualMenu
 {
 
@@ -123,6 +171,7 @@ struct ContextualMenu
 	bool menu_robotsim;
 	bool menu_world;
 	bool menu_meshpart;
+	bool menu_server;
 	
 };
 class SimulatedWorld;
@@ -130,21 +179,25 @@ class SimulatedWorld;
 class NodeTree : public wxTreeItemData 
 {
 public:
-	NodeTree(World* world);
-	NodeTree(PositionableEntity* pos);
+	NodeTree(World* world,SimulatedWorld *simu);
+	NodeTree(PositionableEntity* pos,SimulatedWorld *simu);
 	TypeNode getTipo(){return tipo;}
+	void setTipo(TypeNode type){tipo=type;}
 	string getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
 	const char *getCharName(){return name.c_str();} 
-
+	int typeConnection; //0 Nothing //1 Server //2 Client
 	Bitmap bit;
 	BitmapSelect bitsel;
 	MRPointer pointer;
+	MRServer server;
+	MRClient client;
 	ContextualMenu menus;
 	SimulatedWorld *simuWorld;
 private:
 	TypeNode tipo;
 	string name;
+	
 	
 };
 

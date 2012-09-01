@@ -29,7 +29,6 @@ bool Apolo::OnInit()
 	filemenu->Append(item2);
 	filemenu->AppendSeparator();
 	filemenu->AppendCheckItem(ID_VIS_TREE, wxT("Unvisible tree"));
-	if(apoloMainWin->getTreeVisible()==true)filemenu->Check(ID_VIS_TREE,false);
 	filemenu->AppendSeparator();
 	filemenu->Append(wxID_EXIT, wxT("E&xit"), wxT("Quit the program"));
 	
