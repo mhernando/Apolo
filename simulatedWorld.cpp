@@ -1,5 +1,5 @@
 #include "simulatedWorld.h"
-#include "mainWindow.h"
+
 
 
 MainWindow * SimulatedWorld::mainWin = 0;

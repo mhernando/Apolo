@@ -113,7 +113,6 @@ struct MRPointer
 	KinectSim* kinectSim;
 	NemoLaserSensor3DSim* nemolasersensor3dsim;
 	LaserSensor3DSim* lasersensor3dsim;
-	LaserSensorSim* lasersensorsim;
 	MeshPart* meshpart;
 	AdeptOneSim* adeptone;
 	SpherePart * spherepart;
@@ -125,6 +124,7 @@ struct MRPointer
 	PositionableEntity* positionableentity;
 	World* world;
 	RobotSim* robotsim;
+	LaserSensorSim* lasersensorsim;
 };
 struct MRServer
 {
@@ -138,7 +138,8 @@ struct MRServer
 	VoiceTTSServer *voiceTTS;
 	QuadrotorServer *quadrotor;
 	};
-	int getClients;
+	int Clients;
+	int Port;
 
 };
 
@@ -155,9 +156,9 @@ struct MRClient
 	VoiceTTSClient *voiceTTS;
 	QuadrotorClient *quadrotor;
 	};
-	wxString getHost;
-	wxString getAddress;
-	int getPort;
+	wxString Host;
+	wxString Address;
+	int Port;
 
 };
 
@@ -172,6 +173,7 @@ struct ContextualMenu
 	bool menu_world;
 	bool menu_meshpart;
 	bool menu_server;
+	bool menu_laser;
 	
 };
 class SimulatedWorld;
@@ -193,11 +195,11 @@ public:
 	MRServer server;
 	MRClient client;
 	ContextualMenu menus;
-	SimulatedWorld *simuWorld;
+	
 private:
 	TypeNode tipo;
 	string name;
-	
+	SimulatedWorld *simuWorld;
 	
 };
 

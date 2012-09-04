@@ -3,7 +3,7 @@
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
 
 EVT_COMMAND(wxID_ANY,wxEVT_FACEVERTEX_ADDED,FaceWidget::GetPoint)
-//EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, OnChangeSplitter)
+EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, OnChangeSplitter)
 //EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,FaceWidget::AddVertex)
 
 END_EVENT_TABLE()
@@ -20,6 +20,8 @@ FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,
 	tableAssociated=false;
 	CreatePanel();
 	CreateFace();
+	
+	
 
 }
 void FaceWidget::CreatePanel()
@@ -30,15 +32,13 @@ void FaceWidget::CreatePanel()
 		canvas1=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize,false);
 		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 		canvas2->UpdateWorld(world->getWorld());
-		if(h)	canvas->SplitVertically(canvas2,canvas1,0);
+		if(h)	canvas->SplitVertically(canvas1,canvas2,0);
 		else	canvas->SplitHorizontally(canvas1,canvas2,0);
-		canvas1->AddObject(face);
 		fbox->Add(canvas,1,wxEXPAND );
-		SetSizer(fbox);
+		SetSizer(fbox);	
 		
-	
-	
 }
+
 
 
 void FaceWidget::CreateFace()
@@ -113,12 +113,14 @@ void FaceWidget::AddVertex()
 
 }
 
-////ELIMINAR NO HACE NADA
-/*void FaceWidget::OnChangeSplitter(wxSplitterEvent &event)
+
+void FaceWidget::OnChangeSplitter(wxSplitterEvent &event)
 {
+	
+	//canvas1->SetViewPoint(-10,-10,10,10);
 
 	
-}*/
+}
 
 void FaceWidget::RefreshCanvas()
 {

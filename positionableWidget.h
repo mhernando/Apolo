@@ -4,7 +4,6 @@
 
 #include "nodeTree.h"
 #include "simulatedWorld.h"
-#include <string>
 #include "genericSlider.h"
 
 
@@ -28,39 +27,19 @@ public:
 
 private:
 	
-	wxStaticText *x_text;
-	wxTextCtrl	*x_box;
-	wxStaticText *y_text;
-	wxTextCtrl	*y_box;
-	wxStaticText *z_text;
-	wxTextCtrl	*z_box;
-	wxStaticText *r_text;
-	wxTextCtrl	*r_box;
-	wxStaticText *p_text;
-	wxTextCtrl	*p_box;
-	wxStaticText *yw_text;
-	wxTextCtrl	*yw_box;
-	wxStaticText *name_text;
-	wxTextCtrl	*name_box;
-	wxStaticText *color_text;
+	wxStaticText *x_text,*y_text,*z_text,*r_text ,*p_text,*yw_text,*name_text,*color_text;
+	wxTextCtrl	*x_box,*y_box,*z_box,*r_box,*p_box,*yw_box,*name_box;
 	wxBitmapButton *color_box;
-	GenericSlider *xs;
-	GenericSlider *ys;
-	GenericSlider *zs;
-	GenericSlider *rs;
-	GenericSlider *ps;
-	GenericSlider *yws;
-	bool slider;
-	wxString title;
+	GenericSlider *xs,*ys,*zs,*rs,*ps,*yws;
 	wxColor color;
+	bool slider;
 	double defRed,defGreen,defBlue;
+	double cred,cgreen,cblue;
 	Vector3D defPosition,defOrientation,position,orientation;
 	wxWindow *parent;
-	string text;
+	wxString text,name,title;
 	NodeTree *node;
 	SimulatedWorld *s_world;
-	wxString name;
-	double cred,cgreen,cblue;
 	DECLARE_EVENT_TABLE();
 	
 };
