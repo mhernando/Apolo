@@ -10,8 +10,8 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 	EVT_BUTTON(ID_DEFAULT, InitialProperties::OnButton)
 	EVT_BUTTON(ID_PRIBASE, InitialProperties::OnButton)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::RefreshCanvas)
-	
-//	EVT_WINDOW_CREATE(InitialProperties::Update)
+	EVT_CLOSE(InitialProperties::OnClose)
+	//VT_WINDOW_CREATE(InitialProperties::Update)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxString& title,wxWindowID id)
@@ -53,6 +53,7 @@ void InitialProperties::CreatePanel()
 	else
 	{
 	
+
 	dp=new DesignWidget(this,pos,wxEmptyString,wxDefaultPosition , wxDefaultSize,MainWindow::design_slider);
 	
 	pw=new PositionableWidget(this,pos,"Positionable Parameters",wxDefaultPosition,wxDefaultSize,MainWindow::slider,color);
@@ -113,7 +114,7 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		base->CreateFace();	
 	}
 
-	if(id == ID_ACCEPT)	Close(true);
+	if(id == ID_ACCEPT)	Destroy();
 
 	if(id == ID_DEFAULT)
 	{
@@ -124,14 +125,12 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		dp->SetSpecificValues(true);
 		world->tree->SetItemText(world->tree->GetLastChild(world->tree->GetSelection()),defName);
 		pos->pointer.solidentity->setColor(pw->getDefRedColor(),pw->getDefGreenColor(),pw->getDefBlueColor());
-		Close();
+		Destroy();
 
 	}
 	if(id==ID_CANCEL)
-	{
-		b_sel=false;
 		Close(true);
-	}
+	
 	
 	
 

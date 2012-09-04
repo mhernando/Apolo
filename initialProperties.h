@@ -19,8 +19,8 @@ public:
 	InitialProperties(wxWindow *parent,NodeTree *obj, const wxString& title,wxWindowID id=0);
 	void OnButton(wxCommandEvent& event);
 	bool GetButtom(){return b_sel;}
-	void InitialProperties::RefreshCanvas(wxCommandEvent &event);
-//	void Update(wxWindowCreateEvent& event);
+	void RefreshCanvas(wxCommandEvent &event);
+	void OnClose(wxCloseEvent &event){	b_sel=false; Destroy();}
 	void CreatePanel();
 
 private:

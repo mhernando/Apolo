@@ -35,14 +35,15 @@ void FaceWindow::CreatePanel()
 		points=new PointsList(this,wxT("Face Coordenates"));
 		af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
 		wxSplitterWindow *drawFace= new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
+		drawFace->SetMinimumPaneSize(200);
+		
 		canvas=new FaceWidget(drawFace,world,wxDefaultPosition,wxDefaultSize);
 		canvas->AssociatePointTable(points);
-		drawFace->SetMinimumPaneSize(200);
-	
-
-		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,false);
-		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
 		
+		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,false);
+		drawFace->SplitHorizontally(canvas,pw,0);
+		
+		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
 		roll = new GenericSlider(this,"Face Roll",wxDefaultPosition,wxDefaultSize,false);//true = vertical
 		pitch = new GenericSlider(this,"Face Pitch",wxDefaultPosition,wxDefaultSize,false);
 		plane_dis = new GenericSlider(this,"Normal Distance (Z)",wxDefaultPosition,wxDefaultSize,true);
@@ -67,7 +68,7 @@ void FaceWindow::CreatePanel()
 		obox->Add(color_box,0,wxEXPAND|wxALL,5);
 	
 
-		drawFace->SplitHorizontally(canvas,pw,0);
+		
 		fbox->Add(obox,0,wxEXPAND|wxALL,5);
 
 		fbox->Add(drawFace,1,wxEXPAND );
@@ -77,7 +78,6 @@ void FaceWindow::CreatePanel()
 		
 	
 		SetSizer(fbox);
-		
 	
 	
 }

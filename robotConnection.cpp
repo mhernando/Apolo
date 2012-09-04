@@ -1,91 +1,39 @@
 #include "robotConnection.h"
 
-
-
-BEGIN_EVENT_TABLE(RobotConnection,wxDialog)
-	EVT_BUTTON(ID_ACCEPT, RobotConnection::OnButton)
-	EVT_BUTTON(ID_CANCEL, RobotConnection::OnButton)
-	EVT_BUTTON(ID_DEFAULT, RobotConnection::OnButton)
-	EVT_CLOSE(RobotConnection::OnClose)
-END_EVENT_TABLE()
-
-
 RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
 :wxDialog(parent,wxID_ANY,name,wxPoint(10,10),wxSize(200,400))
 {
-	cancel=false;
+
 	window=parent;
-	defPort=wxT("80");
-	defAdress=wxT("127.0.0.1");
-	defClients=wxT("5");
 	logVisible=true;
 	connectionLog=new ConnectionLog(this,wxT("Connection Log"));
-	CreatePanel();
-	
-	
-	
-	
 
 }
-void RobotConnection::CreatePanel()
-{
-	wxStaticText *adress_text,*clients_text,*port_text;
-	
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* bbox = new wxBoxSizer(wxHORIZONTAL);
-	b_default = new wxButton(this,ID_DEFAULT,wxT("Default Values"),wxDefaultPosition,wxDefaultSize);
-	
-	port_text = new wxStaticText(this, wxID_ANY, wxT("Port :    "),wxDefaultPosition,wxDefaultSize);
-	port_box = new wxTextCtrl(this,wxID_ANY,defPort,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
-	
-	adress_text = new wxStaticText(this, wxID_ANY, wxT("Adress :      "),wxDefaultPosition,wxDefaultSize);
-	adress_box = new wxTextCtrl(this,wxID_ANY,defAdress,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 
-	clients_text = new wxStaticText(this, wxID_ANY, wxT("Max. Clients :    "),wxDefaultPosition,wxDefaultSize);
-	clients_box = new wxTextCtrl(this,wxID_ANY,defClients,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
-
-	b_accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxDefaultSize);
-	b_cancel = new wxButton(this,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxDefaultSize);
-	
-	
-	
-	vbox->Add(b_default,0,wxEXPAND|wxALL,10);
-	vbox->Add(port_text,0,wxLEFT,10);
-	vbox->Add(port_box,0,wxEXPAND |wxALL,10);
-	vbox->Add(adress_text,0,wxLEFT,10);
-	vbox->Add(adress_box,0,wxEXPAND | wxALIGN_LEFT|wxALL,10);
-	vbox->Add(clients_text,0,wxLEFT,10);
-	vbox->Add(clients_box,0,wxEXPAND | wxALIGN_LEFT|wxALL,10);
-	bbox->Add(b_accept,1);
-	bbox->Add(b_cancel,1);
-	vbox->Add(bbox,1,wxEXPAND |wxALL,5);
-	
-	
-
-	SetSizer(vbox);
-	vbox->SetSizeHints(this);
-	
-	
-}
 void RobotConnection::SendData(NodeTree *robot)
 {
-	cancel=false;
-	ShowModal();
-	if(cancel)
-		return;
+
+	ConnectionParameters *serverParam=new ConnectionParameters(this,true,wxT("Server Parameters"));
 	
-	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim )
-		robot->server.laserSensor->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+	serverParam->ShowModal();
+	if(!serverParam->IsAccepted())
+		return;
+
+	wxString address_client=serverParam->GetAddress_Clients();
+	wxString port=serverParam->GetPort();
+	
+	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_LaserSensorSim )
+		robot->server.laserSensor->init(atoi(port),atoi(address_client),true);
 	if(robot->getTipo()==N_LaserSensor3DSim) 
-		robot->server.laserSensor3D->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+		robot->server.laserSensor3D->init(atoi(port),atoi(address_client),true);
 	if(robot->getTipo()==N_WheeledBaseSim) 
-		robot->server.wheeledBase->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+		robot->server.wheeledBase->init(atoi(port),atoi(address_client),true);
 	if(robot->getTipo()==N_CameraSim)
-		robot->server.camera->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+		robot->server.camera->init(atoi(port),atoi(address_client),true);
 	if(robot->getTipo()==N_KinectSim)
-		robot->server.kinect->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+		robot->server.kinect->init(atoi(port),atoi(address_client),true);
 	if(robot->getTipo()==N_QuadrotorSim)
-		robot->server.quadrotor->init(atoi(port_box->GetValue()),atoi(clients_box->GetValue()),true,adress_box->GetValue());
+		robot->server.quadrotor->init(atoi(port),atoi(address_client),true);
 	
 	robot->typeConnection=1;
 	connectionLog->AddConnection(robot);
@@ -95,37 +43,37 @@ void RobotConnection::SendData(NodeTree *robot)
 
 void RobotConnection::ReceiveData(NodeTree *robot)
 {
-	cancel=false;
-	ShowModal();
-	if(cancel)
+	ConnectionParameters *clientParam=new ConnectionParameters(this,false,wxT("Client Parameters")); 
+	clientParam->ShowModal();
+	if(!clientParam->IsAccepted())
 		return;
-	
+	robot->client.Address=clientParam->GetAddress_Clients();
+	robot->client.Port=atoi(clientParam->GetPort());
 	robot->typeConnection=2;
-	Thread<RobotConnection> client_Thid;
+	
 	client_Thid.Start(&RobotConnection::ConnectClient,this,robot);
 	ShowConnLog(logVisible);
-	
 	
 }
 void*  RobotConnection::ConnectClient(void *client)
 {
 	NodeTree* robot=(NodeTree*)client;
 	
-	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim )
+	
+	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
 	{
 		
 		connectionLog->AddConnection(robot);
 		LaserData data;
+		
+		
 		while(1)
 		{
-			if(robot->client.laserSensor->connect(adress_box->GetValue(),atoi(port_box->GetValue()),false))
+			if(robot->client.laserSensor->connect(robot->client.Address,robot->client.Port,false))
 			{
-				robot->pointer.lms100sim->setLaserProperties(0,0,0,0,0);
-				robot->client.getAddress=robot->client.laserSensor->getAddress();
-				robot->client.getPort=robot->client.laserSensor->getPort();
-				robot->client.getHost=robot->client.laserSensor->getHost();
+				robot->client.Host=robot->client.laserSensor->getHost();
 				connectionLog->StateConnection(robot,true);
-				
+				robot->pointer.lms100sim->setActive(false);
 				while(1)
 				{
 					if(!robot->client.laserSensor->isConnected())
@@ -135,22 +83,23 @@ void*  RobotConnection::ConnectClient(void *client)
 					}
 					
 					robot->client.laserSensor->getData(data);
-					//Sleep(1000);
+					Sleep(1000);
 					
 					robot->pointer.lms100sim->setData(data);
+					data.clear();
 					
 				
 				}
 				
-				if(robot->typeConnection==0)
-				break;
+				
 			}
-			
+			if(robot->typeConnection==0)
+					break;
 		}
 
 	}
 
-		
+/*		
 	else if(robot->getTipo()==N_LaserSensor3DSim)
 	{
 		robot->client.laserSensor3D->connect(adress_box->GetValue(),atoi(port_box->GetValue()));
@@ -213,13 +162,15 @@ void*  RobotConnection::ConnectClient(void *client)
 	{
 		robot->client.wheeledBase->connect(adress_box->GetValue(),atoi(port_box->GetValue()));
 		{	
+			Odometry odo;
 			Pose3D pose3D;
+			
 			while(1)
 			{
 				if(robot->client.wheeledBase->isConnected()) break;
 					
-			//	robot->pointer.wheeledbasesim->setData(robot->client.wheeledBase->getPose3D(pose3D));
-			//	añadir odometry
+				//robot->pointer.wheeledbasesim->setData(robot->client.wheeledBase->getPose3D(pose3D));
+				//añadir odometry
 
 			}
 			robot->client.wheeledBase->close();		
@@ -231,7 +182,7 @@ void*  RobotConnection::ConnectClient(void *client)
 	}
 	
 	
-	
+	*/
 
 return NULL;
 }
@@ -243,12 +194,12 @@ return NULL;
 
 void RobotConnection::CloseServer(NodeTree *robot)
 {
-		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim ) robot->server.laserSensor->close();
-		if(robot->getTipo()==N_LaserSensor3DSim)robot->server.laserSensor3D->close();	
-		if(robot->getTipo()==N_WheeledBaseSim) robot->server.wheeledBase->close(); 
-		if(robot->getTipo()==N_CameraSim)robot->server.camera->close();
-		if(robot->getTipo()==N_KinectSim)robot->server.kinect->close();
-		if(robot->getTipo()==N_QuadrotorSim)robot->server.quadrotor->close();
+		if(robot->getTipo()==N_LMS100Sim) robot->server.laserSensor->close();
+		else if(robot->getTipo()==N_LaserSensor3DSim)robot->server.laserSensor3D->close();	
+		else if(robot->getTipo()==N_WheeledBaseSim) robot->server.wheeledBase->close(); 
+		else if(robot->getTipo()==N_CameraSim)robot->server.camera->close();
+		else if(robot->getTipo()==N_KinectSim)robot->server.kinect->close();
+		else if(robot->getTipo()==N_QuadrotorSim)robot->server.quadrotor->close();
 		robot->typeConnection=0;
 		connectionLog->DeleteConnection(robot);
 }
@@ -263,27 +214,10 @@ void RobotConnection::DisconnectClient(NodeTree *robot)
 		if(robot->getTipo()==N_QuadrotorSim)robot->client.quadrotor->close();
 		robot->typeConnection=0;
 		connectionLog->DeleteConnection(robot);
+		
 }
 
-void RobotConnection::OnButton(wxCommandEvent& event)
-{
-	int id=event.GetId();
-	if(id==ID_ACCEPT) Show(false);
-	if(id==ID_CANCEL) Close();	
-	if(id==ID_DEFAULT)
-	{
-		port_box->SetValue(defPort);
-		adress_box->SetValue(defAdress);
-		clients_box->SetValue(defClients);
-		Show(false);
-	}
-}
 
-void RobotConnection::OnClose(wxCloseEvent& event)
-{
-	cancel=true;
-	Show(false);
-}
 
 void RobotConnection::ShowConnLog(bool showLog)
 {
@@ -296,3 +230,4 @@ void RobotConnection::ShowConnLog(bool showLog)
 	
 	window->SetFocus();
 }
+

@@ -4,12 +4,11 @@
 NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 {
 	
-	//simuWorld= new SimulatedWorld(pos->getWorld());
-	/////
 	simuWorld=simu;
 	typeConnection=0;
 	menus.menu_positionable = false;
 	menus.menu_solid = false;
+	menus.menu_laser = false;
 	menus.menu_composed = false;
 	menus.menu_wheeledbased = false;
 	menus.menu_world = false;
@@ -24,6 +23,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	if(dynamic_cast<SolidEntity *>(pos))	menus.menu_solid = true; 
 	if(dynamic_cast<ComposedEntity *>(pos))	menus.menu_composed = true;
 	if(dynamic_cast<WheeledBaseSim *>(pos))	menus.menu_wheeledbased = true;	
+	if(dynamic_cast<LaserSensorSim *>(pos)) menus.menu_laser=true;
 	if(dynamic_cast<RobotSim *>(pos)) menus.menu_robotsim = true;
 	if(dynamic_cast<MeshPart *>(pos)) menus.menu_meshpart = true;
 
@@ -72,9 +72,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		if(name.empty())name = "Wheeled Base";
 		server.wheeledBase=new WheeledBaseServer(pointer.wheeledbasesim,name);
 		client.wheeledBase=new WheeledBaseClient();
-		client.getAddress=client.wheeledBase->getAddress();
-		client.getHost=client.wheeledBase->getHost();
-		client.getPort=client.wheeledBase->getPort();
+	
 	}
 	
 	
@@ -88,8 +86,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name = pos->getName();
 		if(name.empty())name = "Robot"; 
 	}
-   //Ahora las clases específicas o simples que no tienen herencia multiple
-	
+
+
+
 	if(dynamic_cast<LaserSensor3DSim *>(pos))
 	{
 		pointer.lasersensor3dsim = dynamic_cast<LaserSensor3DSim *>(pos);
@@ -100,9 +99,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		if(name.empty())name = "Laser Sensor 3D";
 		server.laserSensor3D=new LaserSensor3DServer(pointer.lasersensor3dsim,name);
 		client.laserSensor3D=new LaserSensor3DClient();
-		client.getAddress=client.laserSensor3D->getAddress();
-		client.getHost=client.laserSensor3D->getHost();
-		client.getPort=client.laserSensor3D->getPort();
+		
 		
 	}
 	if(dynamic_cast<LaserSensorSim *>(pos))
@@ -118,7 +115,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		
 		
 	}
-	
+   //Ahora las clases específicas o simples que no tienen herencia multiple
 	
 	
 	if(dynamic_cast<Joint *>(pos))
@@ -352,6 +349,7 @@ NodeTree::NodeTree(World *world,SimulatedWorld *simu)
 	menus.menu_wheeledbased = false;
 	menus.menu_robotsim=false;
 	menus.menu_meshpart=false;
+	menus.menu_laser = false;
 	simuWorld=simu;
 	pointer.world = world;
 	tipo = N_World;

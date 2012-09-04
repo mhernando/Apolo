@@ -32,6 +32,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_PERSON, MainWindow::AddObject)
 	EVT_MENU(ID_QUADROTOR, MainWindow::AddObject)
 	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
+	EVT_MENU(ID_LASMOD0, MainWindow::OnLaserStyle)
+	EVT_MENU(ID_LASMOD1, MainWindow::OnLaserStyle)
+	EVT_MENU(ID_LASMOD2, MainWindow::OnLaserStyle)
+	EVT_MENU(ID_LASMOD3, MainWindow::OnLaserStyle)
 	EVT_MENU(wxID_EXIT, MainWindow::OnQuit)
 	EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
 	EVT_MENU(ID_LOADWORLD, MainWindow::OnLoadWorld)
@@ -139,20 +143,19 @@ void MainWindow::OnSashDrag(wxSashEvent& event)
     }
 void MainWindow::OnClose(wxCloseEvent& event)
 {
-	if ( event.CanVeto())
-    {
-        wxString msg;
-        msg.Printf(wxT("Are you sure close window?"));
-        if ( wxMessageBox(msg, _T("Please confirm"),
-                          wxICON_QUESTION | wxYES_NO) != wxYES )
-        {
-            event.Veto();
-            return;
-        }
-    }
-	Destroy();
-	event.Skip();
-}
+
+		if(connection->getLog()->IsObjectConnected())
+			wxMessageBox(wxT("Please stop all connections"),wxT("Cannot close the window"));
+		else
+		{
+			wxString msg;
+			msg.Printf(wxT("Are you sure close window?"));
+			if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES )	 
+				 return;
+		Destroy();
+		
+		}
+  }
 void MainWindow::InitToolBar(wxToolBar *tool)
 {
 	toolbar=tool;
@@ -210,10 +213,8 @@ bool MainWindow::checkPanelExist(NodeTree* node)
 }
 void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
-	 wxString msg;
-     msg.Printf(wxT("Are you sure close window?"));
-     if ( wxMessageBox(msg, wxT("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
-	Close(true);
+		Close(true);
+	
 }
 void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 {
@@ -586,6 +587,8 @@ void MainWindow::OnSaveObject(wxCommandEvent& WXUNUSED(event))
 	}
 	else wxLogMessage(wxT("Please select a Object."));
 }
+
+
 void MainWindow::OnDeleteWorld(wxCommandEvent& WXUNUSED(event))
 {	
 	wxTreeItemId itemId = tree->GetSelection();
@@ -821,11 +824,11 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 	{
 		
 		connection->SendData(server);
-		if(server->typeConnection)tree->SetItemTextColour(item,*wxRED);
+		if(server->typeConnection==1)tree->SetItemTextColour(item,*wxRED);
 		
 	}
 
-	if(id==ID_STSERVER)
+	else if(id==ID_STSERVER)
 	{
 		
 		connection->CloseServer(server);
@@ -833,14 +836,14 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 	}
 
 	
-	if(id==ID_LNCLIENT)
+	else if(id==ID_LNCLIENT)
 	{
 		
 		connection->ReceiveData(server);
 		if(server->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
 	}
 
-	if(id==ID_STCLIENT)
+	else if(id==ID_STCLIENT)
 	{
 		
 		connection->DisconnectClient(server);
@@ -849,9 +852,24 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 
 }
 		
+void MainWindow::OnLaserStyle(wxCommandEvent& event)
+{
+	wxTreeItemId itemId  = tree->GetSelection();
+	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)tree->GetItemData(itemId ):NULL;
 	
 
+	if(event.GetId()==ID_LASMOD0)
+		itemData->pointer.lasersensorsim->setDrawGLMode(0);
+	else if(event.GetId()==ID_LASMOD1)
+		itemData->pointer.lasersensorsim->setDrawGLMode(1);
+	else if(event.GetId()==ID_LASMOD2)
+		itemData->pointer.lasersensorsim->setDrawGLMode(2);
+	else if(event.GetId()==ID_LASMOD3)
+		itemData->pointer.lasersensorsim->setDrawGLMode(3);
 	
+
+
+}
 		
 	
 

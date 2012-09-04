@@ -20,6 +20,7 @@ Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const 
 	dimension=triD;
 	flag = false;
 	scene2D.SetViewPoint(-5,-5,5,5);
+	scene.SetViewPoint(20,0,10);
 	Scale2D();
 	
 }
@@ -84,7 +85,11 @@ void Canvas::Paint(wxPaintEvent& event)
 	scene.setViewSize(0,0,GetSize().x,GetSize().y);	
 	scene.Draw();
 	}
-	else scene2D.Draw();
+	else 
+	{
+		scene2D.Draw();
+		//scene2D.setViewSize(GetSize().GetWidth(),GetSize().GetHeight());
+	}
 	SwapBuffers();
 }
 
@@ -152,6 +157,7 @@ void Canvas::OnMouse(wxMouseEvent& event)
 	{
 		//scene2D.MouseButton(pt.x,pt.y,2,event.RightIsDown(),event.ShiftDown(),event.ControlDown()); 
 		//scene2D.MouseButton(pt.x,pt.y,0,event.LeftIsDown(),event.ShiftDown(),event.ControlDown());
+		
 		if(event.LeftDown())
 		{
 		wxCommandEvent CanvasEvent( wxEVT_FACEVERTEX_ADDED,GetId() );
@@ -189,7 +195,17 @@ void Canvas::OnKey(wxKeyEvent& event)
 
 void Canvas::Scale2D()
 {
-	scene2D.GetViewPoint(x2Di,y2Di,x2Df,y2Df);
-	scale2D.x=x2Df-x2Di;
-	scale2D.y=y2Df-y2Di;
+	if(!dimension)
+	{
+		scene2D.GetViewPoint(x2Di,y2Di,x2Df,y2Df);
+		scale2D.x=x2Df-x2Di;
+		scale2D.y=y2Df-y2Di;
+	}
+}
+
+void Canvas::SetShowFrame(bool show)
+{
+	if(dimension)
+		scene.setShowFrame(show);
+	
 }

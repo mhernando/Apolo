@@ -4,6 +4,7 @@
 #include "mrcore.h"
 #include "definitions.h"
 #include "connectionLog.h"
+#include "connectionParameters.h"
 #include "nodeTree.h"
 #include "wx/wx.h"
 
@@ -17,11 +18,9 @@ public:
 	RobotConnection(wxWindow *parent,const wxString& name);
 	void SendData(NodeTree *robot);
 	void CloseServer(NodeTree *robot);
-	void CreatePanel();
-	void OnClose(wxCloseEvent& event);
-	void OnButton(wxCommandEvent& event);
 	void *ConnectClient(void* client);
 	bool getLogVisible(){return logVisible;}
+	ConnectionLog *getLog(){return connectionLog;}
 	void ShowConnLog(bool showLog);
 	void DisconnectClient(NodeTree *robot);
 	void ReceiveData(NodeTree *robot);
@@ -30,18 +29,18 @@ public:
 
 
 private:
-	bool cancel;
+	
 	bool logVisible;
 	wxWindow *window;
 	LaserSensorServer *laser_serv;
+	Thread<RobotConnection> client_Thid;
+
 	LaserSensor3DServer *laser3D_serv;
 	ConnectionLog *connectionLog;
-	wxTextCtrl *port_box, *adress_box,*clients_box;
-	wxButton *b_accept,*b_cancel,*b_default;
 	wxDialog *dialog;
-	wxString defPort,defAdress,defClients;
 	
-	DECLARE_EVENT_TABLE();
+	
+	
 };
 
 #endif // __APOLO__ROBOT_CONNECTION__H

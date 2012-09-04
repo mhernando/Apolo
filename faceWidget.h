@@ -30,7 +30,7 @@ public:
 
 	
 private:
-
+	bool created;
 	bool tableAssociated;
 	bool align,h;
 	wxWindow *window;
