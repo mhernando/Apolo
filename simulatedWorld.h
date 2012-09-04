@@ -18,6 +18,7 @@ class SimulatedWorld
 public:
 	SimulatedWorld(World *world);
 	~SimulatedWorld();
+	
 	ObjectSelection *sel;
 	wxTreeItemId getTreeItem(){return mainNode;}
 	void AddObject(wxWindowID  	id);

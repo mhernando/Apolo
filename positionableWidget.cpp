@@ -8,11 +8,11 @@ BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, PositionableWidget::OnValuesChanged)
 END_EVENT_TABLE()
 
-PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,SimulatedWorld *world,const wxString label, const wxPoint& pos ,
+PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,const wxString label, const wxPoint& pos ,
 									   const wxSize& size,bool sliders ,bool color_w): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
-	s_world=world;
+	s_world=obj->getSimu();
 	slider=sliders;
 	parent=window;
 	name=label;
@@ -29,6 +29,14 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *pE=new wxStaticBoxSizer(wxVERTICAL,this,name);
 	wxStaticBoxSizer *posi, *ori, *pers ;
+	
+	
+	wxBoxSizer *rbox=new wxBoxSizer(wxHORIZONTAL);
+	pers= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Personalitation"));
+	name_text=new wxStaticText(this,wxID_ANY, wxT("Name :"),wxDefaultPosition,wxDefaultSize);
+	name_box = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	
+	
 	if(sliders==false)
 	{
 		wxString defValue;
@@ -136,13 +144,6 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		
 		}
 
-
-	wxBoxSizer *rbox=new wxBoxSizer(wxHORIZONTAL);
-	pers= new wxStaticBoxSizer(wxVERTICAL,this,wxT("Personalitation"));
-	name_text=new wxStaticText(this,wxID_ANY, wxT("Name :"),wxDefaultPosition,wxDefaultSize);
-	name_box = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	
-	
 	rbox->Add(name_text,0,wxCENTRE);
 	rbox->AddSpacer(5);
 	rbox->Add(name_box,1,wxCENTRE);
@@ -198,7 +199,7 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	}
 	Transformation3D t;
 	t.position=position;
-	t.orientation.setRPY(orientation.x,orientation.y,orientation.z);
+	t.orientation.setRPY(deg2rad(orientation.x),deg2rad(orientation.y),deg2rad(orientation.z));
 	node->pointer.positionableentity->setRelativeT3D(t);
 	
 	s_world->getChild()->UpdateWorld();

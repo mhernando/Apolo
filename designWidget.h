@@ -5,28 +5,30 @@
 #include "nodeTree.h"
 #include "simulatedWorld.h"
 #include "genericSlider.h"
+#include "canvas.h"
 
 
 class DesignWidget: public wxPanel
 
 {
 public:
-	DesignWidget(wxWindow *window,wxWindowID id,NodeTree *pose,SimulatedWorld *world,const wxString label,const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize,bool sliders = true, bool orientation=false);
-	void GetSpecificValues(bool def=false);
-	void OnValueChanged(wxCommandEvent& event);
-	void CreatePanel(bool sliders, bool orientation);
-	void ObjectConversion();
+	DesignWidget(wxWindow *window,NodeTree *pose,const wxString label,const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxDefaultSize,bool sliders = true,bool orient=false);
+	void SetSpecificValues(bool def=false);
+	void OnValueChanged(wxCommandEvent& event){SetSpecificValues();}
+	void CreatePanel(bool sliders,bool orientation);
+	void GetDefaultValues();
 
 
 private:
 	GenericSlider *c_radio;
 	GenericSlider *c_height;
 	GenericSlider *c_vertex;
+	Canvas *base;
+	TypeNode type;
 	SimulatedWorld *simu;
 	double defRadio,defHeight,defVertex;
-	bool auxS,auxC,auxP;
-	bool slider;
+	bool slider,orientation;
 	double r,h,v;
 	NodeTree *nodeW;
 	wxStaticText *r_text;
@@ -35,6 +37,7 @@ private:
 	wxTextCtrl	*h_box;
 	wxStaticText *v_text;
 	wxTextCtrl	*v_box;
+
 	
 	
 	DECLARE_EVENT_TABLE();

@@ -9,77 +9,91 @@ SimulatedWorld::SimulatedWorld(World *world)
 {
 	static int numWorld = 0;
 	childView = new ChildView(mainWin, wxT("WORLD"), world);
-	mainNode = tree->GenerateSubTree(world,this);
-	
-
-	m_world = world;
-	
 	
 	wxString title;
 	title.Printf(wxT("World %d"), ++numWorld);
+
+	
 	childView ->SetTitle(title);
 	childView ->SetIcon(wxIcon(worldSelect_xpm));
 	childView ->UpdateWorld();
 	childView ->RefreshChild();
+	mainNode = tree->GenerateSubTree(world,this);
 
-	
+	m_world = world;
+
 }
+
 
 void SimulatedWorld::AddObject(wxWindowID  	id)
 {	
 
-	NodeTree *obj=new NodeTree(new PositionableEntity);
+	NodeTree *obj;
 	NodeTree *itemData = tree->GetSelection().IsOk() ? (NodeTree *) tree->GetItemData(tree->GetSelection()):NULL;
 
 
 // Object Selected////
 
 	if(id==ID_ADDSPHERE)
-		obj->pointer.positionableentity=new SpherePart;
-	if(id==ID_ADDCYL)
-		obj->pointer.positionableentity=new CylindricalPart;
-	if(id==ID_ADDPRI)
-		obj->pointer.positionableentity=new PrismaticPart;
-	if(id==ID_ADDFACESET)
-		obj->pointer.positionableentity=new FaceSetPart;
-	if(id==ID_ADDNEO)
-		obj->pointer.positionableentity=new  Pioneer3ATSim;
-	if(id==ID_ADDSCARA)
-		obj->pointer.positionableentity=new AdeptOneSim;
-	if(id==ID_ADDPUMA)
-		obj->pointer.positionableentity=new  Puma560Sim;
-	if(id==ID_ADDASEA)
-		obj->pointer.positionableentity=new AseaIRB2000Sim;
-	if(id==ID_ADDCUSTOM)
-		obj->pointer.positionableentity=new ComposedEntity;
-	if(id==ID_WHEEL)
-		obj->pointer.positionableentity=new WheeledBaseSim;
-	if(id==ID_LMS200)
-		obj->pointer.positionableentity=new LMS200Sim;
-	if(id==ID_PATROL)
-		obj->pointer.positionableentity=new PatrolbotSim;
-	if(id==ID_LMS100)
-		obj->pointer.positionableentity=new LMS100Sim;
-	if(id==ID_POWERCUBE)
-		obj->pointer.positionableentity=new PowerCube70Sim;
-	if(id==ID_LASER)
-		obj->pointer.positionableentity=new LaserSensorSim;
-	if(id==ID_LASER3D)
-		obj->pointer.positionableentity=new LaserSensor3DSim;
-	if(id==ID_NEMOLASER)
-		obj->pointer.positionableentity=new NemoLaserSensor3DSim;
+		obj=new NodeTree(new SpherePart,this);
+	else if(id==ID_ADDCYL)
+		obj=new NodeTree(new CylindricalPart,this);
+	else if(id==ID_ADDPRI)
+		obj=new NodeTree(new PrismaticPart,this);
+    else if(id==ID_ADDIRRPRI)
+	{	obj=new NodeTree(new PrismaticPart,this);obj->setTipo(N_IrregularPrismaticPart);}
+	else if(id==ID_ADDFACESET)
+		obj=new NodeTree(new FaceSetPart,this);
+	else if(id==ID_ADDNEO)
+		obj=new NodeTree(new  Pioneer3ATSim,this);
+	else if(id==ID_ADDSCARA)
+		obj=new NodeTree(new AdeptOneSim,this);
+	else if(id==ID_ADDPUMA)
+		obj=new NodeTree(new  Puma560Sim,this);
+	else if(id==ID_ADDASEA)
+		obj=new NodeTree(new AseaIRB2000Sim,this);
+	else if(id==ID_ADDCUSTOM)
+		obj=new NodeTree(new ComposedEntity,this);
+	else if(id==ID_WHEEL)
+		obj=new NodeTree(new WheeledBaseSim,this);
+	else if(id==ID_LMS200)
+		obj=new NodeTree(new LMS200Sim,this);
+	else if(id==ID_PATROL)
+		obj=new NodeTree(new PatrolbotSim,this);
+	else if(id==ID_LMS100)
+		obj=new NodeTree(new LMS100Sim,this);
+	else if(id==ID_POWERCUBE)
+		obj=new NodeTree(new PowerCube70Sim,this);
+	else if(id==ID_CAMERA)
+		obj=new NodeTree(new CameraSim,this);
+	else if(id==ID_KINECT)
+		obj=new NodeTree(new KinectSim,this);
+	else if(id==ID_MOBILEROBOT)
+		obj=new NodeTree(new MobileRobot(""),this);
+	else if(id==ID_QUADROTOR)
+		obj=new NodeTree(new QuadrotorSim,this);
+	else if(id==ID_PERSON)
+		obj=new NodeTree(new PersonSim,this);
+	else if(id==ID_LASER)
+		obj=new NodeTree(new LaserSensorSim,this);
+	else if(id==ID_LASER3D)
+		obj=new NodeTree(new LaserSensor3DSim,this);
+	else if(id==ID_NEMOLASER)
+		obj=new NodeTree(new NemoLaserSensor3DSim,this);
+	else 
+		obj=new NodeTree(new PositionableEntity,this);
 
 	// Object addition or world addition//
 	
 	if(tree->GetSelection()!=mainNode)
 	{
-		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
+		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection(),this);
 		itemData->pointer.composedentity->addObject(obj->pointer.positionableentity);
 	}
 	else
 	{
 		(*m_world)+=obj->pointer.positionableentity;
-		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection());
+		newNode=tree->AddNode(obj->pointer.positionableentity,tree->GetSelection(),this);
 	}
 	
 	tree->Expand(tree->GetSelection());
@@ -88,8 +102,9 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 
 
 	// Initial Properties //
-	InitialProperties *ini= new InitialProperties(mainWin,obj,this,wxT("Properties")); 
+	InitialProperties *ini= new InitialProperties(mainWin,obj,wxT("Properties"),id); 
 	ini->ShowModal();
+	
 
 
 	if(ini->GetButtom()==false)

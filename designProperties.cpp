@@ -7,11 +7,11 @@ BEGIN_EVENT_TABLE(DesignProperties, wxDialog)
 	EVT_CLOSE(DesignProperties::OnClose)
 END_EVENT_TABLE()
 
-DesignProperties::DesignProperties(wxWindow *parent, NodeTree *itemData,SimulatedWorld *s_world, const wxString& title)
+DesignProperties::DesignProperties(wxWindow *parent, NodeTree *itemData, const wxString& title)
 :wxDialog(parent,wxID_ANY,title, wxPoint(10,10), wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
 	node=itemData;
-	world=s_world;
+	world=itemData->getSimu();
 	CreatePanel();
 	
 
@@ -19,8 +19,7 @@ DesignProperties::DesignProperties(wxWindow *parent, NodeTree *itemData,Simulate
 
 void DesignProperties::CreatePanel()
 {
-	DesignWidget *design=new DesignWidget(this,wxID_ANY,node,world,wxEmptyString,wxDefaultPosition,wxDefaultSize,MainWindow::design_slider,true);
-	
+	DesignWidget *design=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize,MainWindow::design_slider,true);
 	
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *b_box=new wxBoxSizer(wxHORIZONTAL);
@@ -48,8 +47,6 @@ void DesignProperties::OnButton(wxCommandEvent& event)
 	
 	if(id==ID_CANCEL)
 		Close(true);	
-	
-
 }
 
 void DesignProperties::OnClose(wxCloseEvent& event)

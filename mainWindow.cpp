@@ -2,6 +2,10 @@
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
+	EVT_MENU(ID_LNSERVER, MainWindow::OnConnection)
+	EVT_MENU(ID_STSERVER, MainWindow::OnConnection)
+	EVT_MENU(ID_LNCLIENT, MainWindow::OnConnection)
+	EVT_MENU(ID_STCLIENT, MainWindow::OnConnection)
 	EVT_MENU(ID_ADDOBJ, MainWindow::AddObject)
 	EVT_MENU(ID_ADDCOMP, MainWindow::AddObject)
 	EVT_MENU(ID_ADDSPHERE, MainWindow::AddObject)
@@ -12,6 +16,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_ADDNEO, MainWindow::AddObject)
 	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
 	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
+	EVT_MENU(ID_ADDIRRPRI, MainWindow::AddObject)
 	EVT_MENU(ID_ADDFACESET, MainWindow::AddObject)
 	EVT_MENU(ID_POWERCUBE, MainWindow::AddObject)
 	EVT_MENU(ID_LMS200, MainWindow::AddObject)
@@ -21,6 +26,11 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_LASER, MainWindow::AddObject)
 	EVT_MENU(ID_LASER3D, MainWindow::AddObject)
 	EVT_MENU(ID_NEMOLASER, MainWindow::AddObject)
+	EVT_MENU(ID_CAMERA, MainWindow::AddObject)
+	EVT_MENU(ID_KINECT, MainWindow::AddObject)
+	EVT_MENU(ID_MOBILEROBOT, MainWindow::AddObject)
+	EVT_MENU(ID_PERSON, MainWindow::AddObject)
+	EVT_MENU(ID_QUADROTOR, MainWindow::AddObject)
 	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
 	EVT_MENU(wxID_EXIT, MainWindow::OnQuit)
 	EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
@@ -35,6 +45,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_CLOSE(MainWindow::OnClose)
 	EVT_SIZE(MainWindow::OnSize)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
+	EVT_MENU(ID_VIS_CONNLOG,MainWindow::OnVisibleConnectionLog)
 	EVT_MENU(SLI_VERT,MainWindow::PropertiesDisplay)
 	EVT_MENU(CONT_MENU,MainWindow::PropertiesDisplay)
 	EVT_MENU(DROP_MENU,MainWindow::PropertiesDisplay)
@@ -62,8 +73,9 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 END_EVENT_TABLE()
 
 bool MainWindow::slider=true;
-bool MainWindow::popmenu=false;
+bool MainWindow::popmenu=true;
 bool MainWindow::design_slider=true;
+
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
@@ -72,6 +84,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	
 	Centre();
 	treeVisible=true;
+	
 	
 
 #if wxUSE_STATUSBAR
@@ -104,6 +117,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
+
+	connection=new RobotConnection(this,wxT("Server Configuration"));
+	
 	
 }
 
@@ -218,6 +234,14 @@ void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
 	#endif // wxUSE_MDI_ARCHITECTURE
+}
+
+void MainWindow::OnVisibleConnectionLog(wxCommandEvent& event)
+{
+	if(connection->getLogVisible())
+		connection->ShowConnLog(false);
+	else
+		connection->ShowConnLog(true);
 }
 
 void MainWindow::AddObject(wxCommandEvent& event)
@@ -372,17 +396,8 @@ void MainWindow::OnDesign(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
-
-	for(int i= 0; i<listWorlds.size(); i++)
-	{
-		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
-		{	
-			DesignProperties *design=new DesignProperties(this,itemData,listWorlds[i],wxT("Design Properties"));
-			design->ShowModal();
-			
-		}
-	}
-		  			
+	DesignProperties *design=new DesignProperties(this,itemData,wxT("Design Properties"));
+	design->ShowModal();		  			
 }
 
 void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
@@ -477,7 +492,7 @@ void MainWindow::OnLoadMesh(wxCommandEvent& WXUNUSED(event))
 					return;
 				}
 				listWorlds[i]->getChild()->UpdateWorld();
-				tree->AddNode(mesh, listWorlds[i]->getTreeItem());
+				tree->AddNode(mesh, listWorlds[i]->getTreeItem(),listWorlds[i]);
 			}
 			wxFileInputStream input(openFileDialog.GetPath());
 			if (!input.IsOk())
@@ -510,7 +525,7 @@ void MainWindow::OnLoadObject(wxCommandEvent& WXUNUSED(event))
 				{
 					(*listWorlds[i]->getWorld())+=p_obj;
 					listWorlds[i]->getChild()->UpdateWorld();
-					tree->AddNode(p_obj, listWorlds[i]->getTreeItem());
+					tree->AddNode(p_obj, listWorlds[i]->getTreeItem(),listWorlds[i]);
 				}
 			}
 			wxFileInputStream input(openFile.GetPath());
@@ -794,7 +809,45 @@ void  MainWindow::Search(wxTreeItemId search,bool toogle)
 
 }
 	
+void MainWindow::OnConnection(wxCommandEvent& event)
+{
+
+	int id=event.GetId();
+	wxTreeItemId item=tree->GetSelection();
+	NodeTree *server = item.IsOk() ? (NodeTree *) tree->GetItemData(item)
+		:NULL;
+
+	if(id==ID_LNSERVER)
+	{
+		
+		connection->SendData(server);
+		if(server->typeConnection)tree->SetItemTextColour(item,*wxRED);
+		
+	}
+
+	if(id==ID_STSERVER)
+	{
+		
+		connection->CloseServer(server);
+		tree->SetItemTextColour(item,*wxBLACK);
+	}
+
 	
+	if(id==ID_LNCLIENT)
+	{
+		
+		connection->ReceiveData(server);
+		if(server->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
+	}
+
+	if(id==ID_STCLIENT)
+	{
+		
+		connection->DisconnectClient(server);
+		tree->SetItemTextColour(item,*wxBLACK);
+	}
+
+}
 		
 	
 

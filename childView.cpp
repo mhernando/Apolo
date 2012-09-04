@@ -70,6 +70,7 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	file_menu->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
 	file_menu->AppendSeparator();
 	file_menu->AppendCheckItem(ID_VIS_TREE,wxT("Unvisible Tree"));
+	file_menu->AppendCheckItem(ID_VIS_CONNLOG, wxT("Unvisible ConnectionLog"));
 	file_menu->AppendSeparator();
 	file_menu->Append(wxID_EXIT, wxT("Close all"), wxT("Quit the program"));
 

@@ -72,7 +72,7 @@ public:
 	wxTreeItemId GetWorld(wxTreeItemId i);
 	Tree(wxWindow * parent, const wxWindowID id);
 	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
-	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent);
+	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent,SimulatedWorld *simu);
 	void Parent(wxTreeItemId r);
 	Tree::m_item SimplyItems(int id,string name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);

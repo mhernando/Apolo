@@ -16,7 +16,7 @@ class DesignProperties:public wxDialog
 {
 
 public:
-	DesignProperties(wxWindow *parent,NodeTree *obj, SimulatedWorld *s_world, const wxString& title);
+	DesignProperties(wxWindow *parent,NodeTree *obj,const wxString& title);
 	void OnButton(wxCommandEvent& event);
 	void OnClose(wxCloseEvent& event);
 	void CreatePanel();

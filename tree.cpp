@@ -75,10 +75,9 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	wxTreeItemId world=i;
 	if(GetItemParent(world)==root)
 		return world;
-	else if(GetItemParent(world)==NULL)
-		return 0;
-	else
-		GetWorld(GetItemParent(world));
+	//else if(GetItemParent(world)==NULL)
+	//	return 0;
+	GetWorld(GetItemParent(world));
 }
 
 
@@ -90,31 +89,28 @@ wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 {
 	static int num = 0;
 	text.Printf(wxT("World %d"),++num);
-	NodeTree *auxW = new NodeTree(w);
+	NodeTree *auxW = new NodeTree(w,simu);
 	wxTreeItemId node = AppendItem(root, text, 37, 38,auxW);
 	auxW->SetId(node);
-	auxW->simuWorld=simu;
 	for (int i=0;i<w->getNumObjects();i++)
 	{
-		AddNode((*w)[i],node);
+		AddNode((*w)[i],node,simu);
 	}
 	return node;
 }
 
 
 
-wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent)
+wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWorld *simu)
 {
-	NodeTree *auxP = new NodeTree(pos);
+	NodeTree *auxP = new NodeTree(pos,simu);
 	
 	wxTreeItemId mynode = AppendItem(parent, auxP->getNameTree(), auxP->bit, auxP->bitsel, auxP);
 	auxP->SetId(mynode);
-	
-	auxP->simuWorld = ((NodeTree *)GetItemData(parent))->getSimu();
 	ComposedEntity * auxC = dynamic_cast<ComposedEntity *>(pos);
 	if(auxC)
 		for(int j=0;j<auxC->getNumObjects();j++)
-			AddNode((*auxC)[j],mynode);
+			AddNode((*auxC)[j],mynode,simu);
 		
 	
 	return mynode;
@@ -168,21 +164,26 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.AppendSubMenu(composed,wxT("Add Complex Entities"));
 		
 		///Number of items for Simple Entities Menu///
-		#define NUMBER_S 7
-		#define NUMBER_C 9
+		#define NUMBER_S 10
+		#define NUMBER_C 12
 		m_item simples[NUMBER_S];
 		m_item compos[NUMBER_C];
 		wxMenuItem *item_s[NUMBER_S];
 		wxMenuItem *item_c[NUMBER_C];
 		
-		simples[0]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
-		simples[1]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
-		simples[2]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
-		simples[3]=SimplyItems(ID_ADDFACESET,"Face Set",wxIcon(faceSetPart_xpm));
-		simples[4]=SimplyItems(ID_WHEEL,"Wheeled Base",wxIcon(wheeledBase_xpm));
-		simples[5]=SimplyItems(ID_LASER,"Laser Sensor",wxIcon(laser_xpm));
-		simples[6]=SimplyItems(ID_LASER3D,"Laser Sensor 3D",wxIcon(laser_xpm));
+		simples[0]=SimplyItems(ID_ADDFACESET,"Face Set",wxIcon(faceSetPart_xpm));
+		simples[1]=SimplyItems(ID_ADDSPHERE,"Sphere",wxIcon(sphere_xpm));
+		simples[2]=SimplyItems(ID_ADDCYL,"Cylinder",wxIcon(cylindrical_xpm));
+		simples[3]=SimplyItems(ID_ADDPRI,"Prism",wxIcon(prismatic_xpm));
+		simples[4]=SimplyItems(ID_ADDIRRPRI,"Irregular Prism",wxIcon(prismatic_xpm));	
+		simples[5]=SimplyItems(ID_WHEEL,"Wheeled Base",wxIcon(wheeledBase_xpm));
+		simples[6]=SimplyItems(ID_KINECT,"Kinect",wxIcon(laser_xpm));
+		simples[7]=SimplyItems(ID_CAMERA,"Camera",wxIcon(laser_xpm));
+		simples[8]=SimplyItems(ID_LASER,"Laser",wxIcon(laser_xpm));
+		simples[9]=SimplyItems(ID_LASER3D,"Laser3D",wxIcon(laser_xpm));
 		
+		
+
 		compos[0]=SimplyItems(ID_ADDSCARA,"Robot SCARA",wxIcon(scara_xpm));
 		compos[1]=SimplyItems(ID_ADDNEO,"Robot PIONEER",wxIcon(pioneer_xpm));
 		compos[2]=SimplyItems(ID_ADDPUMA,"Robot PUMA",wxIcon(robotSim_xpm));
@@ -192,8 +193,10 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		compos[6]=SimplyItems(ID_LMS200,"LMS200",wxIcon(sickLms_xpm));
 		compos[7]=SimplyItems(ID_POWERCUBE,"PowerCube",wxIcon(powercube_xpm));
 		compos[8]=SimplyItems(ID_NEMOLASER,"NemoLaser Sensor 3D ",wxIcon(nemolaser_xpm));
-	
-					
+		compos[9]=SimplyItems(ID_QUADROTOR,"Quadrotor",wxIcon(powercube_xpm));
+		compos[10]=SimplyItems(ID_PERSON,"Person",wxIcon(laser_xpm));
+		compos[11]=SimplyItems(ID_MOBILEROBOT,"Mobile Robot",wxIcon(nemolaser_xpm));			
+		
 		for( int i=0; i<NUMBER_S;i++)
 		{
 		
@@ -229,7 +232,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		}
 		
 		wxMenu menuTree(title);
-		if(itemData->menus.menu_composed ) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
+		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
 		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
@@ -237,7 +240,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_positionable)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
-		if(itemData->menus.menu_solid && itemData->menus.menu_composed==false) menuTree.Append(ID_DIS, wxT("Change design properties"));
+		if(itemData->menus.menu_solid && itemData->menus.menu_composed==false && itemData->getTipo()!=N_FaceSetPart) menuTree.Append(ID_DIS, wxT("Change design properties"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==1) menuTree.Append(ID_REFER, wxT("Undraw Reference System"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==0) menuTree.Append(ID_REFER, wxT("Draw Reference System"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_NAME, wxT("Change name"));
@@ -251,6 +254,12 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
 		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
 		if(itemData->menus.menu_meshpart) menuTree.Append(ID_CONVERMESH, wxT("See Cpp Code"));
+		if(itemData->menus.menu_server) menuTree.AppendSeparator();
+		if(itemData->menus.menu_server && itemData->typeConnection==0) menuTree.Append(ID_LNSERVER, wxT("Launch Server"));
+		if(itemData->menus.menu_server && itemData->typeConnection==1) menuTree.Append(ID_STSERVER, wxT("Stop Sending Data"));
+		if(itemData->menus.menu_server && itemData->typeConnection==0) menuTree.Append(ID_LNCLIENT, wxT("Launch Client"));
+		if(itemData->menus.menu_server && itemData->typeConnection==2) menuTree.Append(ID_STCLIENT, wxT("Stop Receiving Data"));
+
 
 		PopupMenu(&menuTree,pt);
 	}

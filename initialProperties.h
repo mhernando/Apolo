@@ -10,20 +10,23 @@
 
 class PositionableWidget;
 class FaceWindow;
+class FaceWidget;
+
 class InitialProperties:public wxDialog
 {
 
 public:
-	InitialProperties(wxWindow *parent,NodeTree *obj,SimulatedWorld *s_world, const wxString& title);
+	InitialProperties(wxWindow *parent,NodeTree *obj, const wxString& title,wxWindowID id=0);
 	void OnButton(wxCommandEvent& event);
-	int GetButtom(){return b_sel;};
-	void OnClose(wxCloseEvent& event);
+	bool GetButtom(){return b_sel;}
+	void InitialProperties::RefreshCanvas(wxCommandEvent &event);
 //	void Update(wxWindowCreateEvent& event);
 	void CreatePanel();
 
 private:
 	
 	FaceWindow *face;
+	FaceWidget *base;
 	Canvas *canvas1,*canvas2;
 	bool b_sel;
 	wxButton *accept;
@@ -38,6 +41,7 @@ private:
 	DesignWidget *dp;
 	wxString defName;
 	double red,green,blue;
+	wxWindowID wID;
 	
 
 	DECLARE_EVENT_TABLE();

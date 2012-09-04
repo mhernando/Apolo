@@ -31,8 +31,9 @@ void GenericSlider::OnEnter(wxCommandEvent& event)
 {
 	
 	int a = event.GetId();
+	scroll=true ;
 	double val=0;
-		if(m_value->GetValue().ToDouble(&val))setValue(val);
+	if(m_value->GetValue().ToDouble(&val))	setValue(val); 
 		else 
 		{
 			wxLogMessage(wxT("Write a number"));
@@ -50,7 +51,7 @@ void GenericSlider::OnSliderProperties(wxCommandEvent& event)
 }
 void GenericSlider::OnScroll(wxScrollEvent& event)
 {
-	scroll=true;
+	scroll=true ;
 	value=currentMin+((m_slider->GetValue())*(currentMax-currentMin)/100.0);
 	setValue(value);
 	
@@ -121,17 +122,21 @@ void GenericSlider::setValue(double val)
 	
 	
 
-	if(scroll)
-	{
+
 		
-	scroll=false;
+	if(scroll) // For Security (only propagate the event when  a scroll event is issued)
+	{
 	//report to the parent window... a value have changed
 	wxCommandEvent sliderEvent( wxEVT_GENERIC_SLIDER_CHANGE,GetId() );
+	sliderEvent.ResumePropagation(2);
 	sliderEvent.SetEventObject( parent);
+	
 	// Send it
 	parent->GetEventHandler()->ProcessEvent( sliderEvent );
-	
+	parent->GetParent()->GetEventHandler()->ProcessEvent( sliderEvent );
+	scroll=false;
 	}
+
 }
 void GenericSlider::setCurrentMinMax(double _min, double _max)
 {
