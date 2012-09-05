@@ -15,6 +15,14 @@
 #include "converter.h"
 #include "apoloPanel.h"
 #include "objectSelection.h"
+
+#include "bitmaps/new.xpm"
+#include "bitmaps/apolo.xpm"
+#include "bitmaps/loadWorld.xpm"
+#include "bitmaps/loadObject.xpm"
+#include "bitmaps/saveWorld.xpm"
+#include "bitmaps/saveObject.xpm"
+
 #include <wx/wx.h>
 #include <wx/menu.h>
 #include <wx/splitter.h>
@@ -25,12 +33,7 @@
 #include <wx/colordlg.h> 
 #include <wx/aui/auibook.h>
 #include <wx/laywin.h>
-#include "bitmaps/new.xpm"
-#include "bitmaps/apolo.xpm"
-#include "bitmaps/loadWorld.xpm"
-#include "bitmaps/loadObject.xpm"
-#include "bitmaps/saveWorld.xpm"
-#include "bitmaps/saveObject.xpm"
+
 
 using namespace std;
 
@@ -67,6 +70,7 @@ public:
 	void OnSaveObject(wxCommandEvent& event);
 	void OnDeleteWorld(wxCommandEvent& event);
 	void OnConnection(wxCommandEvent& event);
+	void OnLaserStyle(wxCommandEvent& event);
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);

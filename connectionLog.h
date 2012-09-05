@@ -19,6 +19,7 @@ public:
 	void AddConnection(NodeTree *robot);
 	void StateConnection(NodeTree *robot,bool connected);
 	void DeleteConnection(NodeTree *robot);
+	bool IsObjectConnected();
 	wxGrid *grid;
 	
 

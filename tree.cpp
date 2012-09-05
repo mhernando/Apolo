@@ -232,11 +232,19 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		}
 		
 		wxMenu menuTree(title);
-		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
-		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
-		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
-		if(itemData->menus.menu_positionable) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
-		if(itemData->menus.menu_positionable) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
+		
+		//Submenu for laser styles///
+		wxMenu *menuLaser=new wxMenu();
+		menuLaser->Append(ID_LASMOD0, wxT("Laser Style 1"));
+		menuLaser->Append(ID_LASMOD1, wxT("Laser Style 2"));
+		menuLaser->Append(ID_LASMOD2, wxT("Laser Style 3"));
+		menuLaser->Append(ID_LASMOD3, wxT("Laser Style 4"));
+		///////
+		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
+		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
+		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
+		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
+		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
@@ -252,6 +260,8 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_wheeledbased) menuTree.Append(ID_MOVE, wxT("Move control"));
 		if(itemData->menus.menu_robotsim) menuTree.AppendSeparator();
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
+		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
+		if(itemData->menus.menu_laser) menuTree.AppendSubMenu(menuLaser,wxT("Laser Styles"));
 		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
 		if(itemData->menus.menu_meshpart) menuTree.Append(ID_CONVERMESH, wxT("See Cpp Code"));
 		if(itemData->menus.menu_server) menuTree.AppendSeparator();

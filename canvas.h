@@ -17,6 +17,7 @@ public:
 	void SetViewPoint(double dist_or_2Dx,double rot_or_2Dy,double elv_or_2Dfx,double s2Dfy=0);
 	double GetViewPoint(double &dist_or_2Dix,double &rot_or_2Diy,double &elv_or_2Dfx,double s2Dfy=0);
 	void SetViewCenter(double x, double y, double z);
+	void SetShowFrame(bool show);
 	void ClearObjects();
 	void Paint(wxPaintEvent& event);
 	void Resized(wxSizeEvent& event);

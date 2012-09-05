@@ -81,6 +81,14 @@ void ConnectionLog::DeleteConnection(NodeTree *robot)
 
 }
 
+bool ConnectionLog::IsObjectConnected()
+{
+	if(log.size()>0)
+		return true;
+	else
+		return false;
+}
+
 void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 {
 
@@ -114,15 +122,16 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 				{
 					state=wxT("Receiving Data");
 					colour=*wxGREEN;
-					address=robot->client.getAddress;
-					host=robot->client.getHost;
-					port<<robot->client.getPort;
+					
+					host=robot->client.Host;
+					
 	
 				}
 				else
 					state=wxT("Waiting Server");
-		
-		
+			
+				address=robot->client.Address;
+				port<<robot->client.Port;
 		
 			}
 			
