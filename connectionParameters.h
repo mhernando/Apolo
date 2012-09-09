@@ -11,7 +11,7 @@ class ConnectionParameters:public wxDialog
 
 {
 public:
-	ConnectionParameters(wxWindow *parent,bool s_c,const wxString& title,wxPoint point=wxDefaultPosition,wxSize size=wxDefaultSize);
+	ConnectionParameters(wxWindow *parent,bool s_c,const wxString& title,wxPoint point=wxPoint(10,10),wxSize size=wxDefaultSize);
 	void CreatePanel(bool sc);
 	void OnButton(wxCommandEvent& event);
 	bool IsAccepted(){return accept;}
@@ -20,7 +20,8 @@ public:
 
 private:
 	bool accept;
-	wxString defPort,defAdress,defClients;
+	bool serv_client;
+	wxString defPort,defAddress,defClients;
 	wxString address_clients;
 	wxString port;
 	wxTextCtrl *clients_address_box;

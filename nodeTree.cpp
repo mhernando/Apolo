@@ -87,8 +87,6 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		if(name.empty())name = "Robot"; 
 	}
 
-
-
 	if(dynamic_cast<LaserSensor3DSim *>(pos))
 	{
 		pointer.lasersensor3dsim = dynamic_cast<LaserSensor3DSim *>(pos);
@@ -329,8 +327,8 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	{
 		pointer.aseaIRB2000Sim = dynamic_cast<AseaIRB2000Sim *>(pos);
 		tipo = N_AseaIRB2000;
-		bit = Bit_asea;
-		bitsel = BitSel_asea;
+		bit = Bit_robotsim;
+		bitsel = BitSel_robotsim;
 		name = pos->getName();
 		if(name.empty())name = "Asea IRB2000";
 		return;

@@ -187,7 +187,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		compos[0]=SimplyItems(ID_ADDSCARA,"Robot SCARA",wxIcon(scara_xpm));
 		compos[1]=SimplyItems(ID_ADDNEO,"Robot PIONEER",wxIcon(pioneer_xpm));
 		compos[2]=SimplyItems(ID_ADDPUMA,"Robot PUMA",wxIcon(robotSim_xpm));
-		compos[3]=SimplyItems(ID_ADDASEA,"Robot ASEA",wxIcon(asea_xpm));
+		compos[3]=SimplyItems(ID_ADDASEA,"Robot ASEA",wxIcon(robotSim_xpm));
 		compos[4]=SimplyItems(ID_PATROL,"Robot PatrolBot",wxIcon(wheeledBase_xpm));
 		compos[5]=SimplyItems(ID_LMS100,"LMS100",wxIcon(sickLms_xpm));
 		compos[6]=SimplyItems(ID_LMS200,"LMS200",wxIcon(sickLms_xpm));
@@ -235,17 +235,17 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		
 		//Submenu for laser styles///
 		wxMenu *menuLaser=new wxMenu();
-		menuLaser->Append(ID_LASMOD0, wxT("Laser Style 1"));
-		menuLaser->Append(ID_LASMOD1, wxT("Laser Style 2"));
-		menuLaser->Append(ID_LASMOD2, wxT("Laser Style 3"));
-		menuLaser->Append(ID_LASMOD3, wxT("Laser Style 4"));
+		menuLaser->Append(ID_LASMOD0, wxT("Points"));
+		menuLaser->Append(ID_LASMOD1, wxT("Rays"));
+		menuLaser->Append(ID_LASMOD2, wxT("Contour"));
+		menuLaser->Append(ID_LASMOD3, wxT("Detection"));
 		///////
 		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
-		if(itemData->menus.menu_positionable)menuTree.AppendSeparator();
+		if(itemData->menus.menu_positionable && itemData->typeConnection==0)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
 		if(itemData->menus.menu_solid && itemData->menus.menu_composed==false && itemData->getTipo()!=N_FaceSetPart) menuTree.Append(ID_DIS, wxT("Change design properties"));
@@ -260,7 +260,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_wheeledbased) menuTree.Append(ID_MOVE, wxT("Move control"));
 		if(itemData->menus.menu_robotsim) menuTree.AppendSeparator();
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
-		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
+		if(itemData->menus.menu_laser) menuTree.AppendSeparator();
 		if(itemData->menus.menu_laser) menuTree.AppendSubMenu(menuLaser,wxT("Laser Styles"));
 		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
 		if(itemData->menus.menu_meshpart) menuTree.Append(ID_CONVERMESH, wxT("See Cpp Code"));
