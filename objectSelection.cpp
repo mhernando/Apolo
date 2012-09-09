@@ -203,7 +203,7 @@ void ObjectSelection::CreateList()
 		ob_list->InsertItem(index,wxT("Robot PATROLBOT"),8);		ob_list->SetItem(index,1,wxT("Add PATROLBOT, a service robot which scan buildings and create floor plans")); 
 		ob_list->InsertItem(index,wxT("Robot PIONNER"),1);			ob_list->SetItem(index,1,wxT("Add PIONEER 3-AT, a versatile four wheel drive robotic platform")); 
 		ob_list->InsertItem(index,wxT("Person"),10);				ob_list->SetItem(index,1,wxT("Add Human Figure")); 
-		ob_list->InsertItem(index,wxT("Robot ASEA"),5);			ob_list->SetItem(index,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
+		ob_list->InsertItem(index,wxT("Robot ASEA"),5);				ob_list->SetItem(index,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
 		ob_list->InsertItem(index,wxT("Robot PUMA"),5);				ob_list->SetItem(index,1,wxT("Add PUMA560, a 6 degrees of freedom robot due to 6 revolution joints"));
 		ob_list->InsertItem(index,wxT("Robot SCARA"),3);			ob_list->SetItem(index,1,wxT("Add ADEPTONE-MV,a robot with 3 rotational and 1 translational joints"));
 
