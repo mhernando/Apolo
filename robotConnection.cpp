@@ -25,23 +25,28 @@ void RobotConnection::SendData(NodeTree *robot)
 	
 	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
 		robot->server.laserSensor->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_LaserSensor3DSim) 
+	else if(robot->getTipo()==N_LaserSensor3DSim) 
 		robot->server.laserSensor3D->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
 		robot->server.wheeledBase->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_CameraSim)
+	else if(robot->getTipo()==N_CameraSim)
 		robot->server.camera->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_KinectSim)
+	else if(robot->getTipo()==N_KinectSim)
 		robot->server.kinect->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_QuadrotorSim)
+	else if(robot->getTipo()==N_QuadrotorSim)
 		robot->server.quadrotor->init(atoi(port),atoi(address_client),true);
+	else return;
 	
 	robot->typeConnection=1;
 	getIP(robot->server.Address);
+	robot->server.Port=atoi(port);
 	connectionLog->AddConnection(robot);
+	
+	server_Thid.Start(&RobotConnection::UpdateServerState,this,robot);
 	ShowConnLog(logVisible);
-
 }
+
+
 
 void RobotConnection::ReceiveData(NodeTree *robot)
 {
@@ -56,6 +61,82 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 	client_Thid.Start(&RobotConnection::ConnectClient,this,robot);
 	ShowConnLog(logVisible);
 	
+}
+
+void* RobotConnection::UpdateServerState(void *server)
+{
+	NodeTree* robot=(NodeTree*)server;
+	bool isConnected=false;
+	int clients=0;
+	bool update=false;
+	
+	while(1)
+	{
+	
+		if(robot->typeConnection==0)
+			break;
+	
+		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
+		{
+			if(clients!=robot->server.laserSensor->getNumClientsConnected())
+			{
+				robot->server.Clients=robot->server.laserSensor->getNumClientsConnected();
+				clients=robot->server.Clients;
+				if(clients>0)isConnected=true; 
+				else isConnected=false;
+				update=true;
+			}		
+		}
+	/*else if(robot->getTipo()==N_LaserSensor3DSim) 
+	{
+		if(robot->server.laserSensor3D->hasClients())
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.laserSensor3D->getNumClientsConnected();
+		}
+	}	
+	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+	{
+		if(robot->server.wheeledBase->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.wheeledBase->getNumClientsConnected();
+		}
+	}
+	else if(robot->getTipo()==N_CameraSim)
+	{
+		if(robot->server.camera->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.camera->getNumClientsConnected();
+		}
+	}	
+	else if(robot->getTipo()==N_KinectSim)
+	{
+		if(robot->server.kinect->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.kinect->getNumClientsConnected();
+		}
+	}
+	else if(robot->getTipo()==N_QuadrotorSim)
+	{
+		if(robot->server.quadrotor->hasClients())
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.quadrotor->getNumClientsConnected();
+		}
+	}
+*/
+	if(update)
+	{
+		connectionLog->StateConnection(robot,isConnected);
+		update=false;
+	}
+	
+	}
+	return NULL;
+
 }
 void*  RobotConnection::ConnectClient(void *client)
 {
@@ -296,7 +377,9 @@ void*  RobotConnection::ConnectClient(void *client)
 	}
 
 
-return NULL;
+	else return NULL;
+
+	return NULL;
 }
 
 
