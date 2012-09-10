@@ -1,5 +1,6 @@
 #include "robotConnection.h"
 
+
 RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
 :wxDialog(parent,wxID_ANY,name,wxPoint(10,10),wxSize(200,400))
 {
@@ -12,7 +13,7 @@ RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
 
 void RobotConnection::SendData(NodeTree *robot)
 {
-
+	
 	ConnectionParameters *serverParam=new ConnectionParameters(this,true,wxT("Server Parameters"));
 	
 	serverParam->ShowModal();
@@ -36,6 +37,7 @@ void RobotConnection::SendData(NodeTree *robot)
 		robot->server.quadrotor->init(atoi(port),atoi(address_client),true);
 	
 	robot->typeConnection=1;
+	getIP(robot->server.Address);
 	connectionLog->AddConnection(robot);
 	ShowConnLog(logVisible);
 
@@ -64,10 +66,8 @@ void*  RobotConnection::ConnectClient(void *client)
 	{
 		
 		connectionLog->AddConnection(robot);
-		LaserData data;
-		
-		
-		
+		LaserData data,rdata;
+	
 		while(1)
 		{
 			if(robot->client.laserSensor->connect(robot->client.Address,robot->client.Port,false))
@@ -84,10 +84,9 @@ void*  RobotConnection::ConnectClient(void *client)
 					}
 					
 					robot->client.laserSensor->getData(data);
-
-		
+					robot->pointer.lasersensorsim->getData(rdata);
 					robot->pointer.lasersensorsim->setData(data);
-					robot->pointer.lasersensorsim->setDrawGLMode(data.drawGLMode);
+					robot->pointer.lasersensorsim->setDrawGLMode(rdata.drawGLMode);
 					data.clear();
 					
 				
@@ -344,3 +343,9 @@ void RobotConnection::ShowConnLog(bool showLog)
 	window->SetFocus();
 }
 
+void RobotConnection::getIP(wxString &ip)
+{
+	wxIPV4address addr;
+	addr.Hostname(wxGetFullHostName());
+	ip = addr.IPAddress();
+} 

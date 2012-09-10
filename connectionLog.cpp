@@ -18,6 +18,7 @@ void ConnectionLog::CreatePanel()
 {
 	grid=new wxGrid(this,-1, wxDefaultPosition,wxDefaultSize);
 	grid->CreateGrid(0,6);
+	grid->EnableEditing(false);
 	grid->SetColLabelValue(col,wxT("  Server/Client  "));
 	grid->SetColumnWidth(col,150);
 	grid->SetColLabelValue(++col,wxT("      State      "));
@@ -51,7 +52,7 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	
 	log.push_back(robot);
 	grid->AppendRows(1);
-	
+	for(int i=0;i<6;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
 	grid->SetRowLabelValue(row,robot->getNameTree());
 	
 	
@@ -102,8 +103,8 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 			if(robot->typeConnection==1)
 			{
 				
-			//grid->SetCellValue(row,--col,value<<robot->server.getPort);	
-			//grid->SetCellValue(row,--col,robot->server.getAdress);
+			//port=robot->server.Port;
+			address=robot->server.Address;
 			//grid->SetCellValue(row,--col,robot->server.getHost);
 			
 				if(connected)

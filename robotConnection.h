@@ -7,6 +7,7 @@
 #include "connectionParameters.h"
 #include "nodeTree.h"
 #include "wx/wx.h"
+#include <wx/socket.h>
 
 
 
@@ -22,6 +23,7 @@ public:
 	bool getLogVisible(){return logVisible;}
 	ConnectionLog *getLog(){return connectionLog;}
 	void ShowConnLog(bool showLog);
+	void getIP(wxString &ip);
 	void DisconnectClient(NodeTree *robot);
 	void ReceiveData(NodeTree *robot);
 	

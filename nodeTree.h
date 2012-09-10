@@ -140,6 +140,7 @@ struct MRServer
 	};
 	int Clients;
 	int Port;
+	wxString Address;
 
 };
 
