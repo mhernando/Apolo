@@ -11,9 +11,10 @@ ConnectionParameters::ConnectionParameters(wxWindow *parent,bool s_c,const wxStr
 									   
 {
 	defPort="13000";
-	defAdress="127.0.0.1";
+	defAddress="127.0.0.1";
 	defClients="5";
 	accept=false;
+	serv_client=s_c;
 	CreatePanel(s_c);	
 }
 
@@ -32,13 +33,13 @@ void ConnectionParameters::CreatePanel(bool sc)
 	
 	if(sc)
 	{
-	clients_address_text->SetName(wxT("Max. Clients :    "));
+	clients_address_text->SetLabel(wxT("Max. Clients :    "));
 	clients_address_box = new wxTextCtrl(this,wxID_ANY,defClients,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 	}
 	else
 	{
-	clients_address_text->SetName(wxT("Address :      "));
-	clients_address_box = new wxTextCtrl(this,wxID_ANY,defAdress,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
+	clients_address_text->SetLabel(wxT("Address :      "));
+	clients_address_box = new wxTextCtrl(this,wxID_ANY,defAddress,wxDefaultPosition,wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_CENTRE);
 	}
 	
 	wxButton *b_accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxDefaultSize);
@@ -76,7 +77,8 @@ void ConnectionParameters::OnButton(wxCommandEvent& event)
 	if(id==ID_DEFAULT)
 	{
 		port=defPort;
-		address_clients=defClients;
+		if(serv_client)address_clients=defClients;
+		else address_clients=defAddress;
 		Close(false);
 	}
 }
