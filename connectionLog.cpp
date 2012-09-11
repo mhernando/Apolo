@@ -77,8 +77,8 @@ void ConnectionLog::DeleteConnection(NodeTree *robot)
 			grid->DeleteRows(i,1,false);
 			row--;
 			log.erase(log.begin()+i);
-		};
-	};
+		}
+	}
 
 }
 

@@ -87,6 +87,19 @@ void* RobotConnection::UpdateServerState(void *server)
 				update=true;
 			}		
 		}
+
+		
+		else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+		{
+			if(clients!=robot->server.wheeledBase->getNumClientsConnected())
+			{
+				robot->server.Clients=robot->server.wheeledBase->getNumClientsConnected();
+				clients=robot->server.Clients;
+				if(clients>0)isConnected=true; 
+				else isConnected=false;
+				update=true;
+			}		
+		}
 	/*else if(robot->getTipo()==N_LaserSensor3DSim) 
 	{
 		if(robot->server.laserSensor3D->hasClients())
@@ -401,7 +414,7 @@ void RobotConnection::CloseServer(NodeTree *robot)
 
 void RobotConnection::DisconnectClient(NodeTree *robot)
 {
-		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim ) robot->client.laserSensor->close();
+		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim ) robot->client.laserSensor->close();
 		else if(robot->getTipo()==N_LaserSensor3DSim)robot->client.laserSensor3D->close();	
 		else if(robot->getTipo()==N_WheeledBaseSim  || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim ) robot->client.wheeledBase->close(); 
 		else if(robot->getTipo()==N_CameraSim)robot->client.camera->close();
