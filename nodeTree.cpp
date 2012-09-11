@@ -6,6 +6,11 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	
 	simuWorld=simu;
 	typeConnection=0;
+	server.Port=0;
+	server.Clients=0;
+	client.Port=0;
+	client.Host=wxEmptyString;
+	client.Address=wxEmptyString;
 	menus.menu_positionable = false;
 	menus.menu_solid = false;
 	menus.menu_laser = false;

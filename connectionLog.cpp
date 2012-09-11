@@ -18,6 +18,7 @@ void ConnectionLog::CreatePanel()
 {
 	grid=new wxGrid(this,-1, wxDefaultPosition,wxDefaultSize);
 	grid->CreateGrid(0,6);
+	grid->EnableEditing(false);
 	grid->SetColLabelValue(col,wxT("  Server/Client  "));
 	grid->SetColumnWidth(col,150);
 	grid->SetColLabelValue(++col,wxT("      State      "));
@@ -51,7 +52,7 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	
 	log.push_back(robot);
 	grid->AppendRows(1);
-	
+	for(int i=0;i<6;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
 	grid->SetRowLabelValue(row,robot->getNameTree());
 	
 	
@@ -73,11 +74,11 @@ void ConnectionLog::DeleteConnection(NodeTree *robot)
 	{
 		if(log[i]==robot)
 		{
-			grid->DeleteRows(i);
+			grid->DeleteRows(i,1,false);
 			row--;
 			log.erase(log.begin()+i);
-		};
-	};
+		}
+	}
 
 }
 
@@ -101,22 +102,23 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 		{
 			if(robot->typeConnection==1)
 			{
-				
-			//grid->SetCellValue(row,--col,value<<robot->server.getPort);	
-			//grid->SetCellValue(row,--col,robot->server.getAdress);
-			//grid->SetCellValue(row,--col,robot->server.getHost);
-			
+
 				if(connected)
 				{
 					state=wxT("Sending Data");
 					colour=*wxRED;
+					
 				}
 				else	state=wxT("Waiting Clients");
+				
+				port<<robot->server.Port;
+				address=robot->server.Address;
+				client<<robot->server.Clients;
 			}
 
 			
 
-			if(robot->typeConnection==2)
+			else if(robot->typeConnection==2)
 			{
 				if(connected)
 				{
@@ -132,12 +134,13 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 			
 				address=robot->client.Address;
 				port<<robot->client.Port;
+				client=wxEmptyString;
 		
 			}
 			
 			grid->SetCellValue(i,++col,state);
 			grid->SetCellBackgroundColour(i,col,colour);
-			grid->SetCellValue(i,++col,"");
+			grid->SetCellValue(i,++col,client);
 			grid->SetCellValue(i,++col,host);
 			grid->SetCellValue(i,++col,address);
 			grid->SetCellValue(i,++col,port);

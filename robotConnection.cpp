@@ -1,5 +1,6 @@
 #include "robotConnection.h"
 
+
 RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
 :wxDialog(parent,wxID_ANY,name,wxPoint(10,10),wxSize(200,400))
 {
@@ -12,7 +13,7 @@ RobotConnection::RobotConnection(wxWindow *parent,const wxString &name)
 
 void RobotConnection::SendData(NodeTree *robot)
 {
-
+	
 	ConnectionParameters *serverParam=new ConnectionParameters(this,true,wxT("Server Parameters"));
 	
 	serverParam->ShowModal();
@@ -24,22 +25,28 @@ void RobotConnection::SendData(NodeTree *robot)
 	
 	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
 		robot->server.laserSensor->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_LaserSensor3DSim) 
+	else if(robot->getTipo()==N_LaserSensor3DSim) 
 		robot->server.laserSensor3D->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
 		robot->server.wheeledBase->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_CameraSim)
+	else if(robot->getTipo()==N_CameraSim)
 		robot->server.camera->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_KinectSim)
+	else if(robot->getTipo()==N_KinectSim)
 		robot->server.kinect->init(atoi(port),atoi(address_client),true);
-	if(robot->getTipo()==N_QuadrotorSim)
+	else if(robot->getTipo()==N_QuadrotorSim)
 		robot->server.quadrotor->init(atoi(port),atoi(address_client),true);
+	else return;
 	
 	robot->typeConnection=1;
+	getIP(robot->server.Address);
+	robot->server.Port=atoi(port);
 	connectionLog->AddConnection(robot);
+	
+	server_Thid.Start(&RobotConnection::UpdateServerState,this,robot);
 	ShowConnLog(logVisible);
-
 }
+
+
 
 void RobotConnection::ReceiveData(NodeTree *robot)
 {
@@ -55,6 +62,95 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 	ShowConnLog(logVisible);
 	
 }
+
+void* RobotConnection::UpdateServerState(void *server)
+{
+	NodeTree* robot=(NodeTree*)server;
+	bool isConnected=false;
+	int clients=0;
+	bool update=false;
+	
+	while(1)
+	{
+	
+		if(robot->typeConnection==0)
+			break;
+	
+		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
+		{
+			if(clients!=robot->server.laserSensor->getNumClientsConnected())
+			{
+				robot->server.Clients=robot->server.laserSensor->getNumClientsConnected();
+				clients=robot->server.Clients;
+				if(clients>0)isConnected=true; 
+				else isConnected=false;
+				update=true;
+			}		
+		}
+
+		
+		else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+		{
+			if(clients!=robot->server.wheeledBase->getNumClientsConnected())
+			{
+				robot->server.Clients=robot->server.wheeledBase->getNumClientsConnected();
+				clients=robot->server.Clients;
+				if(clients>0)isConnected=true; 
+				else isConnected=false;
+				update=true;
+			}		
+		}
+	/*else if(robot->getTipo()==N_LaserSensor3DSim) 
+	{
+		if(robot->server.laserSensor3D->hasClients())
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.laserSensor3D->getNumClientsConnected();
+		}
+	}	
+	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+	{
+		if(robot->server.wheeledBase->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.wheeledBase->getNumClientsConnected();
+		}
+	}
+	else if(robot->getTipo()==N_CameraSim)
+	{
+		if(robot->server.camera->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.camera->getNumClientsConnected();
+		}
+	}	
+	else if(robot->getTipo()==N_KinectSim)
+	{
+		if(robot->server.kinect->hasClients()) 
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.kinect->getNumClientsConnected();
+		}
+	}
+	else if(robot->getTipo()==N_QuadrotorSim)
+	{
+		if(robot->server.quadrotor->hasClients())
+		{ 
+			isConnected=true; 
+			robot->server.Clients=robot->server.quadrotor->getNumClientsConnected();
+		}
+	}
+*/
+	if(update)
+	{
+		connectionLog->StateConnection(robot,isConnected);
+		update=false;
+	}
+	
+	}
+	return NULL;
+
+}
 void*  RobotConnection::ConnectClient(void *client)
 {
 	NodeTree* robot=(NodeTree*)client;
@@ -64,10 +160,8 @@ void*  RobotConnection::ConnectClient(void *client)
 	{
 		
 		connectionLog->AddConnection(robot);
-		LaserData data;
-		
-		
-		
+		LaserData data,rdata;
+	
 		while(1)
 		{
 			if(robot->client.laserSensor->connect(robot->client.Address,robot->client.Port,false))
@@ -84,10 +178,9 @@ void*  RobotConnection::ConnectClient(void *client)
 					}
 					
 					robot->client.laserSensor->getData(data);
-
-		
+					robot->pointer.lasersensorsim->getData(rdata);
 					robot->pointer.lasersensorsim->setData(data);
-					robot->pointer.lasersensorsim->setDrawGLMode(data.drawGLMode);
+					robot->pointer.lasersensorsim->setDrawGLMode(rdata.drawGLMode);
 					data.clear();
 					
 				
@@ -297,7 +390,9 @@ void*  RobotConnection::ConnectClient(void *client)
 	}
 
 
-return NULL;
+	else return NULL;
+
+	return NULL;
 }
 
 
@@ -319,7 +414,7 @@ void RobotConnection::CloseServer(NodeTree *robot)
 
 void RobotConnection::DisconnectClient(NodeTree *robot)
 {
-		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LaserSensorSim ) robot->client.laserSensor->close();
+		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim ) robot->client.laserSensor->close();
 		else if(robot->getTipo()==N_LaserSensor3DSim)robot->client.laserSensor3D->close();	
 		else if(robot->getTipo()==N_WheeledBaseSim  || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim ) robot->client.wheeledBase->close(); 
 		else if(robot->getTipo()==N_CameraSim)robot->client.camera->close();
@@ -344,3 +439,9 @@ void RobotConnection::ShowConnLog(bool showLog)
 	window->SetFocus();
 }
 
+void RobotConnection::getIP(wxString &ip)
+{
+	wxIPV4address addr;
+	addr.Hostname(wxGetFullHostName());
+	ip = addr.IPAddress();
+} 
