@@ -16,7 +16,7 @@ DECLARE_EVENT_TYPE(wxEVT_GENERIC_SLIDER_CHANGE, -1)
 class GenericSlider: public wxPanel
 {
 public:
-	GenericSlider(wxWindow *window, const wxString label, const wxPoint& pos = wxDefaultPosition,
+	GenericSlider(wxWindow *window,  wxString label, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(60,200),bool orientation = true);
 	
 	void OnEnter(wxCommandEvent& event);

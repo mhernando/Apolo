@@ -32,7 +32,7 @@ void ConnectionLog::CreatePanel()
 	grid->SetColLabelValue(++col,wxT("       Port       "));
 	grid->SetColumnWidth(col,150);
 	grid->SetRowLabelSize(150);
-	grid->GetParent()->SendSizeEvent();
+	//grid->GetParent()->SendSizeEvent();
 	this->SetMaxSize(wxSize(1060,2000));
 	this->SetMinSize(wxSize(530,250));
 	col=0;
@@ -54,7 +54,7 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	grid->AppendRows(1);
 	for(int i=0;i<6;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
 	
-	grid->SetRowLabelValue(row,robot->getNameTree());
+	grid->SetRowLabelValue(row,wxString(robot->getNameTree()));
 	
 	if(robot->typeConnection==1)	
 		s_c=wxT("Server");
@@ -81,7 +81,7 @@ void ConnectionLog::DeleteConnection(NodeTree *robot)
 		}
 	}
 
-	for(int i=0;i<log.size();i++) 	grid->SetRowLabelValue(i,log[i]->getNameTree());
+	for(int i=0;i<log.size();i++) 	grid->SetRowLabelValue(i,wxString(log[i]->getNameTree()));
 
 }
 

@@ -117,11 +117,8 @@ void ObjectSelection::PreliminarView(wxListEvent &event)
 		
 	}
 	
-	ob_list->SendSizeEvent();
 	preView->AddObject(preliminar);
 	
-
-
 }
 
 

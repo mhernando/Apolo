@@ -44,9 +44,9 @@ void FaceWindow::CreatePanel()
 		drawFace->SplitHorizontally(canvas,pw,0);
 		
 		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
-		roll = new GenericSlider(this,"Face Roll",wxDefaultPosition,wxDefaultSize,false);//true = vertical
-		pitch = new GenericSlider(this,"Face Pitch",wxDefaultPosition,wxDefaultSize,false);
-		plane_dis = new GenericSlider(this,"Normal Distance (Z)",wxDefaultPosition,wxDefaultSize,true);
+		roll = new GenericSlider(this,wxT("Face Roll"),wxDefaultPosition,wxDefaultSize,false);//true = vertical
+		pitch = new GenericSlider(this,wxT("Face Pitch"),wxDefaultPosition,wxDefaultSize,false);
+		plane_dis = new GenericSlider(this,wxT("Normal Distance (Z)"),wxDefaultPosition,wxDefaultSize,true);
 		wxString string[2]={wxT("1"), wxT("0")};
 		wxString string2[2]={wxT("On"), wxT("Off")};
 		trans = new wxRadioBox(this,wxID_ANY,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,2,string);

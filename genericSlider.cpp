@@ -10,7 +10,7 @@ BEGIN_EVENT_TABLE(GenericSlider, wxPanel)
 END_EVENT_TABLE()
 
 
-GenericSlider::GenericSlider(wxWindow *window,const wxString label,const wxPoint& pos,const wxSize& size,bool orientation)
+GenericSlider::GenericSlider(wxWindow *window,wxString label,const wxPoint& pos,const wxSize& size,bool orientation)
 	: wxPanel( window, wxID_ANY, pos, size)
 {
 	title = label;
@@ -160,7 +160,7 @@ void GenericSlider::setProperties(double _min, double _max, bool islimited)
 void GenericSlider::updateMinMax(double m_currentMin, double m_currentMax)
 {
 	wxString aux1,aux2;
-	char precis[5]="%.2f";
+	wxString precis="%.2f";
 	if(m_currentMax-m_currentMin>25)precis[2]='0';
 	if(m_currentMax-m_currentMin>15 && m_currentMax-m_currentMin<24)precis[2]='1';
 	if(m_currentMax-m_currentMin<14)precis[2]='2';

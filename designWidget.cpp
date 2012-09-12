@@ -42,7 +42,7 @@ void DesignWidget::CreatePanel(bool sliders,bool orientation)
 	{	
 		if(slider)
 		{
-			c_radio=new GenericSlider(this,"Radio",wxDefaultPosition,wxDefaultSize,orientation);
+			c_radio=new GenericSlider(this,wxT("Radio"),wxDefaultPosition,wxDefaultSize,orientation);
 			c_radio->setProperties(0,10,false);
 			c_radio->setValue(defRadio);
 			pbox->Add(c_radio,1,wxEXPAND);
@@ -63,7 +63,7 @@ void DesignWidget::CreatePanel(bool sliders,bool orientation)
 	{
 		if(slider)
 		{
-			c_height=new GenericSlider(this,"Height",wxDefaultPosition,wxDefaultSize,orientation);
+			c_height=new GenericSlider(this,wxT("Height"),wxDefaultPosition,wxDefaultSize,orientation);
 			c_height->setProperties(0,10,false);
 			c_height->setValue(defHeight);
 			pbox->Add(c_height,1,wxEXPAND);
@@ -86,7 +86,7 @@ void DesignWidget::CreatePanel(bool sliders,bool orientation)
 	{
 		if(slider)
 		{
-			c_vertex=new GenericSlider(this,"BaseVertex",wxDefaultPosition,wxDefaultSize,orientation);
+			c_vertex=new GenericSlider(this,wxT("BaseVertex"),wxDefaultPosition,wxDefaultSize,orientation);
 			c_vertex->setProperties(3,10,false);
 			c_vertex->setValue(defVertex);
 			pbox->Add(c_vertex,1,wxEXPAND);

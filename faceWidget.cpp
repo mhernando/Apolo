@@ -3,7 +3,7 @@
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
 
 EVT_COMMAND(wxID_ANY,wxEVT_FACEVERTEX_ADDED,FaceWidget::GetPoint)
-EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, OnChangeSplitter)
+//EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, OnChangeSplitter)
 //EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,FaceWidget::AddVertex)
 
 END_EVENT_TABLE()
@@ -119,12 +119,12 @@ void FaceWidget::AddVertex()
 }
 
 
-void FaceWidget::OnChangeSplitter(wxSplitterEvent &event)
-{
+//void FaceWidget::OnChangeSplitter(wxSplitterEvent &event)
+//{
 
 	
 		
-}
+//}
 
 void FaceWidget::RefreshCanvas()
 {

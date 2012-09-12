@@ -24,22 +24,22 @@ void RobotConnection::SendData(NodeTree *robot)
 	wxString port=serverParam->GetPort();
 	
 	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
-		robot->server.laserSensor->init(atoi(port),atoi(address_client),true);
+		robot->server.laserSensor->init(wxAtoi(port),wxAtoi(address_client),true);
 	else if(robot->getTipo()==N_LaserSensor3DSim) 
-		robot->server.laserSensor3D->init(atoi(port),atoi(address_client),true);
+		robot->server.laserSensor3D->init(wxAtoi(port),wxAtoi(address_client),true);
 	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
-		robot->server.wheeledBase->init(atoi(port),atoi(address_client),true);
+		robot->server.wheeledBase->init(wxAtoi(port),wxAtoi(address_client),true);
 	else if(robot->getTipo()==N_CameraSim)
-		robot->server.camera->init(atoi(port),atoi(address_client),true);
+		robot->server.camera->init(wxAtoi(port),wxAtoi(address_client),true);
 	else if(robot->getTipo()==N_KinectSim)
-		robot->server.kinect->init(atoi(port),atoi(address_client),true);
+		robot->server.kinect->init(wxAtoi(port),wxAtoi(address_client),true);
 	else if(robot->getTipo()==N_QuadrotorSim)
-		robot->server.quadrotor->init(atoi(port),atoi(address_client),true);
+		robot->server.quadrotor->init(wxAtoi(port),wxAtoi(address_client),true);
 	else return;
 	
 	robot->typeConnection=1;
 	getIP(robot->server.Address);
-	robot->server.Port=atoi(port);
+	robot->server.Port=wxAtoi(port);
 	connectionLog->AddConnection(robot);
 	
 	server_Thid.Start(&RobotConnection::UpdateServerState,this,robot);
@@ -54,7 +54,7 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 	clientParam->ShowModal();
 	if(!clientParam->IsAccepted()) return;
 	robot->client.Address=clientParam->GetAddress_Clients();
-	robot->client.Port=atoi(clientParam->GetPort());
+	robot->client.Port=wxAtoi(clientParam->GetPort());
 	robot->typeConnection=2;
 	
 	client_Thid.Start(&RobotConnection::ConnectClient,this,robot);
@@ -154,9 +154,9 @@ void*  RobotConnection::ConnectClient(void *client)
 	
 		while(1)
 		{
-			if(robot->client.laserSensor->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.laserSensor->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.laserSensor->getHost();
+				robot->client.Host=wxString(robot->client.laserSensor->getHost());
 				connectionLog->StateConnection(robot,true);
 				robot->pointer.lasersensorsim->setActive(false);
 				while(1)
@@ -186,9 +186,9 @@ void*  RobotConnection::ConnectClient(void *client)
 		
 		while(1)
 		{
-			if(robot->client.laserSensor->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.laserSensor->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.laserSensor3D->getHost();
+				robot->client.Host=wxString(robot->client.laserSensor3D->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.lasersensor3dsim->setActive(false);
 				while(1)
@@ -213,9 +213,9 @@ void*  RobotConnection::ConnectClient(void *client)
 	
 		while(1)
 		{
-			if(robot->client.camera->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.camera->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.camera->getHost();
+				robot->client.Host=wxString(robot->client.camera->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.cameraSim->setActive(false);
 				while(1)
@@ -241,9 +241,9 @@ void*  RobotConnection::ConnectClient(void *client)
 		
 		while(1)
 		{
-			if(robot->client.kinect->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.kinect->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.kinect->getHost();
+				robot->client.Host=wxString(robot->client.kinect->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.kinectSim->setActive(false);
 				while(1)
@@ -268,9 +268,9 @@ void*  RobotConnection::ConnectClient(void *client)
 		
 		while(1)
 		{
-			if(robot->client.quadrotor->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.quadrotor->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.laserSensor->getHost();
+				robot->client.Host=wxString(robot->client.laserSensor->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.quadrotorSim->setActive(false);
 				while(1)
@@ -295,9 +295,9 @@ void*  RobotConnection::ConnectClient(void *client)
 		
 		while(1)
 		{
-			if(robot->client.wheeledBase->connect(robot->client.Address,robot->client.Port,false))
+			if(robot->client.wheeledBase->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=robot->client.wheeledBase->getHost();
+				robot->client.Host=wxString(robot->client.wheeledBase->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.wheeledbasesim->setActive(false);
 				while(1)
