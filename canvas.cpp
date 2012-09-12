@@ -90,6 +90,7 @@ void Canvas::Paint(wxPaintEvent& event)
 		scene2D.Draw();
 		//scene2D.setViewSize(GetSize().GetWidth(),GetSize().GetHeight());
 	}
+	
 	SwapBuffers();
 }
 

@@ -76,16 +76,16 @@ void GenericSlider::createPanel(bool orientation)
 	wxBoxSizer *minmaxbs=new wxBoxSizer(V);
 	if(orientation)
 	{
-		m_min=new wxStaticText(this,wxID_ANY,"¿?",wxDefaultPosition,wxSize(34,20),wxALIGN_LEFT);
-		m_max=new wxStaticText(this,wxID_ANY,"¿?",wxDefaultPosition,wxSize(34,20),wxALIGN_LEFT);
+		m_min=new wxStaticText(this,wxID_ANY,wxT("¿?"),wxDefaultPosition,wxSize(34,20),wxALIGN_LEFT);
+		m_max=new wxStaticText(this,wxID_ANY,wxT("¿?"),wxDefaultPosition,wxSize(34,20),wxALIGN_LEFT);
 		minmaxbs->Add(m_max,wxSizerFlags(1).Align(wxALIGN_LEFT));
 		minmaxbs->Add(m_min,wxSizerFlags(0).Align(wxALIGN_LEFT));
 		
 	}
 	else
 	{
-		m_min=new wxStaticText(this,wxID_ANY,"¿?",wxDefaultPosition,wxSize(45,20),wxALIGN_LEFT);//original
-		m_max=new wxStaticText(this,wxID_ANY,"¿?",wxDefaultPosition,wxSize(40,20),wxALIGN_RIGHT);
+		m_min=new wxStaticText(this,wxID_ANY,wxT("¿?"),wxDefaultPosition,wxSize(45,20),wxALIGN_LEFT);//original
+		m_max=new wxStaticText(this,wxID_ANY,wxT("¿?"),wxDefaultPosition,wxSize(40,20),wxALIGN_RIGHT);
 		minmaxbs->Add(m_min,wxSizerFlags(1).Align(wxALIGN_RIGHT));
 		minmaxbs->Add(m_max,wxSizerFlags(1).Align(wxALIGN_LEFT));
 	}
@@ -116,7 +116,7 @@ void GenericSlider::setValue(double val)
 	value=val;
 	m_slider->SetValue((int)100*(val-currentMin)/(currentMax-currentMin));
 	
-	wxString w=wxString::Format("%.2f",value);
+	wxString w=wxString::Format(wxT("%.2f"),value);
 	m_value->ChangeValue(wxEmptyString);
 	m_value->ChangeValue(w);
 	

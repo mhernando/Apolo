@@ -188,7 +188,6 @@ public:
 	void setTipo(TypeNode type){tipo=type;}
 	string getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
-	const char *getCharName(){return name.c_str();} 
 	int typeConnection; //0 Nothing //1 Server //2 Client
 	Bitmap bit;
 	BitmapSelect bitsel;

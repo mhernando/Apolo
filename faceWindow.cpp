@@ -108,7 +108,8 @@ void FaceWindow::FaceOrientation(wxCommandEvent& WXUNUSED(event))
 void FaceWindow::FaceButton(wxCommandEvent& WXUNUSED(event))
 {
 	node->pointer.facesetpart->addFace((*canvas->GetFace()));
-	world->getChild()->UpdateWorld();
+	canvas->GetCanvas3D()->ClearObjects();
+	canvas->GetCanvas3D()->UpdateWorld(world->getWorld());
 	roll->setValue(0);
 	pitch->setValue(0);
 	plane_dis->setValue(0);
