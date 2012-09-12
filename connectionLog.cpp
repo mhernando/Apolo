@@ -32,7 +32,7 @@ void ConnectionLog::CreatePanel()
 	grid->SetColLabelValue(++col,wxT("       Port       "));
 	grid->SetColumnWidth(col,150);
 	grid->SetRowLabelSize(150);
-	grid->GetParent()->SendSizeEvent();
+	//grid->GetParent()->SendSizeEvent();
 	this->SetMaxSize(wxSize(1060,2000));
 	this->SetMinSize(wxSize(530,250));
 	col=0;
@@ -53,8 +53,8 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	log.push_back(robot);
 	grid->AppendRows(1);
 	for(int i=0;i<6;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
-	grid->SetRowLabelValue(row,robot->getNameTree());
 	
+	grid->SetRowLabelValue(row,wxString(robot->getNameTree()));
 	
 	if(robot->typeConnection==1)	
 		s_c=wxT("Server");
@@ -70,15 +70,18 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 }
 void ConnectionLog::DeleteConnection(NodeTree *robot)
 {
+	wxString label=wxEmptyString;
 	for(int i=0;i<log.size();i++)
 	{
 		if(log[i]==robot)
 		{
-			grid->DeleteRows(i,1,false);
+			grid->DeleteRows(i);
 			row--;
 			log.erase(log.begin()+i);
 		}
 	}
+
+	for(int i=0;i<log.size();i++) 	grid->SetRowLabelValue(i,wxString(log[i]->getNameTree()));
 
 }
 
@@ -97,7 +100,7 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 	wxColour colour=*wxCYAN;
 
 	for(int i=0;i<log.size();i++)
-	{
+	{	
 		if(log[i]==robot)
 		{
 			if(robot->typeConnection==1)

@@ -22,6 +22,7 @@ public:
 	void OnChangeSplitter(wxSplitterEvent &event);
 	void SetAlign(bool al){align=al;};
 	bool GetAlign(){return align;};
+	Canvas *GetCanvas3D(){return canvas2;}
 	void AssociatePointTable(PointsList *point);
 	void CreateFace();
 	Face* GetFace() {return face;};

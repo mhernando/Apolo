@@ -65,7 +65,7 @@ private:
 	wxTreeItemId root;
 	wxTreeItemId m_parent;
 	bool sel;
-	struct m_item {int id; string name; wxIcon icon;};
+	struct m_item {int id; wxString name; wxIcon icon;};
 	DECLARE_EVENT_TABLE();	
 
 public:
@@ -74,7 +74,7 @@ public:
 	wxTreeItemId GenerateSubTree(World* w,SimulatedWorld *simu);
 	wxTreeItemId AddNode(PositionableEntity * pos, wxTreeItemId parent,SimulatedWorld *simu);
 	void Parent(wxTreeItemId r);
-	Tree::m_item SimplyItems(int id,string name, wxIcon icon);
+	Tree::m_item SimplyItems(int id,wxString name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);
 	wxTreeItemId GenerateSubTree(ComposedEntity* w,SimulatedWorld* simu);
 	void OnShowCanvas(wxMouseEvent& event);

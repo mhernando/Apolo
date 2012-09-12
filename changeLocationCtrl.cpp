@@ -21,9 +21,9 @@ ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wx
 
 	if(id == ID_ORI)//change orientation
 	{
-		control0 = new GenericSlider(panel,"Roll",wxDefaultPosition,wxDefaultSize,true);//true = vertical
-		control1 = new GenericSlider(panel,"Pitch",wxDefaultPosition,wxDefaultSize,true);
-		control2 = new GenericSlider(panel,"Yaw",wxDefaultPosition,wxDefaultSize,true);
+		control0 = new GenericSlider(panel,wxT("Roll"),wxDefaultPosition,wxDefaultSize,true);//true = vertical
+		control1 = new GenericSlider(panel,wxT("Pitch"),wxDefaultPosition,wxDefaultSize,true);
+		control2 = new GenericSlider(panel,wxT("Yaw"),wxDefaultPosition,wxDefaultSize,true);
 		control0->setProperties(-180,180);
 		control1->setProperties(-180,180);
 		control2->setProperties(-180,180);
@@ -31,9 +31,9 @@ ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wx
 	}
 	else//change position
 	{
-		control0 = new GenericSlider(panel,"X (m)",wxDefaultPosition,wxDefaultSize,true);
-		control1 = new GenericSlider(panel,"Y (m)",wxDefaultPosition,wxDefaultSize,true);
-		control2 = new GenericSlider(panel,"Z (m)",wxDefaultPosition,wxDefaultSize,true);
+		control0 = new GenericSlider(panel,wxT("X (m)"),wxDefaultPosition,wxDefaultSize,true);
+		control1 = new GenericSlider(panel,wxT("Y (m)"),wxDefaultPosition,wxDefaultSize,true);
+		control2 = new GenericSlider(panel,wxT("Z (m)"),wxDefaultPosition,wxDefaultSize,true);
 		control0->setProperties(-10,10);
 		control1->setProperties(-10,10);
 		control2->setProperties(-10,10);

@@ -109,10 +109,10 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 
 	if(ini->GetButtom()==false)
 	{
+		delete obj->pointer.positionableentity;
 		delete obj;
 		tree->Delete(newNode);
 	}
-	
 	childView->UpdateWorld();
 
 	

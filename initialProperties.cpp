@@ -56,7 +56,7 @@ void InitialProperties::CreatePanel()
 
 	dp=new DesignWidget(this,pos,wxEmptyString,wxDefaultPosition , wxDefaultSize,MainWindow::design_slider);
 	
-	pw=new PositionableWidget(this,pos,"Positionable Parameters",wxDefaultPosition,wxDefaultSize,MainWindow::slider,color);
+	pw=new PositionableWidget(this,pos,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,color);
 	
 	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	

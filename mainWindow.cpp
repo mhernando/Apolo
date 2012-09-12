@@ -174,8 +174,8 @@ void MainWindow::InitToolBar(wxToolBar *tool)
 	toolbar->AddTool(ID_LOADOBJ, bitmaps[2], wxT("Load Object"));
 	toolbar->AddTool(ID_SAVEOBJ, bitmaps[4], wxT("Save Object"));
 	toolbar->AddSeparator();
-	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxString("Show Item Selected"));
-	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxString("Show Reference System of main objects and composed objects"));
+	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxT("Show Item Selected"));
+	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
 	toolbar->AddSeparator();
 	toolbar->Realize();
 }
@@ -354,7 +354,7 @@ void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Move");
 			WheeledBasePanel* wheeledBaseCtrl;
 			wheeledBaseCtrl = new WheeledBasePanel(this,wxID_ANY,itemData);
-			wheeledBaseCtrl->getTitle()->SetLabel((wxString)itemData->getNameTree());
+			wheeledBaseCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(wheeledBaseCtrl,textOutside);
 			wxLogStatus(wxT("Wheeled Base Panel"));
 		}
@@ -372,7 +372,7 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Joints");
 			RobotSimPanel* robotSimCtrl;
 			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,itemData);
-			robotSimCtrl->getTitle()->SetLabel((wxString)itemData->getNameTree());
+			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(robotSimCtrl,textOutside);
 			wxLogStatus(wxT("Robot Sim Panel"));
 		}
@@ -748,6 +748,7 @@ void MainWindow::ShowSelection(wxCommandEvent& event)
 	if(d_box)
 	{
 		tree->SetShowSelection(true);
+		if(!tree->GetSelection().IsOk()) return;
 		if(itemData->menus.menu_solid  && tree->GetSelection()!=tree->GetRootItem())
 		{
 			itemData->pointer.solidentity->setDrawBox(true);
@@ -756,7 +757,9 @@ void MainWindow::ShowSelection(wxCommandEvent& event)
 	}
 	else
 	{
+		
 		tree->SetShowSelection(false);
+		if(!tree->GetSelection().IsOk()) return;
 		if(itemData->menus.menu_solid && tree->GetSelection()!=tree->GetRootItem())
 		{
 			itemData->pointer.solidentity->setDrawBox(false);
@@ -793,7 +796,7 @@ void  MainWindow::Search(wxTreeItemId search,bool toogle)
 	
 	if(itemData->menus.menu_positionable)
 	{
-		if(itemData->menus.menu_composed || itemData->pointer.positionableentity->getOwner()->getClassName()==wxT("World"))
+		if(itemData->menus.menu_composed || itemData->pointer.positionableentity->getOwner()->getClassName()=="World")
 		{
 			if(toogle)
 				itemData->pointer.positionableentity->setDrawReferenceSystem();

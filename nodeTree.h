@@ -186,9 +186,8 @@ public:
 	NodeTree(PositionableEntity* pos,SimulatedWorld *simu);
 	TypeNode getTipo(){return tipo;}
 	void setTipo(TypeNode type){tipo=type;}
-	string getNameTree(){return name;}
+	wxString getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
-	const char *getCharName(){return name.c_str();} 
 	int typeConnection; //0 Nothing //1 Server //2 Client
 	Bitmap bit;
 	BitmapSelect bitsel;
@@ -199,7 +198,7 @@ public:
 	
 private:
 	TypeNode tipo;
-	string name;
+	wxString name;
 	SimulatedWorld *simuWorld;
 	
 };

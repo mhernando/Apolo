@@ -10,9 +10,9 @@ ConnectionParameters::ConnectionParameters(wxWindow *parent,bool s_c,const wxStr
 :wxDialog(parent,wxID_ANY, title, point, size,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX ) 
 									   
 {
-	defPort="13000";
-	defAddress="127.0.0.1";
-	defClients="5";
+	defPort=wxT("13000");
+	defAddress=wxT("127.0.0.1");
+	defClients=wxT("5");
 	accept=false;
 	serv_client=s_c;
 	CreatePanel(s_c);	
