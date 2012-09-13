@@ -4,6 +4,7 @@
 #include "definitions.h"
 #include "canvas.h"
 #include <wx/listctrl.h>
+#include <wx/imaglist.h>
 #include <wx/wx.h>
 #include <wx/splitter.h>
 

@@ -8,8 +8,8 @@ IF(wxWidgets_FOUND)
 		INCLUDE_DIRECTORIES(C:/mrcore/include/mrcore) 
 		LINK_DIRECTORIES(C:/mrcore/lib)
 	ELSE(WIN32)
-		INCLUDE_DIRECTORIES(/usr/local/include/mrcore)
-		LINK_DIRECTORIES(/usr/local/lib)
+		INCLUDE_DIRECTORIES(/usr/local/mrcore/include/mrcore)
+		LINK_DIRECTORIES(/usr/local/mrcore/lib)
 	ENDIF(WIN32)
 
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp 

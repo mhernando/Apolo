@@ -115,13 +115,13 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		sbox=new wxBoxSizer(wxHORIZONTAL);
 		
 	
-		xs=new GenericSlider(this,"X position",wxDefaultPosition,wxDefaultSize,true);
-		ys=new GenericSlider(this,"Y position",wxDefaultPosition,wxDefaultSize,true);
-		zs=new GenericSlider(this,"Z position",wxDefaultPosition,wxDefaultSize,true);
+		xs=new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,true);
+		ys=new GenericSlider(this,wxT("Y position"),wxDefaultPosition,wxDefaultSize,true);
+		zs=new GenericSlider(this,wxT("Z position"),wxDefaultPosition,wxDefaultSize,true);
 
-		rs=new GenericSlider(this,"Roll orientation",wxDefaultPosition,wxDefaultSize,true);
-		ps=new GenericSlider(this,"Pitch orientation",wxDefaultPosition,wxDefaultSize,true);
-		yws=new GenericSlider(this,"Yaw orientation",wxDefaultPosition,wxDefaultSize,true);
+		rs=new GenericSlider(this,wxT("Roll orientation"),wxDefaultPosition,wxDefaultSize,true);
+		ps=new GenericSlider(this,wxT("Pitch orientation"),wxDefaultPosition,wxDefaultSize,true);
+		yws=new GenericSlider(this,wxT("Yaw orientation"),wxDefaultPosition,wxDefaultSize,true);
 		
 		
 		SliderLimits();

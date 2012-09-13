@@ -42,12 +42,12 @@ void RobotSimPanel::OnValueChanged(wxCommandEvent& event)
 	
 	for(int i=0;i<numJoints;i++)
 	{
-		if(listJoints[i]->IsMouseInWindow())
-		{
+	//	if(listJoints[i]->IsMouseInWindow()) // Comment because in linux compiler it says " IsMouseInWindow doesn't exist 
+	//	{
 			double value = listJoints[i]->getValue();
 			itemnode->pointer.robotsim->setJointValue(i,value);
 			itemnode->getSimu()->getChild()->RefreshChild();
-		}
+	//	}
 	}
 	event.Skip();
 }
