@@ -80,6 +80,7 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj=new NodeTree(new LaserSensor3DSim,this);
 	else if(id==ID_NEMOLASER)
 		obj=new NodeTree(new NemoLaserSensor3DSim,this);
+		
 	else 
 		obj=new NodeTree(new PositionableEntity,this);
 

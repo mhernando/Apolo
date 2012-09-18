@@ -196,6 +196,7 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	{
 		text=name_box->GetValue();
 		node->getSimu()->tree->SetItemText(s_world->getNewNode(),text);
+		node->pointer.positionableentity->setName(text.ToStdString());
 	}
 	Transformation3D t;
 	t.position=position;

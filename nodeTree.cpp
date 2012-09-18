@@ -129,9 +129,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_joint;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Joint";
-		return;
+		
 	}
-	if(dynamic_cast<SimpleJoint *>(pos))
+	else if(dynamic_cast<SimpleJoint *>(pos))
 	{
 		pointer.simplejoint = dynamic_cast<SimpleJoint*>(pos);
 		tipo = N_SimpleJoint;
@@ -139,9 +139,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_simplejoint;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Simple Joint";
-		return;
+		
 	}
-	if(dynamic_cast<CylindricalPart *>(pos))
+	else if(dynamic_cast<CylindricalPart *>(pos))
 	{
 		pointer.cylindricalpart = dynamic_cast<CylindricalPart*>(pos);
 		tipo = N_CylindricalPart;
@@ -149,10 +149,10 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_cylindricalpart;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Cylinder";
-		return;
+		
 	}
 
-	if(dynamic_cast<SpherePart *>(pos))
+	else if(dynamic_cast<SpherePart *>(pos))
 	{
 		pointer.spherepart = dynamic_cast<SpherePart*>(pos);
 		tipo = N_SpherePart;
@@ -160,9 +160,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_spherepart;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Sphere";
-		return;
+	
 	}
-	if(dynamic_cast<PrismaticPart *>(pos))
+	else if(dynamic_cast<PrismaticPart *>(pos))
 	{
 		pointer.prismaticpart = dynamic_cast<PrismaticPart *>(pos);
 		tipo = N_PrismaticPart;
@@ -170,9 +170,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_prismaticpart;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Prism";
-		return;
+	
 	}
-	if(dynamic_cast<NemoLaserSensor3DSim *>(pos))
+	else if(dynamic_cast<NemoLaserSensor3DSim *>(pos))
 	{
 		pointer.nemolasersensor3dsim = dynamic_cast<NemoLaserSensor3DSim *>(pos);
 		tipo = N_NemoLaserSensor3DSim;
@@ -180,10 +180,10 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_nemolasersensor3dsim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Nemo Laser Sensor";
-		return;
+		
 	}
 	
-	if(dynamic_cast<LMS200Sim *>(pos))
+	else if(dynamic_cast<LMS200Sim *>(pos))
 	{
 		pointer.lms200sim = dynamic_cast<LMS200Sim*>(pos);
 		tipo = N_LMS200Sim;
@@ -193,9 +193,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		menus.menu_server=true;
 		
 		if(name.empty())name = "Sick LMS200";
-		return;
+		
 	}
-	if(dynamic_cast<LMS100Sim *>(pos))
+	else if(dynamic_cast<LMS100Sim *>(pos))
 	{
 		pointer.lms100sim = dynamic_cast<LMS100Sim*>(pos);
 		tipo = N_LMS100Sim;
@@ -204,9 +204,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name = wxString(pos->getName());
 		menus.menu_server=true;
 		if(name.empty())name = "Sick LMS100";
-		return;
+		
 	}
-	if(dynamic_cast<FaceSetPart *>(pos))
+	else if(dynamic_cast<FaceSetPart *>(pos))
 	{
 		pointer.facesetpart = dynamic_cast<FaceSetPart*>(pos);
 		tipo = N_FaceSetPart;
@@ -214,9 +214,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_facesetpart;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Face Set";
-		return;
+	
 	}
-	if(dynamic_cast<PatrolbotSim *>(pos))
+	else if(dynamic_cast<PatrolbotSim *>(pos))
 	{
 		pointer.patrolbotsim = dynamic_cast<PatrolbotSim*>(pos);
 		tipo = N_PatrolbotSim;
@@ -224,9 +224,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		//bitsel = BitSel_patrolbotsim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Patrol Bot";
-		return;
+	
 	}
-	if(dynamic_cast<Pioneer3ATSim *>(pos))
+	else if(dynamic_cast<Pioneer3ATSim *>(pos))
 	{
 		pointer.pioneer3atsim = dynamic_cast<Pioneer3ATSim *>(pos);
 		tipo = N_Pioneer3ATSim;
@@ -234,9 +234,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_pioneer3atsim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Pioneer3AT";
-		return;
+		
 	}
-	if(dynamic_cast<PowerCube70Sim *>(pos))
+	else if(dynamic_cast<PowerCube70Sim *>(pos))
 	{
 		pointer.powercube70sim = dynamic_cast<PowerCube70Sim *>(pos);
 		tipo = N_PowerCube70Sim;
@@ -245,10 +245,10 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name = wxString(pos->getName());
 		menus.menu_server=true;
 		if(name.empty())name = "Power Cube";
-		return;
+	
 	}
 	
-	if(dynamic_cast<MeshPart *>(pos))
+	else if(dynamic_cast<MeshPart *>(pos))
 	{
 		pointer.meshpart = dynamic_cast<MeshPart *>(pos);
 		tipo = N_MeshPart;
@@ -256,9 +256,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_meshpart;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Meshpart";
-		return;
+		
 	}
-	if(dynamic_cast<AdeptOneSim *>(pos))
+	else if(dynamic_cast<AdeptOneSim *>(pos))
 	{
 		pointer.adeptone = dynamic_cast<AdeptOneSim *>(pos);
 		tipo = N_AdeptOneSim;
@@ -266,10 +266,10 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_adeptonesim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Scara Adept One";
-		return;
+
 		
 	}
-	if(dynamic_cast<PersonSim *>(pos))
+	else if(dynamic_cast<PersonSim *>(pos))
 	{
 		pointer.personSim = dynamic_cast<PersonSim*>(pos);
 		tipo = N_PersonSim;
@@ -278,9 +278,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name = wxString(pos->getName());
 		
 		if(name.empty())name = "Person";
-		return;
+		
 	}
-	if(dynamic_cast<QuadrotorSim *>(pos))
+	else if(dynamic_cast<QuadrotorSim *>(pos))
 	{
 		pointer.quadrotorSim = dynamic_cast<QuadrotorSim*>(pos);
 		tipo = N_QuadrotorSim;
@@ -290,9 +290,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		menus.menu_server=true;
 		
 		if(name.empty())name = "Quadrotor";
-		return;
+		
 	}
-	if(dynamic_cast<CameraSim *>(pos))
+	else if(dynamic_cast<CameraSim *>(pos))
 	{
 		pointer.cameraSim = dynamic_cast<CameraSim*>(pos);
 		tipo = N_CameraSim;
@@ -302,9 +302,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		menus.menu_server=true;
 		
 		if(name.empty())name = "Camera";
-		return;
+		
 	}
-	if(dynamic_cast<KinectSim *>(pos))
+	else if(dynamic_cast<KinectSim *>(pos))
 	{
 		pointer.kinectSim = dynamic_cast<KinectSim*>(pos);
 		tipo = N_KinectSim;
@@ -314,9 +314,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		menus.menu_server=true;
 		
 		if(name.empty())name = "Kinect";
-		return;
+		
 	}
-	if(dynamic_cast<MobileRobot *>(pos))
+	else if(dynamic_cast<MobileRobot *>(pos))
 	{
 		pointer.mobileRobot = dynamic_cast<MobileRobot*>(pos);
 		tipo = N_MobileRobot;
@@ -326,9 +326,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		menus.menu_server=true;
 		
 		if(name.empty())name = "MobileRobot";
-		return;
+	
 	}
-	if(dynamic_cast<AseaIRB2000Sim *>(pos))
+	else if(dynamic_cast<AseaIRB2000Sim *>(pos))
 	{
 		pointer.aseaIRB2000Sim = dynamic_cast<AseaIRB2000Sim *>(pos);
 		tipo = N_AseaIRB2000;
@@ -336,10 +336,12 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_robotsim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Asea IRB2000";
-		return;
+		
 	}
 	else return;
-	
+
+	pointer.positionableentity->setName(name.ToStdString());
+	return;
 }
 
 NodeTree::NodeTree(World *world,SimulatedWorld *simu)

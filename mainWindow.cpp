@@ -1,4 +1,5 @@
 #include "mainWindow.h"
+#include "apoloPort.h"
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
@@ -121,7 +122,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
-
+	ApoloPort *port=new ApoloPort(12000,&listWorlds);
 	connection=new RobotConnection(this,wxT("Server Configuration"));
 	
 	
@@ -258,7 +259,7 @@ void MainWindow::AddObject(wxCommandEvent& event)
 	}
 	for(int i=0;i<listWorlds.size();i++)	
 		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
-		  			listWorlds[i]->AddObject(id);
+			listWorlds[i]->AddObject(id);
 	
 	
 	
@@ -860,7 +861,6 @@ void MainWindow::OnLaserStyle(wxCommandEvent& event)
 	wxTreeItemId itemId  = tree->GetSelection();
 	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)tree->GetItemData(itemId ):NULL;
 	
-
 	if(event.GetId()==ID_LASMOD0)
 		itemData->pointer.lasersensorsim->setDrawGLMode(0);
 	else if(event.GetId()==ID_LASMOD1)
@@ -870,8 +870,6 @@ void MainWindow::OnLaserStyle(wxCommandEvent& event)
 	else if(event.GetId()==ID_LASMOD3)
 		itemData->pointer.lasersensorsim->setDrawGLMode(3);
 	
-
-
 }
 		
 	
