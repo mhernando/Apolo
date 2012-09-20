@@ -17,6 +17,7 @@ IF(wxWidgets_FOUND)
 	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp 
 	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp)
 
+
 	IF(WIN32)
 #		SET_TARGET_PROPERTIES(APOLO PROPERTIES
 #				COMPILE_FLAGS "${wxWidgets_CXX_FLAGS} ${wxWidgets_DEFINITIONS}"
