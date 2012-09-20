@@ -18,7 +18,7 @@ void *ApoloPort::handleConnections(void *server)
 	Socket socket=*sock;
 	PositionableEntity *pos;
 	
-	char message[100];
+	char message[100]="";
 	int numWorld=0;
 	int worldSize=0;
 	char name[20];
@@ -47,7 +47,7 @@ void *ApoloPort::handleConnections(void *server)
 			else
 			{		
 		
-				bool ret=temp->ReceiveBytes(message,100,-1);
+				bool ret=temp->Receive(message,500,-1);
 		
 				if(ret)
 				{
@@ -57,7 +57,7 @@ void *ApoloPort::handleConnections(void *server)
 		
 				else
 				{
-			
+					
 					sscanf(message,"%s %c %d %f %f %f %f %f %f",name,&order,&numWorld,&x,&y,&z,&u,&v,&w);
 
 					for(int i=0;name[i]!='\0';i++)

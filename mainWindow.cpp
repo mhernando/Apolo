@@ -86,7 +86,6 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 : wxMDIParentFrame(parent, id, title, pos, size, style),note(0)
 {
 	
-	
 	Centre();
 	treeVisible=true;
 	
