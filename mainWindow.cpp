@@ -1,5 +1,5 @@
 #include "mainWindow.h"
-#include "apoloPort.h"
+
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
@@ -121,7 +121,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
-	ApoloPort *port=new ApoloPort(12000,&listWorlds);
+	port=new ApoloPort(12000,&listWorlds);
 	connection=new RobotConnection(this,wxT("Server Configuration"));
 	
 	
@@ -293,7 +293,7 @@ void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 	if(!s_text.empty() && itemData->menus.menu_world)
 	{
 		tree->SetItemText(itemId, s_text);
-		itemData->getSimu()->getChild()->SetTitle(s_text);
+		itemData->getSimu()->setName(s_text);
 	}
     else if ( !s_text.empty() && itemData->pointer.positionableentity)
     {

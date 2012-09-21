@@ -15,6 +15,7 @@
 #include "converter.h"
 #include "apoloPanel.h"
 #include "objectSelection.h"
+#include "apoloPort.h"
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -36,6 +37,8 @@
 
 
 using namespace std;
+
+class ApoloPort;
 
 class MainWindow : public wxMDIParentFrame
 {
@@ -102,6 +105,7 @@ private:
 	bool referVisible;
 	bool drawBox;
 	bool rToogle;
+	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
 	Tree* tree;

@@ -21,6 +21,8 @@ public:
 	
 	ObjectSelection *sel;
 	wxTreeItemId getTreeItem(){return mainNode;}
+	string getName(){return name;}
+	void setName(wxString _name){ name=_name; childView->SetTitle(_name);}
 	void AddObject(wxWindowID  	id);
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
@@ -35,6 +37,7 @@ public:
 private:
 	int cont;
 	wxTreeItemId mainNode;
+	string name;
 	wxTreeItemId newNode;
 	ChildView* childView;
 	World* m_world;

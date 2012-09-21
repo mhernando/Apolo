@@ -9,12 +9,12 @@ SimulatedWorld::SimulatedWorld(World *world)
 {
 	static int numWorld = 0;
 	childView = new ChildView(mainWin, wxT("WORLD"), world);
-	
-	wxString title;
-	title.Printf(wxT("World %d"), ++numWorld);
+	wxString defName=wxT("World");
+	defName.Printf(wxT("%s %d"),defName, ++numWorld);
+	name=defName.ToStdString();
 
 	
-	childView ->SetTitle(title);
+	childView ->SetTitle(name);
 	childView ->SetIcon(wxIcon(worldSelect_xpm));
 	childView ->UpdateWorld();
 	childView ->RefreshChild();
@@ -128,7 +128,7 @@ void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 	NodeTree *parentData = parentItem.IsOk() ? (NodeTree *) tree->GetItemData(parentItem):NULL;
 	
 	if(parentItem!=mainNode)
-		parentData->pointer.composedentity->remove(objectData->pointer.positionableentity);//->erase(parentData->pointer.composedentity->getIndexOf(objectData->pointer.positionableentity));
+		parentData->pointer.composedentity->erase(parentData->pointer.composedentity->getIndexOf(objectData->pointer.positionableentity));
 	else 
 		delete objectData->pointer.positionableentity;
 	
