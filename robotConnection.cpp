@@ -22,27 +22,28 @@ void RobotConnection::SendData(NodeTree *robot)
 
 	wxString address_client=serverParam->GetAddress_Clients();
 	wxString port=serverParam->GetPort();
-	
-	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
-		robot->server.laserSensor->init(wxAtoi(port),wxAtoi(address_client),true);
-	else if(robot->getTipo()==N_LaserSensor3DSim) 
-		robot->server.laserSensor3D->init(wxAtoi(port),wxAtoi(address_client),true);
-	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
-		robot->server.wheeledBase->init(wxAtoi(port),wxAtoi(address_client),true);
-	else if(robot->getTipo()==N_CameraSim)
-		robot->server.camera->init(wxAtoi(port),wxAtoi(address_client),true);
-	else if(robot->getTipo()==N_KinectSim)
-		robot->server.kinect->init(wxAtoi(port),wxAtoi(address_client),true);
-	else if(robot->getTipo()==N_QuadrotorSim)
-		robot->server.quadrotor->init(wxAtoi(port),wxAtoi(address_client),true);
-	else return;
-	
-	robot->typeConnection=1;
+	delete serverParam;
 	getIP(robot->server.Address);
 	robot->server.Port=wxAtoi(port);
+
+	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
+		robot->server.laserSensor->init(robot->server.Port,wxAtoi(address_client),true);
+	else if(robot->getTipo()==N_LaserSensor3DSim) 
+		robot->server.laserSensor3D->init(robot->server.Port,wxAtoi(address_client),true);
+	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
+		robot->server.wheeledBase->init(robot->server.Port,wxAtoi(address_client),true);
+	else if(robot->getTipo()==N_CameraSim)
+		robot->server.camera->init(robot->server.Port,wxAtoi(address_client),true);
+	else if(robot->getTipo()==N_KinectSim)
+		robot->server.kinect->init(robot->server.Port,wxAtoi(address_client),true);
+	else if(robot->getTipo()==N_QuadrotorSim)
+		robot->server.quadrotor->init(robot->server.Port,wxAtoi(address_client),true);
+	else return ;
+
+	robot->typeConnection=1;
 	connectionLog->AddConnection(robot);
-	
-	server_Thid.Start(&RobotConnection::UpdateServerState,this,robot);
+	Thread<RobotConnection> thid;
+	HandleThreads(thid,robot);
 	ShowConnLog(logVisible);
 }
 
@@ -55,9 +56,10 @@ void RobotConnection::ReceiveData(NodeTree *robot)
 	if(!clientParam->IsAccepted()) return;
 	robot->client.Address=clientParam->GetAddress_Clients();
 	robot->client.Port=wxAtoi(clientParam->GetPort());
+	delete clientParam;
 	robot->typeConnection=2;
-	
-	client_Thid.Start(&RobotConnection::ConnectClient,this,robot);
+	Thread<RobotConnection>thid;
+	HandleThreads(thid,robot,false,false);
 	ShowConnLog(logVisible);
 	
 }
@@ -66,17 +68,19 @@ void* RobotConnection::UpdateServerState(void *server)
 {
 	NodeTree* robot=(NodeTree*)server;
 	bool isConnected=false;
-	int clients=0;
 	bool update=false;
-	
+	int clients=0;
 	while(1)
 	{
 	
-		if(robot->typeConnection==0)
-			break;
-	
 		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
 		{
+			if(robot->typeConnection==0)
+			{
+						robot->server.laserSensor->close();
+						break;
+			}
+			
 			if(clients!=robot->server.laserSensor->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.laserSensor->getNumClientsConnected();
@@ -87,6 +91,13 @@ void* RobotConnection::UpdateServerState(void *server)
 		
 		else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim) 
 		{
+			if(robot->typeConnection==0)
+			{
+				
+				robot->server.wheeledBase->close();
+						break;
+			}
+			
 			if(clients!=robot->server.wheeledBase->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.wheeledBase->getNumClientsConnected();
@@ -95,6 +106,13 @@ void* RobotConnection::UpdateServerState(void *server)
 		}
 	else if(robot->getTipo()==N_LaserSensor3DSim) 
 	{
+		if(robot->typeConnection==0)
+			{
+				
+				robot->server.laserSensor3D->close();
+						break;
+			}
+			
 		if(clients!=robot->server.laserSensor3D->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.laserSensor3D->getNumClientsConnected();
@@ -104,6 +122,13 @@ void* RobotConnection::UpdateServerState(void *server)
 
 	else if(robot->getTipo()==N_CameraSim)
 	{
+		if(robot->typeConnection==0)
+			{
+				
+						robot->server.camera->close();
+						break;
+			}
+			
 		if(clients!=robot->server.camera->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.camera->getNumClientsConnected();
@@ -113,6 +138,13 @@ void* RobotConnection::UpdateServerState(void *server)
 	
 	else if(robot->getTipo()==N_KinectSim)
 	{
+		if(robot->typeConnection==0)
+			{
+				
+						robot->server.kinect->close();
+						break;
+			}
+			
 		if(clients!=robot->server.kinect->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.kinect->getNumClientsConnected();
@@ -122,6 +154,12 @@ void* RobotConnection::UpdateServerState(void *server)
 	
 	else if(robot->getTipo()==N_QuadrotorSim)
 	{
+		if(robot->typeConnection==0)
+			{
+				
+						robot->server.quadrotor->close();
+						break;
+			}
 		if(clients!=robot->server.wheeledBase->getNumClientsConnected())
 			{
 				robot->server.Clients=robot->server.quadrotor->getNumClientsConnected();
@@ -133,12 +171,13 @@ void* RobotConnection::UpdateServerState(void *server)
 		{
 			clients=robot->server.Clients;
 			if(clients>0)	isConnected=true; 
-			else						isConnected=false;
+			else			isConnected=false;
 			connectionLog->StateConnection(robot,isConnected);
 			update=false;
 		}
 	
 	}
+	
 	return NULL;
 
 }
@@ -150,170 +189,186 @@ void*  RobotConnection::ConnectClient(void *client)
 	if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim )
 	{	
 		connectionLog->AddConnection(robot);
-		LaserData data,rdata;
-	
-		while(1)
+		while(robot->typeConnection>0)
 		{
+			
 			if(robot->client.laserSensor->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
 				robot->client.Host=wxString(robot->client.laserSensor->getHost());
 				connectionLog->StateConnection(robot,true);
 				robot->pointer.lasersensorsim->setActive(false);
-				while(1)
+				while(robot->client.laserSensor->isConnected()==1)
 				{
-					if(!robot->client.laserSensor->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}				
-					robot->client.laserSensor->getData(data);
-					robot->pointer.lasersensorsim->getData(rdata);
-					robot->pointer.lasersensorsim->setData(data);
-					robot->pointer.lasersensorsim->setDrawGLMode(rdata.drawGLMode);
-					data.clear();				
-				}				
+						LaserData data,rdata;
+						if(robot->typeConnection==0)
+							break;
+			
+						robot->pointer.lasersensorsim->getData(rdata);
+						if(robot->client.laserSensor->getData(data))
+							robot->pointer.lasersensorsim->setData(data);	
+						robot->pointer.lasersensorsim->setDrawGLMode(rdata.drawGLMode);
+					
+				}
+				connectionLog->StateConnection(robot,false);
+				robot->pointer.lasersensorsim->setActive(true);
+				
 			}
-			if(robot->typeConnection==0)	break;
+			
 		}
+		robot->client.laserSensor->close();
 	}
-
-
+	
 	else if(robot->getTipo()==N_LaserSensor3DSim )
-	{
-		
+	{	
 		connectionLog->AddConnection(robot);
-		LaserData3D data;
-		
-		while(1)
+		while(robot->typeConnection>0)
 		{
-			if(robot->client.laserSensor->connect(robot->client.Address.char_str(),robot->client.Port,false))
+			
+			if(robot->client.laserSensor3D->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
 				robot->client.Host=wxString(robot->client.laserSensor3D->getHost());
 				connectionLog->StateConnection(robot,true);
 				//robot->pointer.lasersensor3dsim->setActive(false);
-				while(1)
+				while(robot->client.laserSensor3D->isConnected())
 				{
-					if(!robot->client.laserSensor3D->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}			
-					robot->client.laserSensor3D->getData(data);			
-					robot->pointer.lasersensor3dsim->setData(data);		
-				}	
+					LaserData3D data,rdata;
+						if(robot->typeConnection==0)
+						{
+							robot->client.laserSensor3D->close();
+							//robot->pointer.lasersensor3dsim->setActive(true);
+							return NULL;
+						}
+
+						robot->pointer.lasersensor3dsim->getData(rdata);
+						if(robot->client.laserSensor3D->getData(data))
+							robot->pointer.lasersensor3dsim->setData(data);	
+						robot->pointer.lasersensor3dsim->setDrawGLMode(rdata.drawGLMode);
+					
+				}
+				connectionLog->StateConnection(robot,false);
+				robot->client.laserSensor3D->close();
+				//robot->pointer.lasersensor3dsim->setActive(true);
 			}
-			if(robot->typeConnection==0)	break;
-		}
+		}				
 	}
-		
 	else if(robot->getTipo()==N_CameraSim)
-	{
+	{	
 		connectionLog->AddConnection(robot);
-		Image image;
-	
-		while(1)
+		while(robot->typeConnection>0)
 		{
+			
 			if(robot->client.camera->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
 				robot->client.Host=wxString(robot->client.camera->getHost());
 				connectionLog->StateConnection(robot,true);
-				//robot->pointer.cameraSim->setActive(false);
-				while(1)
+				while(robot->client.camera->isConnected())
 				{
-					if(!robot->client.camera->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}
+					Image image;
+						if(robot->typeConnection==0)
+						{
+							robot->client.camera->close();
+							return NULL;
+						}
+
+						if(robot->client.camera->getImage(image))
+							robot->pointer.cameraSim->setImage(image);	
+						
 					
-					robot->client.camera->getImage(image);
-					robot->pointer.cameraSim->setImage(image);					
 				}
+				connectionLog->StateConnection(robot,false);
+				robot->client.camera->close();
 			}
-			if(robot->typeConnection==0)	break;
-		}
+		}				
 	}
-	
+		
 	else if(robot->getTipo()==N_KinectSim)
 	{	
 		connectionLog->AddConnection(robot);
-		PointCloud cloud;
-		
-		while(1)
+		while(robot->typeConnection>0)
 		{
+			
 			if(robot->client.kinect->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
 				robot->client.Host=wxString(robot->client.kinect->getHost());
 				connectionLog->StateConnection(robot,true);
-				//robot->pointer.kinectSim->setActive(false);
-				while(1)
+				while(robot->client.kinect->isConnected())
 				{
-					if(!robot->client.kinect->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}				
-					robot->client.kinect->getData(cloud);
-					robot->pointer.kinectSim->setData(cloud);
+					PointCloud cloud;
+						if(robot->typeConnection==0)
+						{
+							robot->client.kinect->close();
+							return NULL;
+						}
+					if(robot->client.kinect->getData(cloud))
+						robot->pointer.kinectSim->setData(cloud);
+							
+					
 				}
+				connectionLog->StateConnection(robot,false);
+				robot->client.kinect->close();
 			}
-			if(robot->typeConnection==0)	break;
-		}
+		}				
 	}
 	
-	else if(robot->getTipo()==N_QuadrotorSim )
-	{
+	else if(robot->getTipo()==N_QuadrotorSim)
+	{	
 		connectionLog->AddConnection(robot);
-		QuadrotorData data;
-		
-		while(1)
+		while(robot->typeConnection>0)
 		{
-			if(robot->client.quadrotor->connect(robot->client.Address.char_str(),robot->client.Port,false))
+			
+			if(robot->client.kinect->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
-				robot->client.Host=wxString(robot->client.laserSensor->getHost());
+				robot->client.Host=wxString(robot->client.quadrotor->getHost());
 				connectionLog->StateConnection(robot,true);
-				//robot->pointer.quadrotorSim->setActive(false);
-				while(1)
+				while(robot->client.quadrotor->isConnected())
 				{
-					if(!robot->client.quadrotor->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}
-				//	robot->client.quadrotor->getData(data);
+					QuadrotorData data;
+						if(robot->typeConnection==0)
+						{
+							robot->client.quadrotor->close();
+							return NULL;
+						}
+					//	robot->client.quadrotor->getData(data);
 				//	robot->pointer.quadrotorSim->setData(data);
-				}	
+							
+					
+				}
+				connectionLog->StateConnection(robot,false);
+				robot->client.quadrotor->close();
 			}
-			if(robot->typeConnection==0)	break;
-		}
+		}				
 	}
 	
 	else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim)
-	{
+	{	
 		connectionLog->AddConnection(robot);
-		Odometry odo;
-		
-		while(1)
+		while(robot->typeConnection>0)
 		{
-			if(robot->client.wheeledBase->connect(robot->client.Address.char_str(),robot->client.Port,false))
+			
+			if(robot->client.kinect->connect(robot->client.Address.char_str(),robot->client.Port,false))
 			{
 				robot->client.Host=wxString(robot->client.wheeledBase->getHost());
 				connectionLog->StateConnection(robot,true);
-				//robot->pointer.wheeledbasesim->setActive(false);
-				while(1)
+				while(robot->client.wheeledBase->isConnected())
 				{
-					if(!robot->client.wheeledBase->isConnected())
-					{
-						connectionLog->StateConnection(robot,false);
-						break;
-					}
-					robot->client.wheeledBase->getOdometry(odo);				
-					robot->pointer.wheeledbasesim->setLocation(odo.pose);
+					Odometry odo;
+						if(robot->typeConnection==0)
+						{
+							robot->client.wheeledBase->close();
+							return NULL;
+						}
+				
+					if(robot->client.wheeledBase->getOdometry(odo))				
+						robot->pointer.wheeledbasesim->setLocation(odo.pose);
+							
+					
 				}
+				connectionLog->StateConnection(robot,false);
+				robot->client.wheeledBase->close();
 			}
-			if(robot->typeConnection==0)	break;
-		}
+		}				
 	}
+
 
 	else return NULL;
 	return NULL;
@@ -321,32 +376,12 @@ void*  RobotConnection::ConnectClient(void *client)
 
 
 
-
-
-
-void RobotConnection::CloseServer(NodeTree *robot)
+void RobotConnection::Disconnect(NodeTree *robot)
 {
-		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim) robot->server.laserSensor->close();
-		else if(robot->getTipo()==N_LaserSensor3DSim)robot->server.laserSensor3D->close();	
-		else if(robot->getTipo()==N_WheeledBaseSim || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim ) robot->server.wheeledBase->close(); 
-		else if(robot->getTipo()==N_CameraSim)robot->server.camera->close();
-		else if(robot->getTipo()==N_KinectSim)robot->server.kinect->close();
-		else if(robot->getTipo()==N_QuadrotorSim)robot->server.quadrotor->close();
-		else return;
-		robot->typeConnection=0;
-		connectionLog->DeleteConnection(robot);
-}
 
-void RobotConnection::DisconnectClient(NodeTree *robot)
-{
-		if(robot->getTipo()==N_LMS100Sim || robot->getTipo()==N_LMS200Sim || robot->getTipo()==N_LaserSensorSim ) robot->client.laserSensor->close();
-		else if(robot->getTipo()==N_LaserSensor3DSim)robot->client.laserSensor3D->close();	
-		else if(robot->getTipo()==N_WheeledBaseSim  || robot->getTipo()==N_Pioneer3ATSim || robot->getTipo()==N_PatrolbotSim ) robot->client.wheeledBase->close(); 
-		else if(robot->getTipo()==N_CameraSim)robot->client.camera->close();
-		else if(robot->getTipo()==N_KinectSim)robot->client.kinect->close();
-		else if(robot->getTipo()==N_QuadrotorSim)robot->client.quadrotor->close();
-		else return;
 		robot->typeConnection=0;
+		Thread<RobotConnection>thid;
+		HandleThreads(thid,robot,true);
 		connectionLog->DeleteConnection(robot);
 		
 }
@@ -368,4 +403,33 @@ void RobotConnection::getIP(wxString &ip)
 	wxIPV4address addr;
 	addr.Hostname(wxGetFullHostName());
 	ip = addr.IPAddress();
+} 
+
+void RobotConnection::HandleThreads(Thread<RobotConnection> thid,NodeTree *robot,bool close,bool server)
+{
+	if(!close)
+	{
+	v_threads.push_back(thid);
+	r_connected.push_back(robot);
+	if(server)	
+		v_threads.back().Start(&RobotConnection::UpdateServerState,this,robot);
+	else
+		v_threads.back().Start(&RobotConnection::ConnectClient,this,robot);
+	}
+	else
+	{	
+	
+		for(unsigned int i=0;i<r_connected.size();i++)
+		{
+			if(r_connected[i]==robot)
+			{
+				v_threads[i].Join();
+				v_threads.erase(v_threads.begin()+i);
+				r_connected.erase(r_connected.begin()+i);
+			}
+		}
+				
+			
+	}
+
 } 

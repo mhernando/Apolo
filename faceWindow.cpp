@@ -1,11 +1,9 @@
 #include "faceWindow.h"
 
-
-
-
 BEGIN_EVENT_TABLE(FaceWindow, wxPanel)
 
 EVT_BUTTON(ID_OTHERFACE, FaceWindow::FaceButton)
+EVT_BUTTON(ID_CHANGEVIEW, FaceWindow::FaceButton)
 EVT_BUTTON(ID_COLOR, FaceWindow::ColorChanged)	
 EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, FaceWindow::FaceOrientation)
 //EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,FaceWindow::AddVertex)
@@ -22,7 +20,9 @@ FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, con
 	
 	world=obj->getSimu();
 	node=obj;
+	worldView=false;
 	CreatePanel();
+	red=blue=green=1.0f;
 
 }
 
@@ -34,6 +34,7 @@ void FaceWindow::CreatePanel()
 		
 		points=new PointsList(this,wxT("Face Coordenates"));
 		af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
+		cView = new wxButton(this,ID_CHANGEVIEW,wxT("World View3D"),wxDefaultPosition,wxDefaultSize);
 		wxSplitterWindow *drawFace= new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
 		drawFace->SetMinimumPaneSize(200);
 		
@@ -49,7 +50,8 @@ void FaceWindow::CreatePanel()
 		plane_dis = new GenericSlider(this,wxT("Normal Distance (Z)"),wxDefaultPosition,wxDefaultSize,true);
 		wxString string[2]={wxT("1"), wxT("0")};
 		wxString string2[2]={wxT("On"), wxT("Off")};
-		trans = new wxRadioBox(this,wxID_ANY,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,2,string);
+		//trans = new wxRadioBox(this,wxID_ANY,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,2,string);
+		transparency = new GenericSlider(this,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,false);
 		align = new wxRadioBox(this,wxID_ANY,wxT("Align Face Drawing "),wxDefaultPosition,wxDefaultSize,2,string2);
 		wxBitmapButton *color_box = new wxBitmapButton(this,ID_COLOR,wxIcon(colour_xpm),wxDefaultPosition,wxSize(100,50),4,wxDefaultValidator,wxT("Change face color"));
 		roll->setProperties(-180,180);
@@ -58,15 +60,17 @@ void FaceWindow::CreatePanel()
 		pitch->setValue(0);
 		plane_dis->setProperties(-10,10);
 		plane_dis->setValue(0);
+		transparency->setProperties(0,1);
+		transparency->setValue(1);
 
 		
 		obox->Add(roll,0,wxALL|wxEXPAND,5);
 		obox->Add(pitch,0,wxALL|wxEXPAND,5);
 		obox->Add(plane_dis,1,wxALL|wxEXPAND,5);
-		obox->Add(trans,0,wxEXPAND|wxALL,5);
-		obox->Add(align,0,wxEXPAND|wxALL,5);
+		obox->Add(transparency,0,wxEXPAND|wxALL,5);
+		obox->Add(align,0,wxEXPAND|wxALL,5);	
 		obox->Add(color_box,0,wxEXPAND|wxALL,5);
-	
+		obox->Add(cView,0,wxEXPAND|wxALL,5);
 
 		
 		fbox->Add(obox,0,wxEXPAND|wxALL,5);
@@ -101,19 +105,33 @@ void FaceWindow::FaceOrientation(wxCommandEvent& WXUNUSED(event))
 	trans.position.z=plane_dis->getValue();
 	trans.orientation.setRPY(deg2rad(roll->getValue()),deg2rad(pitch->getValue()),0);
 	canvas->GetFace()->setBase(trans);
+	canvas->GetFace()->setColor(red,green,blue,transparency->getValue());
 	canvas->RefreshCanvas();
 
 }
 
-void FaceWindow::FaceButton(wxCommandEvent& WXUNUSED(event))
+void FaceWindow::FaceButton(wxCommandEvent& event)
 {
-	node->pointer.facesetpart->addFace((*canvas->GetFace()));
-	canvas->GetCanvas3D()->ClearObjects();
-	canvas->GetCanvas3D()->UpdateWorld(world->getWorld());
-	roll->setValue(0);
-	pitch->setValue(0);
-	plane_dis->setValue(0);
-	canvas->CreateFace();
+	int id=event.GetId();
+	if(id==ID_CHANGEVIEW)
+	{
+		worldView=!worldView;
+		canvas->ChangeView(worldView);
+		if(worldView) cView->SetLabel(wxT("Face View3D"));
+		else	cView->SetLabel(wxT("World View3D"));
+			
+	}
+
+	else
+	{
+		node->pointer.facesetpart->addFace((*canvas->GetFace()));
+		canvas->GetCanvas3D()->ClearObjects();
+		canvas->GetCanvas3D()->UpdateWorld(world->getWorld());
+		roll->setValue(0);
+		pitch->setValue(0);
+		plane_dis->setValue(0);
+		canvas->CreateFace();
+	}
 
 	
 }
@@ -126,14 +144,10 @@ void  FaceWindow::ColorChanged(wxCommandEvent& event)
 		wxColor color=wxGetColourFromUser(this);
 		if(color.IsOk())
 		{
-			double red,green,blue,alfa=1;
 			red = color.Red();
 			green = color.Green();
 			blue = color.Blue();
-			if(trans->GetSelection()==1)
-				alfa=0;
-
-			canvas->GetFace()->setColor(red/255,green/255,blue/255,alfa);
+			canvas->GetFace()->setColor(red/255,green/255,blue/255,transparency->getValue());
 			world->getChild()->UpdateWorld();
 		
 		}		

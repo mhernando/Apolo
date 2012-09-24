@@ -39,7 +39,7 @@ ObjectSelection::ObjectSelection(wxWindow *parent,const wxWindowID id, const wxP
 	face2.addVertex(-1,-1);face2.addVertex(-1,1);face2.addVertex(1,1);face2.addVertex(1,-1);	set.addFace(face2);
 	trans.position.x=0;trans.position.y=1;	trans.orientation.setRPY(deg2rad(90),0,0);		face3.setBase(trans);	
 	face3.addVertex(-1,-1);face3.addVertex(-1,1);face3.addVertex(1,1);face3.addVertex(1,-1);	set.addFace(face3);
-	preliminar=new PositionableEntity();
+	preliminar=NULL;
 	CreateList();
 }
 

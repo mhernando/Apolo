@@ -13,13 +13,14 @@ END_EVENT_TABLE()
 FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal)
 : wxPanel(parent, wxID_ANY, pos, size)
 {
-	face=new Face();
-	faceCopy=new Face((*face));
+	face=NULL;
+	faceCopy=NULL;
 	window=parent;
 	h=horizontal;
 	world=simu;
 	align=true;
 	tableAssociated=false;
+	worldView=false;
 	CreatePanel();
 	CreateFace();
 	
@@ -33,7 +34,6 @@ void FaceWidget::CreatePanel()
 		canvas->SetMinimumPaneSize(50);
 		canvas1=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize,false);
 		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-		canvas2->UpdateWorld(world->getWorld());
 		if(h)	canvas->SplitVertically(canvas1,canvas2,0);
 		else	canvas->SplitHorizontally(canvas1,canvas2,0);
 		fbox->Add(canvas,1,wxEXPAND );
@@ -51,7 +51,7 @@ void FaceWidget::CreateFace()
 	faceCopy=new Face((*face));
 	canvas1->ClearObjects();
 	canvas1->AddObject(faceCopy);
-	canvas2->AddObject(face);
+	ChangeView(worldView);
 	RefreshCanvas();
 	if(tableAssociated)	points->RefreshGrid();
 
@@ -65,7 +65,19 @@ void FaceWidget::AssociatePointTable(PointsList *point)
 
 
 	//window->Connect(wxEVT_POINT_ADDED,wxCommandEventHandler(AddVertex);
+}
+
+void FaceWidget::ChangeView(bool wView)
+{
+	worldView=wView;
+	canvas2->ClearObjects();
+	if(worldView)
+		canvas2->UpdateWorld(world->getWorld());
+	else
+		canvas2->AddObject(face);
+
 	
+	canvas2->Refresh();
 
 }
 void FaceWidget::GetPoint(wxCommandEvent& event)

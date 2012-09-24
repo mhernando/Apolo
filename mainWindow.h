@@ -93,6 +93,7 @@ public:
 	bool getBoxVisible(){return drawBox;}
 	void OnVisibleConnectionLog(wxCommandEvent& event);
 	bool getReferenceVisible(){return referVisible;}
+	RobotConnection *GetConnection(){return connection;}
 	SimulatedWorld *GetSimulated(){return simuWorld;}
 	wxTreeItemId getRoot(){return m_root;}
 	void OnSashDrag(wxSashEvent& event);

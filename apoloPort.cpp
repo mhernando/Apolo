@@ -36,9 +36,8 @@ void *ApoloPort::handleConnections(void *server)
 	
 	int n=0;
 	char order;
-	int index=0;
+	unsigned int index=0;
 	bool inex=false;
-	char buffer[500];
 	char nameWorld[30];
 	char nameObject[30];
 	unsigned char max=0;
@@ -64,7 +63,7 @@ void *ApoloPort::handleConnections(void *server)
 		{	
 			n=0;
 			inex=false;
-
+			char buffer[500];
 			if(0<temp->Receive(buffer,500,-1))
 			{
 
