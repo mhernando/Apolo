@@ -36,7 +36,7 @@ private:
 	bool logVisible;
 	wxWindow *window;
 	LaserSensorServer *laser_serv;
-	vector<Thread<RobotConnection>> v_threads;
+	vector<Thread<RobotConnection> > v_threads;
 	vector<NodeTree*> r_connected;
 	LaserSensor3DServer *laser3D_serv;
 	ConnectionLog *connectionLog;

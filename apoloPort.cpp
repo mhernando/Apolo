@@ -67,6 +67,7 @@ void *ApoloPort::handleConnections(void *server)
 			if(0<temp->Receive(buffer,500,-1))
 			{
 
+					
 					order=buffer[n++];
 					max=buffer[n++];
 					for(int i=0;i<max;i++)
@@ -79,7 +80,8 @@ void *ApoloPort::handleConnections(void *server)
 					
 					for(index=0; index<world->size();index++)
 					{
-					
+						char worldXName[30];
+						sprintf(worldXName,"%s",(*world)[index]->getName().c_str());
 						
 						if(strcmp(nameWorld,"0")==0 )
 						{
@@ -98,7 +100,7 @@ void *ApoloPort::handleConnections(void *server)
 						}
 						
 						
-						else if(nameWorld==(*world)[index]->getName())
+						else if(strcmp(nameWorld,worldXName)==0)
 						{
 							if((*world)[index]->getWorld()->getObjectByName(nameObject))
 							{
