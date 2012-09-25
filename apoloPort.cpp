@@ -14,128 +14,199 @@ ApoloPort::ApoloPort(int port,vector<SimulatedWorld*>*listWorlds)
 
 void *ApoloPort::handleConnections(void *server)
 {
-	Socket* sock= (Socket*) server;
-	Socket socket=*sock;
+	Socket *aux_sock= (Socket*) server;
+	Socket socket=*aux_sock;
 	PositionableEntity *pos;
+	LaserData data;
+	LaserSensorSim *sensor;
+	RobotSim *robot;
 	
-	char message[100]="";
-	int numWorld=0;
-	int worldSize=0;
-	char name[20];
-	float x=0;
-	float y=0;
-	float z=0;
-	float u=0;
-	float v=0;
-	float w=0;
-	char order='0';
+	union double2byteConversor
+{
+		unsigned char bytes[8];
+		double real;
+};
+
+	union int2byteConversor
+{
+		unsigned char bytes[4];
+		int integer;
+};
+	
+	
+	int n=0;
+	char order;
+	unsigned int index=0;
+	bool inex=false;
+	char nameWorld[30];
+	char nameObject[30];
+	unsigned char max=0;
+	unsigned char numJoints=0;
+	char request[6000]="\nSucces\n";
+	double objectPosition[3]={0,0,0};
+	double objectOrientation[3]={0,0,0};
+	unsigned char jointN[6]={0,0,0,0,0,0};
+	double jointOrientation[6]={0,0,0,0,0,0};
+	
+	
+	Transformation3D trans;
+	Vector3D orientation;
+	double2byteConversor dConv;
+	int2byteConversor iConv;
 	
 	while(1)
 	{
+		Socket *temp=socket.acceptConnection();
 		
-		Socket* temp=socket.acceptConnection();
-		while(1)
-		{
 		
-			
-			if(!temp || !temp->IsConnected())
+		while(temp->IsConnected())
+		{	
+			n=0;
+			inex=false;
+			char buffer[500];
+			if(0<temp->Receive(buffer,500,-1))
 			{
-				LOG_ERROR("Accept returned invalid socket");
-				break;
+
+					
+					order=buffer[n++];
+					max=buffer[n++];
+					for(int i=0;i<max;i++)
+						nameWorld[i]=buffer[n++];
+					
+					max=buffer[n++];
+					for(int i=0;i<max;i++)
+						nameObject[i]=buffer[n++];
+					
+					
+					for(index=0; index<world->size();index++)
+					{
+						char worldXName[30];
+						sprintf(worldXName,"%s",(*world)[index]->getName().c_str());
+						
+						if(strcmp(nameWorld,"0")==0 )
+						{
+							if((*world)[index]->getWorld()->getObjectByName(nameObject))
+							{
+								pos=(*world)[index]->getWorld()->getObjectByName(nameObject);
+								break;
+								
+							}
+							if(index==world->size()-1)
+							{
+								sprintf(request,"\nThe object doesn`t exit\n");
+								inex=true;
+								break;
+							}
+						}
+						
+						
+						else if(strcmp(nameWorld,worldXName)==0)
+						{
+							if((*world)[index]->getWorld()->getObjectByName(nameObject))
+							{
+								pos=(*world)[index]->getWorld()->getObjectByName(nameObject);
+								break;
+
+
+							}
+							if(index==world->size()-1)
+							{
+								sprintf(request,"\nThe object doesn`t exit\n");
+								inex=true;
+								break;
+							}
+						}
+							
+						if(index==world->size()-1)
+						{
+							sprintf(request,"\nThe world doesn`t exit\n");
+							inex=true;
+							break;
+						}
+
+
+
+					}
+					if(!inex)
+					{
+
+						if(order=='p')
+						{
+	
+						for(int i=0;i<6;i++)
+						{
+							for(int z=0;z<8;z++)
+								dConv.bytes[z]=buffer[n++];
+						
+							if(i=0)trans.position.x=dConv.real;	
+							if(i=1)trans.position.y=dConv.real;
+							if(i=2)trans.position.z=dConv.real;
+							if(i=4)orientation.x=dConv.real;	
+							if(i=5)orientation.y=dConv.real;
+							if(i=6)orientation.z=dConv.real;
+						}
+
+						trans.orientation.setRPY(orientation.x,orientation.y,orientation.z);
+						pos->setAbsoluteT3D(trans);
+					
+						}
+					
+						else if(order=='j')
+						{
+							robot=dynamic_cast<RobotSim*>(pos);
+							numJoints=buffer[n++];
+							for(int i=0;i<numJoints;i++) jointN[i]=buffer[n++];
+							for(int i=0;i<numJoints;i++)
+							{
+								for(int z=0;z<8;z++)
+									dConv.bytes[z]=buffer[n++];
+							
+									jointOrientation[i]=dConv.real;
+									robot->setJointValue(jointN[i],jointOrientation[i]);
+							}
+						}
+						else if(order=='g')
+						{
+							n=0;
+							sensor=dynamic_cast<LaserSensorSim*>(pos);
+							sensor->getData(data);
+							iConv.integer=data.size();
+							for(int z=0;z<4;z++)
+								request[n++]=iConv.bytes[z];
+							for(int i=0;i<data.size();i++)
+							{
+								dConv.real=data.getRange(i);
+								for(int z=0;z<8;z++)
+									request[n++]=dConv.bytes[z];
+							}
+						
+						
+							if(0<temp->Send(request,6000))
+								temp->Receive(request,100,-1);
+							
+						}
+
+
+						else
+							sprintf(request,"\nThis order doesn`t exit\n");
+
+					
+					
+
+					}
+
+					temp->Send(request,50);
+					(*world)[index]->getChild()->RefreshChild();
+								
 			}
-		
-			else
-			{		
-		
-				bool ret=temp->Receive(message,500,-1);
-		
-				if(ret)
-				{
-					LOG_ERROR("Receive error");//sock.Receive outputs LOG
-					break;
-				}
-		
-				else
-				{
-					
-					sscanf(message,"%s %c %d %f %f %f %f %f %f",name,&order,&numWorld,&x,&y,&z,&u,&v,&w);
-
-					for(int i=0;name[i]!='\0';i++)
-					{
-						if(name[i]=='_')
-							name[i]=' ';
-					}
-					worldSize=(*world).size()-1;
-					if(numWorld<0 || numWorld >worldSize)
-					{
-						temp->Send("This world doesn't exit",100);
-						break;
-					}
-					
-					pos=(*world)[numWorld]->getWorld()->getObjectByName(name);
-		
-					
-					if(!(*world)[numWorld]->getWorld()->hasObject(pos))
-					{
-						temp->Send("This object doesn't exit",50);
-						break;
-					}
-
-		
-					if(order=='p')
-					{
-						Vector3D vector;
-						vector.x=x;
-						vector.y=y;
-						vector.z=z;
-						pos->setRelativePosition(vector);
-						char response[50];
-						sprintf(response,"The object has been moved to coordenates %.2f %.2f %.2f",x,y,z);
-						temp->Send(response,100);
-					}
-		
-
-					else if(order=='g')
-					{
-						LaserSensorSim *sim;
-						LaserData data;
-				
-						sim=dynamic_cast<LaserSensorSim*>(pos);
-						sim->getData(data);
-						char laserString[5000];
-						for(int i=0; i<data.size()*5;i=i+6)
-							sprintf(laserString+i,"%.2f\t",data.getRange(i));
-						temp->Send(laserString,5000);
-					}
-
-					else if(order=='r')
-					{
-						RobotSim *robot;
-						robot=dynamic_cast<RobotSim*>(pos);
-						int joints=robot->getNumJoints();
-						float values[6];
-						values[0]=x;
-						values[1]=y;
-						values[2]=z;
-						values[3]=u;
-						values[4]=v;
-						values[5]=w;
-
-						for(int i=0;i<joints;i++)
-							robot->setJointValue(i,values[i]);
-						temp->Send("Robot articulations have been moved",100);
-
-
-					}
-					(*world)[numWorld]->getChild()->RefreshChild();
-				}
 			
-	
-			}
+			
+			
 		}
+
+		temp->close();
+		delete temp;
 	
-
-
-	temp->close();
 	}
+	
 }

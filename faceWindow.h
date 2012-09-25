@@ -25,18 +25,20 @@ class FaceWindow : public wxPanel
 public:
 	FaceWindow(wxWindow *parent,NodeTree *obj, const wxString& title, const wxPoint& pos,const wxSize& size);
 	void CreatePanel();
-	void FaceOrientation(wxCommandEvent& WXUNUSED(event));
+	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void  ColorChanged(wxCommandEvent& event);
 	void FaceAlign(wxCommandEvent& event);
 	
 private:
-
-	wxRadioBox *trans,*align;
+	
+	bool worldView;
+	double red,green,blue;
+	wxRadioBox *align;
 	FaceWidget *canvas;
-	GenericSlider *roll,*pitch,*plane_dis;
+	GenericSlider *roll,*pitch,*plane_dis,*transparency;
 	wxTextCtrl *transp_box;
-	wxButton *af;
+	wxButton *af,*cView;
 	wxPoint point;
 	PointsList *points;
 	wxSplitterWindow *drawFace;

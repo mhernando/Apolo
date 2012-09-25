@@ -21,10 +21,13 @@ public:
 	
 	ObjectSelection *sel;
 	wxTreeItemId getTreeItem(){return mainNode;}
+	string getName(){return name;}
+	void setName(string _name){ name=_name; childView->SetTitle(_name);}
+	void setObjConnected(bool con){objConnected=con;}
+	bool IsObjectConnected(){return objConnected;}
 	void AddObject(wxWindowID  	id);
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
-	wxTreeItemId getNewNode(){return newNode;};
 	ChildView* getChild(){return childView;}
 
 
@@ -33,9 +36,10 @@ public:
 	static Tree *tree;
 	
 private:
+	bool objConnected;
 	int cont;
 	wxTreeItemId mainNode;
-	wxTreeItemId newNode;
+	string name;
 	ChildView* childView;
 	World* m_world;
 	

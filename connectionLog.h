@@ -28,6 +28,7 @@ private:
 	wxString tittle;
 	wxWindow *parent;
 	double row,col;
+	Mutex mutex;
 	
 	
 };
