@@ -1,5 +1,5 @@
 #include "nodeTree.h"
-#include "simulatedWorld.h"
+
 
 NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 {
@@ -90,6 +90,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_robotsim ;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Robot"; 
+		
 	}
 
 	if(dynamic_cast<LaserSensor3DSim *>(pos))
@@ -100,8 +101,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		bitsel = BitSel_lasersensor3dsim;
 		name = wxString(pos->getName());
 		if(name.empty())name = "Laser Sensor 3D";
-		server.laserSensor3D=new LaserSensor3DServer(pointer.lasersensor3dsim,name.ToStdString());
-		client.laserSensor3D=new LaserSensor3DClient();
+	
 		
 		
 	}

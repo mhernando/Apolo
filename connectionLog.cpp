@@ -1,8 +1,9 @@
 #include "connectionLog.h"
+#include "simulatedWorld.h"
 
 
 ConnectionLog::ConnectionLog(wxWindow *window,wxString name)
-		:wxDialog(window,wxID_ANY,name ,wxPoint(0,0), wxSize(1060,250),wxCAPTION|wxRESIZE_BORDER|wxMINIMIZE_BOX|wxSYSTEM_MENU| wxDIALOG_NO_PARENT) 
+		:wxDialog(window,wxID_ANY,name ,wxPoint(0,0), wxSize(1210,250),wxCAPTION|wxRESIZE_BORDER|wxMINIMIZE_BOX|wxSYSTEM_MENU| wxDIALOG_NO_PARENT) 
 									   
 {
 	parent=window;
@@ -17,9 +18,11 @@ ConnectionLog::ConnectionLog(wxWindow *window,wxString name)
 void ConnectionLog::CreatePanel()
 {
 	grid=new wxGrid(this,-1, wxDefaultPosition,wxDefaultSize);
-	grid->CreateGrid(0,6);
+	grid->CreateGrid(0,7);
 	grid->EnableEditing(false);
 	grid->SetColLabelValue(col,wxT("  Server/Client  "));
+	grid->SetColumnWidth(col,150);
+	grid->SetColLabelValue(++col,wxT("  World  "));
 	grid->SetColumnWidth(col,150);
 	grid->SetColLabelValue(++col,wxT("      State      "));
 	grid->SetColumnWidth(col,150);
@@ -33,8 +36,8 @@ void ConnectionLog::CreatePanel()
 	grid->SetColumnWidth(col,150);
 	grid->SetRowLabelSize(150);
 	//grid->GetParent()->SendSizeEvent();
-	this->SetMaxSize(wxSize(1060,2000));
-	this->SetMinSize(wxSize(530,250));
+	this->SetMaxSize(wxSize(1210,2000));
+	this->SetMinSize(wxSize(680,250));
 	col=0;
 	
 	
@@ -49,12 +52,11 @@ void ConnectionLog::CreatePanel()
 void ConnectionLog::AddConnection(NodeTree *robot)
 {	
 	wxString s_c=wxEmptyString;
-	
 	log.push_back(robot);
 	grid->AppendRows(1);
-	for(int i=0;i<6;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
-	
+	for(int i=0;i<7;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
 	grid->SetRowLabelValue(row,wxString(robot->getNameTree()));
+	robot->getSimu()->setObjConnected(true);
 	
 	if(robot->typeConnection==1)	
 		s_c=wxT("Server");
@@ -63,7 +65,9 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 		s_c=wxT("Client");
 	
 	
+	
 	grid->SetCellValue(row,col,s_c);
+	grid->SetCellValue(row,++col,wxString(robot->getSimu()->getName()));
 	StateConnection(robot,false);
 	row++;
 
@@ -71,17 +75,25 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 void ConnectionLog::DeleteConnection(NodeTree *robot)
 {
 	wxString label=wxEmptyString;
-	for(int i=0;i<log.size();i++)
+	for(unsigned int i=0;i<log.size();i++)
 	{
 		if(log[i]==robot)
 		{
-			grid->DeleteRows(i);
-			row--;
+			grid->DeleteRows(i);	
 			log.erase(log.begin()+i);
+			row--;
 		}
 	}
 
-	for(int i=0;i<log.size();i++) 	grid->SetRowLabelValue(i,wxString(log[i]->getNameTree()));
+	for(unsigned int i=0;i<log.size();i++) 
+	{
+		robot->getSimu()->setObjConnected(false);
+		grid->SetRowLabelValue(i,wxString(log[i]->getNameTree()));
+		if(grid->GetCellValue(i,2)==wxString(robot->getSimu()->getName()))
+			robot->getSimu()->setObjConnected(true);
+	}
+	
+	
 
 }
 
@@ -96,10 +108,11 @@ bool ConnectionLog::IsObjectConnected()
 void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 {
 
+	mutex.Lock();
 	wxString client,address,host,port,state;
 	wxColour colour=*wxCYAN;
 
-	for(int i=0;i<log.size();i++)
+	for(unsigned int i=0;i<log.size();i++)
 	{	
 		if(log[i]==robot)
 		{
@@ -150,5 +163,5 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 			col=0;
 		}
 	}
-	
+	mutex.Unlock();
 }

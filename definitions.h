@@ -93,7 +93,7 @@
 #define ID_OTHERFACE 4008
 #define ID_ALIGN 4009
 #define ID_PRIBASE 4010
-
+#define ID_CHANGEVIEW 4011
 // Define  for wxwigets reseved 50XX
 //wxID_EXIT 5006
 //wxID_ABOUT 5013

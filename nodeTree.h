@@ -160,6 +160,7 @@ struct MRClient
 	wxString Host;
 	wxString Address;
 	int Port;
+	
 
 };
 
@@ -181,11 +182,14 @@ class SimulatedWorld;
 
 class NodeTree : public wxTreeItemData 
 {
+class RobotConnection;
+
 public:
 	NodeTree(World* world,SimulatedWorld *simu);
 	NodeTree(PositionableEntity* pos,SimulatedWorld *simu);
 	TypeNode getTipo(){return tipo;}
 	void setTipo(TypeNode type){tipo=type;}
+	void setName(wxString _name){name=_name;}
 	wxString getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
 	int typeConnection; //0 Nothing //1 Server //2 Client
@@ -195,10 +199,12 @@ public:
 	MRServer server;
 	MRClient client;
 	ContextualMenu menus;
-	
+	Thread<RobotConnection>Thid;
+
 private:
 	TypeNode tipo;
 	wxString name;
+	
 	SimulatedWorld *simuWorld;
 	
 };

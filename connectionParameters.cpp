@@ -13,6 +13,7 @@ ConnectionParameters::ConnectionParameters(wxWindow *parent,bool s_c,const wxStr
 	defPort=wxT("13000");
 	defAddress=wxT("127.0.0.1");
 	defClients=wxT("5");
+	clients_address_box=NULL;
 	accept=false;
 	serv_client=s_c;
 	CreatePanel(s_c);	

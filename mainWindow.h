@@ -15,6 +15,7 @@
 #include "converter.h"
 #include "apoloPanel.h"
 #include "objectSelection.h"
+#include "apoloPort.h"
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -36,6 +37,8 @@
 
 
 using namespace std;
+
+class ApoloPort;
 
 class MainWindow : public wxMDIParentFrame
 {
@@ -90,6 +93,7 @@ public:
 	bool getBoxVisible(){return drawBox;}
 	void OnVisibleConnectionLog(wxCommandEvent& event);
 	bool getReferenceVisible(){return referVisible;}
+	RobotConnection *GetConnection(){return connection;}
 	SimulatedWorld *GetSimulated(){return simuWorld;}
 	wxTreeItemId getRoot(){return m_root;}
 	void OnSashDrag(wxSashEvent& event);
@@ -102,6 +106,7 @@ private:
 	bool referVisible;
 	bool drawBox;
 	bool rToogle;
+	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
 	Tree* tree;

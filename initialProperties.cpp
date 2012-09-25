@@ -1,4 +1,5 @@
 #include "initialProperties.h"
+#include "tree.h"
 
 
 BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
@@ -37,7 +38,9 @@ void InitialProperties::CreatePanel()
 	
 	
 	if(pos->getSimu()->mainWin->getToogleReference())
-		pos->getSimu()->mainWin->Search(world->getNewNode(),true);
+	{	Tree *tree=world->tree;
+		pos->getSimu()->mainWin->Search(tree->GetLastChild(tree->GetSelection()),true);
+	}
 		
 	if(dynamic_cast<ComposedEntity *>(pos->pointer.positionableentity))	
 		color=false;
@@ -71,6 +74,7 @@ void InitialProperties::CreatePanel()
 		wxStaticBoxSizer *pri=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Base Design"));
 		
 		base=new FaceWidget(this,world,wxDefaultPosition,wxDefaultSize,false);
+		base->ChangeView(true);
 		PointsList *points=new PointsList(this);
 		wxButton *pri_base = new wxButton(this,ID_PRIBASE,wxT("Create"),wxDefaultPosition,wxSize(60,25));
 		base->AssociatePointTable(points);

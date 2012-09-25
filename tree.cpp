@@ -101,7 +101,7 @@ wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 
 
 
-wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWorld *simu)
+NodeTree* Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWorld *simu)
 {
 	NodeTree *auxP = new NodeTree(pos,simu);
 	
@@ -113,10 +113,8 @@ wxTreeItemId Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,Simulate
 			AddNode((*auxC)[j],mynode,simu);
 		
 	
-	return mynode;
+	return auxP;
 
-	
-	
 }
 
 
@@ -150,7 +148,8 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.Append(ID_LOADOBJ, wxT("Load object"));
 		menuWorld.Append(ID_LOADMESH, wxT("Import .stl"));
 		menuWorld.Append(ID_SAVEWORLD, wxT("Save world"), wxT("Save this world"));
-		menuWorld.Append(ID_DELETE,wxT("Delete world"));
+		if(!itemData->getSimu()->IsObjectConnected())
+			menuWorld.Append(ID_DELETE,wxT("Delete world"));
 		menuWorld.AppendSeparator();
 		
 		if(MainWindow::popmenu)

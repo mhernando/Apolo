@@ -24,6 +24,7 @@ public:
 	bool GetAlign(){return align;};
 	Canvas *GetCanvas3D(){return canvas2;}
 	void AssociatePointTable(PointsList *point);
+	void ChangeView(bool world);
 	void CreateFace();
 	Face* GetFace() {return face;};
 
@@ -34,6 +35,7 @@ private:
 	bool created;
 	bool tableAssociated;
 	bool align,h;
+	bool worldView;
 	wxWindow *window;
 	float x,y;
 	Face *face,*faceCopy;

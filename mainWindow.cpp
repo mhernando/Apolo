@@ -1,5 +1,5 @@
 #include "mainWindow.h"
-#include "apoloPort.h"
+
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
@@ -121,7 +121,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
-	ApoloPort *port=new ApoloPort(12000,&listWorlds);
+	port=new ApoloPort(12000,&listWorlds);
 	connection=new RobotConnection(this,wxT("Server Configuration"));
 	
 	
@@ -256,7 +256,7 @@ void MainWindow::AddObject(wxCommandEvent& event)
 		id=ob_sel->GetObject();
 			if(id==0)return;
 	}
-	for(int i=0;i<listWorlds.size();i++)	
+	for(unsigned int i=0;i<listWorlds.size();i++)	
 		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
 			listWorlds[i]->AddObject(id);
 	
@@ -270,7 +270,7 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
         msg.Printf(wxT("Are you sure you want to delete this object?"));
         if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
         else
-			for(int i=0;i<listWorlds.size();i++)
+			for(unsigned int i=0;i<listWorlds.size();i++)
 				if(listWorlds[i]->getTreeItem()==tree->GetWorld(tree->GetSelection()))
 					listWorlds[i]->DeleteObject(tree->GetSelection());
 					
@@ -293,7 +293,7 @@ void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 	if(!s_text.empty() && itemData->menus.menu_world)
 	{
 		tree->SetItemText(itemId, s_text);
-		itemData->getSimu()->getChild()->SetTitle(s_text);
+		itemData->getSimu()->setName(s_text.ToStdString());
 	}
     else if ( !s_text.empty() && itemData->pointer.positionableentity)
     {
@@ -417,9 +417,9 @@ void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
 			double g = color.Green();
 			double b = color.Blue();
 			itemData->pointer.solidentity->setColor(r/255,g/255,b/255);
-			for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
+			for(unsigned int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
 		}
-		for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();		
+		for(unsigned int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();		
 	}
 }
 void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
@@ -469,7 +469,7 @@ void MainWindow::OnLoadMesh(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	
-	for(int i= 0; i<listWorlds.size(); i++)
+	for(unsigned int i= 0; i<listWorlds.size(); i++)
 	{
 		if(listWorlds[i]->getTreeItem()==itemId)
 		{
@@ -508,7 +508,7 @@ void MainWindow::OnLoadMesh(wxCommandEvent& WXUNUSED(event))
 void MainWindow::OnLoadObject(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
-	for(int i=0; i<listWorlds.size(); i++)
+	for(unsigned int i=0; i<listWorlds.size(); i++)
 	{
 		if(listWorlds[i]->getTreeItem()==itemId)
 		{
@@ -543,7 +543,7 @@ void MainWindow::OnSaveWorld(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	
-	for(int i= 0; i<listWorlds.size(); i++)
+	for(unsigned int i= 0; i<listWorlds.size(); i++)
 	{
 		if(listWorlds[i]->getTreeItem()==itemId)
 		{
@@ -627,7 +627,7 @@ void MainWindow::UpdateUISaveWorld(wxUpdateUIEvent& event)
 void MainWindow::OnShowCanvas()
 {
 	wxTreeItemId itemId = tree->GetSelection();
-	for(int i= 0; i<listWorlds.size(); i++)
+	for(unsigned int i= 0; i<listWorlds.size(); i++)
 	{
 		if(listWorlds[i]->getTreeItem()==itemId)
 		{
@@ -672,7 +672,7 @@ void MainWindow::ShowBox(bool box)
 	{
 		if(drawBox)itemData->pointer.solidentity->setDrawBox(false);
 		else itemData->pointer.solidentity->setDrawBox(true);
-		for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();	
+		for(unsigned int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();	
 	}	
 }
 void MainWindow::ShowReference(bool refer)
@@ -684,7 +684,7 @@ void MainWindow::ShowReference(bool refer)
 	{
 		if(referVisible)itemData->pointer.positionableentity->setDrawReferenceSystem(false);
 		else itemData->pointer.positionableentity->setDrawReferenceSystem(true);
-		for(int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
+		for(unsigned int i= 0; i<listWorlds.size(); i++)listWorlds[i]->getChild()->UpdateWorld();
 	}	
 }
 
@@ -831,12 +831,6 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 		
 	}
 
-	else if(id==ID_STSERVER)
-	{
-		
-		connection->CloseServer(server);
-		tree->SetItemTextColour(item,*wxBLACK);
-	}
 
 	
 	else if(id==ID_LNCLIENT)
@@ -846,10 +840,10 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 		if(server->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
 	}
 
-	else if(id==ID_STCLIENT)
+	else if(id==ID_STCLIENT || id==ID_STSERVER)
 	{
 		
-		connection->DisconnectClient(server);
+		connection->Disconnect(server);
 		tree->SetItemTextColour(item,*wxBLACK);
 	}
 
