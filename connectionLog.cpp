@@ -20,9 +20,9 @@ void ConnectionLog::CreatePanel()
 	grid=new wxGrid(this,-1, wxDefaultPosition,wxDefaultSize);
 	grid->CreateGrid(0,7);
 	grid->EnableEditing(false);
-	grid->SetColLabelValue(col,wxT("  Server/Client  "));
+	grid->SetColLabelValue(col,wxT("  World  "));
 	grid->SetColumnWidth(col,150);
-	grid->SetColLabelValue(++col,wxT("  World  "));
+	grid->SetColLabelValue(++col,wxT("  Server/Client  "));
 	grid->SetColumnWidth(col,150);
 	grid->SetColLabelValue(++col,wxT("      State      "));
 	grid->SetColumnWidth(col,150);
@@ -66,8 +66,8 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	
 	
 	
-	grid->SetCellValue(row,col,s_c);
-	grid->SetCellValue(row,++col,wxString(robot->getSimu()->getName()));
+	grid->SetCellValue(row,col,wxString(robot->getSimu()->getName()));
+	grid->SetCellValue(row,++col,s_c);
 	StateConnection(robot,false);
 	row++;
 
@@ -85,11 +85,12 @@ void ConnectionLog::DeleteConnection(NodeTree *robot)
 		}
 	}
 
+	robot->getSimu()->setObjConnected(false);
 	for(unsigned int i=0;i<log.size();i++) 
 	{
-		robot->getSimu()->setObjConnected(false);
+		
 		grid->SetRowLabelValue(i,wxString(log[i]->getNameTree()));
-		if(grid->GetCellValue(i,2)==wxString(robot->getSimu()->getName()))
+		if(wxString(grid->GetCellValue(i,0)).Cmp(wxString(robot->getSimu()->getName()))==0)
 			robot->getSimu()->setObjConnected(true);
 	}
 	
@@ -153,8 +154,8 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 				client=wxEmptyString;
 		
 			}
-			
-			grid->SetCellValue(i,++col,state);
+			col=2;
+			grid->SetCellValue(i,col,state);
 			grid->SetCellBackgroundColour(i,col,colour);
 			grid->SetCellValue(i,++col,client);
 			grid->SetCellValue(i,++col,host);
