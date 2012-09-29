@@ -25,9 +25,6 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 
 END_EVENT_TABLE()
 
-wxMenu *ChildView::ipro;
-wxMenu *ChildView::osel;
-wxMenu *ChildView::dwid;
 
 ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 : wxMDIChildFrame(parent, wxID_ANY, title, wxPoint(50,50), wxSize(500,400), wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE),m_timer(this,ID_TIMER)
@@ -46,90 +43,63 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 	if(toolbar)InitToolBar(toolbar);
 
 	//make a other menu
-	file_menu = new wxMenu;
-	wxMenuItem *c_item1 = new wxMenuItem(file_menu, ID_NEW, wxT("New world"),wxT("Create a new world"));
+	filemenu = new wxMenu;
+	wxMenuItem *c_item1 = new wxMenuItem(filemenu, ID_NEW, wxT("New world"),wxT("Create a new world"));
 	c_item1->SetBitmap(new_xpm);
-	file_menu->Append(c_item1);
-	wxMenuItem *c_item2 = new wxMenuItem(file_menu,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
+	filemenu->Append(c_item1);
+	wxMenuItem *c_item2 = new wxMenuItem(filemenu,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
 	c_item2->SetBitmap(loadWorld_xpm);
-	file_menu->Append(c_item2);
-	wxMenuItem *c_item3 = new wxMenuItem(file_menu,ID_LOADOBJ, wxT("Load Object"), wxT("Add object to current World select"));
+	filemenu->Append(c_item2);
+	wxMenuItem *c_item3 = new wxMenuItem(filemenu,ID_LOADOBJ, wxT("Load Object"), wxT("Add object to current World select"));
 	c_item3->SetBitmap(loadObject_xpm);
-	file_menu->Append(c_item3);
-	file_menu->AppendSeparator();
-	file_menu->Append(ID_LOADMESH, wxT("Import .stl"), wxT("Import .stl file"));
-	file_menu->AppendSeparator();
-	file_menu->Append(ID_CONVER, wxT("Converter .stl"), wxT("Converter .stl file"));
-	file_menu->AppendSeparator();
-	wxMenuItem *c_item4 = new wxMenuItem(file_menu,ID_SAVEWORLD, wxT("Save World"),wxT("Save world select"));
+	filemenu->Append(c_item3);
+	filemenu->AppendSeparator();
+	filemenu->Append(ID_LOADMESH, wxT("Import .stl"), wxT("Import .stl file"));
+	filemenu->AppendSeparator();
+	filemenu->Append(ID_CONVER, wxT("Converter .stl"), wxT("Converter .stl file"));
+	filemenu->AppendSeparator();
+	wxMenuItem *c_item4 = new wxMenuItem(filemenu,ID_SAVEWORLD, wxT("Save World"),wxT("Save world select"));
 	c_item4->SetBitmap(saveWorld_xpm);
-	file_menu->Append(c_item4);
-	wxMenuItem *c_item5 = new wxMenuItem(file_menu,ID_SAVEOBJ, wxT("Save Object"), wxT("Save object select"));
+	filemenu->Append(c_item4);
+	wxMenuItem *c_item5 = new wxMenuItem(filemenu,ID_SAVEOBJ, wxT("Save Object"), wxT("Save object select"));
 	c_item5->SetBitmap(saveObject_xpm);
-	file_menu->Append(c_item5);
-	file_menu->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
-	file_menu->AppendSeparator();
-	file_menu->AppendCheckItem(ID_VIS_TREE,wxT("Unvisible Tree"));
-	file_menu->AppendCheckItem(ID_VIS_CONNLOG, wxT("Unvisible ConnectionLog"));
-	file_menu->AppendSeparator();
-	file_menu->Append(wxID_EXIT, wxT("Close all"), wxT("Quit the program"));
+	filemenu->Append(c_item5);
+	filemenu->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
+	filemenu->AppendSeparator();
+	filemenu->AppendCheckItem(ID_VIS_TREE,wxT("Unvisible Tree"));
+	filemenu->AppendCheckItem(ID_VIS_CONNLOG, wxT("Unvisible ConnectionLog"));
+	filemenu->AppendSeparator();
+	filemenu->Append(wxID_EXIT, wxT("Close all"), wxT("Quit the program"));
 
-	file_menu2 = new wxMenu;
-	wxMenuItem *item1 = new wxMenuItem(file_menu2, ID_SPLITHF, wxT("Double horizontal"));
+	filemenu2 = new wxMenu;
+	wxMenuItem *item1 = new wxMenuItem(filemenu2, ID_SPLITHF, wxT("Double horizontal"));
 	item1->SetBitmap(V1_xpm);
-	wxMenuItem *item2 = new wxMenuItem(file_menu2, ID_SPLITVF, wxT("Double vertical"));
+	wxMenuItem *item2 = new wxMenuItem(filemenu2, ID_SPLITVF, wxT("Double vertical"));
 	item2->SetBitmap(V2_xpm);
-	wxMenuItem *item3 = new wxMenuItem(file_menu2, ID_SPLITHS, wxT("Triple horizontal"));
+	wxMenuItem *item3 = new wxMenuItem(filemenu2, ID_SPLITHS, wxT("Triple horizontal"));
 	item3->SetBitmap(V4_xpm);
-	wxMenuItem *item4 = new wxMenuItem(file_menu2, ID_SPLITVS, wxT("Triple vertical"));
+	wxMenuItem *item4 = new wxMenuItem(filemenu2, ID_SPLITVS, wxT("Triple vertical"));
 	item4->SetBitmap(V3_xpm);
-	wxMenuItem *item5 = new wxMenuItem(file_menu2, ID_UNSPLITF, wxT("Simple"));
+	wxMenuItem *item5 = new wxMenuItem(filemenu2, ID_UNSPLITF, wxT("Simple"));
 	item5->SetBitmap(V5_xpm);
-	file_menu2->Append(item1);
-	file_menu2->Append(item2);
-	file_menu2->Append(item3);
-	file_menu2->Append(item4);
-	file_menu2->Append(item5);
-	file_menu2->Append(ID_UNSPLITS, wxT("Double"));
-	file_menu2->Append(ID_HIDE, wxT("Hide World"));
+	filemenu2->Append(item1);
+	filemenu2->Append(item2);
+	filemenu2->Append(item3);
+	filemenu2->Append(item4);
+	filemenu2->Append(item5);
+	filemenu2->Append(ID_UNSPLITS, wxT("Double"));
+	filemenu2->Append(ID_HIDE, wxT("Hide World"));
 
-	file_menu3 = new wxMenu;
-	wxMenuItem *Iplay = new wxMenuItem(file_menu3, ID_PLAY, wxT("Play Simulator"));
+	filemenu3 = new wxMenu;
+	wxMenuItem *Iplay = new wxMenuItem(filemenu3, ID_PLAY, wxT("Play Simulator"));
 	Iplay->SetBitmap(play_xpm);
-	wxMenuItem *Istop = new wxMenuItem(file_menu3, ID_STOP2, wxT("Stop Simulator"));
+	wxMenuItem *Istop = new wxMenuItem(filemenu3, ID_STOP2, wxT("Stop Simulator"));
 	Istop->SetBitmap(stop2_xpm);
-	file_menu3->Append(Iplay);
-	file_menu3->Append(Istop);
-
-	file_menu4 = new wxMenu;
-	file_menu4->Append(wxID_ABOUT, wxT("&About..."));
-
-	file_menu5=new wxMenu;
-	ipro=new wxMenu;
-	osel=new wxMenu;
-	dwid=new wxMenu;
-
-	file_menu5->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
-	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
-	ipro->AppendCheckItem(SLI_VERT,wxT("Vertical Sliders"));
-	file_menu5->AppendSubMenu(osel,wxT("Object Selection"),wxT("Change display configuration of Positionable Properties"));
-	osel->AppendCheckItem(POP_MENU,wxT("Pop-Up Menu"));
-	osel->AppendCheckItem(DROP_MENU,wxT("Drop-Down Menu"));
-	file_menu5->AppendSubMenu(dwid,wxT("Design Widget"),wxT("Change display configuration of Design Properties"));
-	dwid->AppendCheckItem(DIS_SLI,wxT("Slider Menu"));
-	dwid->AppendCheckItem(DIS_CONT,wxT("Contextual Menu"));
-	
-	
-
-	menubar = new wxMenuBar;
-	menubar->Append(file_menu, wxT("&File"));
-	
-	menubar->Append(file_menu2, wxT("Views") );
-	menubar->Append(file_menu3, wxT("Run"));
-	menubar->Append(file_menu4, wxT("About"));
-	menubar->Append(file_menu5, wxT("Settings") );
-	SetMenuBar(menubar);
+	filemenu3->Append(Iplay);
+	filemenu3->Append(Istop);
+	ReplaceMenu();
 	CreateSubWindows();
+	
 
 }
 void ChildView::InitToolBar(wxToolBar* toolbar)
@@ -155,6 +125,22 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	toolbar->AddTool(ID_STOP2, bitmaps[6], wxT("STOP"));
 	toolbar->AddSeparator();
 	toolbar->Realize();
+	
+}
+
+void ChildView::ReplaceMenu()
+{
+	
+	menubar=mainWin->GetMenuBar();
+	
+	menubar->Replace(1,filemenu2,wxT("Views"));
+	menubar->Replace(2,filemenu3,wxT("Run"));
+	if(menubar->GetMenuCount()==3)
+	{
+		menubar->Replace(0,filemenu,wxT("&File"));
+		menubar->Append(mainWin->getMenuAbout(),wxT("About"));
+		menubar->Append(mainWin->getMenuSettings(), wxT("Settings") );
+	}
 	
 }
 

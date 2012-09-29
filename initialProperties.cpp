@@ -18,6 +18,7 @@ END_EVENT_TABLE()
 InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxString& title,wxWindowID id)
 :wxDialog(parent,id, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX ) 
 {
+	mainWin=(MainWindow*)parent;
 	b_sel=true;
 	world=obj->getSimu();
 	pos=obj;
@@ -57,9 +58,9 @@ void InitialProperties::CreatePanel()
 	{
 	
 
-	dp=new DesignWidget(this,pos,wxEmptyString,wxDefaultPosition , wxDefaultSize,MainWindow::design_slider);
+	dp=new DesignWidget(this,pos,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
 	
-	pw=new PositionableWidget(this,pos,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,color);
+	pw=new PositionableWidget(this,pos,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
 	
 	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	

@@ -75,9 +75,9 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	wxTreeItemId world=i;
 	if(GetItemParent(world)==root)
 		return world;
-	//else if(GetItemParent(world)==NULL)
-	//	return 0;
-	GetWorld(GetItemParent(world));
+	else
+		GetWorld(GetItemParent(world));
+	return 0;
 }
 
 
@@ -152,7 +152,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 			menuWorld.Append(ID_DELETE,wxT("Delete world"));
 		menuWorld.AppendSeparator();
 		
-		if(MainWindow::popmenu)
+		if(m_mainWin->getPopMenuValue())
 		{
 		menuWorld.Append(ID_ADDOBJ,wxT("Add Simples Entities"));
 		menuWorld.Append(ID_ADDCOMP,wxT("Add Complex Entities"));
@@ -277,15 +277,31 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 
 void Tree::OnShowCanvas(wxMouseEvent& event)
 {
-	wxTreeItemId id = HitTest(event.GetPosition());
-	if(id.IsOk())
+	wxTreeItemId itemId  = GetSelection();
+	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+	if(itemId.IsOk())
 	{
 		wxLogStatus(wxT("Item seleccionado"));
-		m_mainWin->OnShowCanvas();
-	}	
-	else wxLogStatus(wxT("No item under mouse"));
+		for(unsigned int i=0; i<m_mainWin->listWorlds.size();i++)
+		{
+		if(m_mainWin->listWorlds[i]->getWorld()->hasObject(itemData->pointer.positionableentity))
+		{
+			if(!m_mainWin->listWorlds[i]->getChild()->IsShown())
+				m_mainWin->listWorlds[i]->getChild()->Show();
+			m_mainWin->listWorlds[i]->getChild()->Activate();
+		}
+		else if(m_mainWin->listWorlds[i]->getWorld()==itemData->pointer.world)
+		{
+			m_mainWin->listWorlds[i]->getChild()->Maximize(!m_mainWin->listWorlds[i]->getChild()->IsMaximized());
+			m_mainWin->listWorlds[i]->getChild()->Update();
+		}
+		else m_mainWin->listWorlds[i]->getChild()->Lower();
+		}
+	}
+	else  wxLogStatus(wxT("No item under mouse"));
 
 	event.Skip();
+
 }
 
 Tree::m_item Tree::SimplyItems(int id,wxString name, wxIcon icon)
@@ -325,6 +341,14 @@ void Tree::ShowSelection(wxTreeEvent& event)
 			}
 		}
 	}
+
+	for(unsigned int i=0;i<m_mainWin->listWorlds.size();i++)
+		if(m_mainWin->listWorlds[i]->getTreeItem()==GetSelection())
+		{
+			if(!m_mainWin->listWorlds[i]->getChild()->IsShown())
+				m_mainWin->listWorlds[i]->getChild()->Show();
+			m_mainWin->listWorlds[i]->getChild()->Activate();
+		}
 
 }
 

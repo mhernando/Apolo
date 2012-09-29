@@ -10,6 +10,8 @@ END_EVENT_TABLE()
 DesignProperties::DesignProperties(wxWindow *parent, NodeTree *itemData, const wxString& title)
 :wxDialog(parent,wxID_ANY,title, wxPoint(10,10), wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
+
+	mainWin=(MainWindow*)parent;
 	node=itemData;
 	world=itemData->getSimu();
 	CreatePanel();
@@ -19,7 +21,7 @@ DesignProperties::DesignProperties(wxWindow *parent, NodeTree *itemData, const w
 
 void DesignProperties::CreatePanel()
 {
-	DesignWidget *design=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize,MainWindow::design_slider,true);
+	DesignWidget *design=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize,mainWin->getDesignValue(),true);
 	
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *b_box=new wxBoxSizer(wxHORIZONTAL);

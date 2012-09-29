@@ -25,17 +25,12 @@ class MainWindow;
 class ChildView: public wxMDIChildFrame
 {
 public:
-	static wxMenu *ipro;
-	static wxMenu *osel;
-	static wxMenu *dwid;
+	
 	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
 
 	void InitToolBar(wxToolBar* toolbar);
 		
 	void InitToolBar2(wxToolBar* toolbar2);
-
-
-
 
 	void UpdateWorld();
 	void RefreshChild();
@@ -51,7 +46,7 @@ public:
 	void SplitVerticalSecond(wxCommandEvent& event);
 	void UnSplitFirst(wxCommandEvent& event);
 	void UnSplitSecond(wxCommandEvent& event);
-
+	void ReplaceMenu();
 	void UpdateUIHorizontalFirst(wxUpdateUIEvent& event);
 	void UpdateUIHorizontalSecond(wxUpdateUIEvent& event);
 	void UpdateUIVerticalFirst(wxUpdateUIEvent& event);
@@ -78,11 +73,9 @@ private:
 	/////
 	wxToolBar* toolbar2;
 	/////
-	wxMenu * file_menu;
-	wxMenu * file_menu2;
-	wxMenu * file_menu3;
-	wxMenu * file_menu4;
-	wxMenu * file_menu5;
+	wxMenu * filemenu;
+	wxMenu * filemenu2;
+	wxMenu * filemenu3;
 	wxMenuBar * menubar;
 	DECLARE_EVENT_TABLE()
 	

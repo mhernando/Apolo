@@ -43,9 +43,6 @@ class ApoloPort;
 class MainWindow : public wxMDIParentFrame
 {
 public:
-	static bool slider;
-	static bool popmenu;
-	static bool design_slider;
 	MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style);
 	
 	void PropertiesDisplay(wxCommandEvent& event);
@@ -79,7 +76,6 @@ public:
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
 
 	void InitToolBar(wxToolBar* tool);
-	void OnShowCanvas();
 	void ShowSelection(wxCommandEvent& event);
 	void Search(wxTreeItemId item,bool toogle);
 	void ShowReferenceComposed(wxCommandEvent& event);
@@ -98,6 +94,11 @@ public:
 	wxTreeItemId getRoot(){return m_root;}
 	void OnSashDrag(wxSashEvent& event);
 	void CheckProperties();
+	bool getSliderValue(){return slider;}
+	bool getPopMenuValue(){return popmenu;}
+	bool getDesignValue(){return design_slider;}
+	wxMenu* getMenuAbout(){return menuAbout;}
+	wxMenu* getMenuSettings(){return menuSettings;}
 	vector <SimulatedWorld *> listWorlds;
 	
 private:
@@ -106,6 +107,7 @@ private:
 	bool referVisible;
 	bool drawBox;
 	bool rToogle;
+	bool slider,popmenu,design_slider;
 	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
@@ -114,13 +116,14 @@ private:
 	wxToolBar* toolbar;
 	wxAuiNotebook* note;
 	wxMenu* filemenu;
-	wxMenu* filemenu2;
-	wxMenu* filemenu3;
+	wxMenu* menuAbout;
+	wxMenu* menuSettings;
 	wxMenu* filesubmenu3;
 	wxMenuBar* menubar;
 	wxPanel* m_panel;
 	wxSashLayoutWindow *s;
 	int w, h;
+	wxMenu *ipro,*osel,*dwid;
 	DECLARE_EVENT_TABLE();
 
 };

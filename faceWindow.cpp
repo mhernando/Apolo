@@ -17,7 +17,7 @@ END_EVENT_TABLE()
 FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, const wxPoint& pos,const wxSize& size)
 : wxPanel(parent, wxID_ANY, pos, size)
 {
-	
+	mainWin=(MainWindow*)parent;
 	world=obj->getSimu();
 	node=obj;
 	worldView=false;
@@ -41,7 +41,7 @@ void FaceWindow::CreatePanel()
 		canvas=new FaceWidget(drawFace,world,wxDefaultPosition,wxDefaultSize);
 		canvas->AssociatePointTable(points);
 		
-		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,false);
+		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
 		drawFace->SplitHorizontally(canvas,pw,0);
 		
 		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
