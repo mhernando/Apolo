@@ -1,79 +1,123 @@
 #include "apoloMex.h" //de momento inutil ...habrá que borrarlo 
 #include "../apoloMessage.h"
+#include "mrcore.h"
+static mr::Socket  *conection=0;
 
+/* Here is the exit function, which gets run when the MEX-file is
+   cleared and when the user exits MATLAB. The mexAtExit function
+   should always be declared as static. */
+static void CloseConection(void){
 
+  mexPrintf("Closing Apolo conexion .\n");
+  conection->close();
+  delete conection;
+}
 // Definimos la función de interfaz entre Matlab y C++
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-	// Obtener los valores de entrada
-	PixelEnt* imgEnt = (PixelEnt*)mxGetPr(prhs[0]);
-	mwSize numDims = mxGetNumberOfDimensions(prhs[0]);
-	const mwSize* dimImgEnt = mxGetDimensions(prhs[0]);
 
-	// Crear y asignar los punteros de salida
-	plhs[0] = mxCreateNumericMatrix(dimImgEnt[0],dimImgEnt[1],mxUINT8_CLASS,mxREAL);
-	PixelSal* imgSal = (PixelSal*)mxGetPr(plhs[0]);
+//1, obtengo el nombre de la función a ejecutar y hago un switch
+//el primer argumento es el nombre de la funcion
+	char *command;
+    if(nrhs!=1)mexErrMsgTxt("One input required.");
+    if ( mxIsChar(prhs[0]) != 1)mexErrMsgTxt("Input must be a string.");
 
-	// Llamada a la funcion
-	binomial(imgEnt,numDims,dimImgEnt,imgSal);
-}
+    /* input must be a row vector */
+    if (mxGetM(prhs[0])!=1)mexErrMsgTxt("Input must be a row vector.");
+ 
+    /* copy the string data from prhs[0] into a C string input_ buf. 
+	OJO, hace la reserva por lo que hay que llamar a mxFree(input_buf) despues de usarlo*/
+    command = mxArrayToString(prhs[0]);
+    
+	//si el enlace no está abierto, lo abro y registro que al salir de matlab se cierre si no se ha cerrado ya
+	if(conection==0)conection=new mr::Socket;
+	if(conection->IsConnected()==0)conection->connect("127.0.0.1",12000);
+	if(conection->IsConnected()==0)mexErrMsgTxt("Apolo is not running at the localhost");
+	/* Register an exit function. You should only register the
+	   exit function after the conexion has been opened successfully*/
+	mexAtExit(CloseConection);
 
-void binomial(PixelEnt* imgEnt,mwSize numDims,const mwSize* dimImgEnt,PixelSal* imgSal) {
+/*#define AP_SETJOINTS 'J'
+#define AP_SETXYZ 'P'
+#define AP_SETRPY 'O'
+#define AP_CHECKJOINTS 'j'
+#define AP_UPDATEWORLD 'U'*/
 
-	// Calculamos el numero de píxeles (o voxels) que tiene nuestra imagen
-	int i,nrow = dimImgEnt[0],ncol = dimImgEnt[1],numElem = ncol*nrow;
-	
-	// Pasamos a double
-	double* imgEntDouble = new double[numElem];
-	for(i=0;i<numElem;i++)
-		imgEntDouble[i] = double(imgEnt[i]);
-
-	// Creamos imagen de salida
-	double* imgSalDouble = new double[numElem];
-
-	// Recorremos imagen aplicando filtro
-	// 4 esquinas
-	imgSalDouble[0] = imgEntDouble[0]*.5625+imgEntDouble[1]*.1875+imgEntDouble[nrow]*.1875+imgEntDouble[nrow+1]*.0625;
-	imgSalDouble[nrow-1] = imgEntDouble[nrow-1]*.5625+imgEntDouble[nrow-2]*.1875+imgEntDouble[2*nrow-1]*.1875+imgEntDouble[2*nrow-2]*.0625;
-	imgSalDouble[nrow*(ncol-1)] = imgEntDouble[nrow*(ncol-1)]*.5625+imgEntDouble[nrow*(ncol-1)+1]*.1875+imgEntDouble[nrow*(ncol-2)]*.1875+
-		imgEntDouble[nrow*(ncol-2)+1]*.0625;
-	imgSalDouble[numElem-1] = imgEntDouble[numElem-1]*.5625+imgEntDouble[numElem-2]*.1875+imgEntDouble[numElem-nrow-1]*.1875+
-		imgEntDouble[numElem-nrow-2]*.0625;
-	// Columna izquierda
-	for(i=1;i<nrow-1;i++) {
-		imgSalDouble[i] = imgEntDouble[i]*.375+imgEntDouble[i-1]*.1875+imgEntDouble[i+1]*.1875+imgEntDouble[i+nrow]*.125+
-			imgEntDouble[i+nrow-1]*.0625+imgEntDouble[i+nrow+1]*.0625;
-	}
-	// Columna derecha
-	for(i=nrow*(ncol-1)+1;i<numElem-1;i++) {
-		imgSalDouble[i] = imgEntDouble[i]*.375+imgEntDouble[i-1]*.1875+imgEntDouble[i+1]*.1875+imgEntDouble[i-nrow]*.125+
-			imgEntDouble[i-nrow-1]*.0625+imgEntDouble[i-nrow+1]*.0625;
-	}
-	// Fila superior
-	for(i=nrow;i<nrow*(ncol-1);i+=nrow) {
-		imgSalDouble[i] = imgEntDouble[i]*.375+imgEntDouble[i-nrow]*.1875+imgEntDouble[i+nrow]*.1875+imgEntDouble[i+1]*.125+
-			imgEntDouble[i-nrow+1]*.0625+imgEntDouble[i+nrow+1]*.0625;
-	}
-	// Fila inferior
-	for(i=2*nrow-1;i<numElem-1;i+=nrow) {
-		imgSalDouble[i] = imgEntDouble[i]*.375+imgEntDouble[i-nrow]*.1875+imgEntDouble[i+nrow]*.1875+imgEntDouble[i-1]*.125+
-			imgEntDouble[i-nrow-1]*.0625+imgEntDouble[i+nrow-1]*.0625;
-	}
-	// Parte sin bordes de la imagen
-	for(i=nrow+1;i<nrow*(ncol-1)-1;i++) {
-		if(i%nrow!=0 && i%nrow!=nrow-1) {
-			imgSalDouble[i] = imgEntDouble[i]*.25+imgEntDouble[i-1]*.125+imgEntDouble[i+1]*.125+imgEntDouble[i-nrow]*.125+
-				imgEntDouble[i+nrow]*.125+imgEntDouble[i-1-nrow]*.0625+imgEntDouble[i-1+nrow]*.0625+imgEntDouble[i+1-nrow]*.0625+
-				imgEntDouble[i+1+nrow]*.0625;
+	//--------------gets the input parameters that are common to most cases
+	char *world=0,*name=0;
+	char message[500];
+	switch(command[0])
+	{
+	//commands with world id, and name
+	case AP_SETJOINTS:
+	case AP_CHECKJOINTS:
+		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
+		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
+		name=mxArrayToString(prhs[2]);
+		if(name[0]==0){
+			mxFree(name);
+			name=0;
+		}
+	//commands with world only
+	case AP_UPDATEWORLD:
+		if(nrhs<2)mexErrMsgTxt("world parameter not present");
+		if (( mxIsChar(prhs[1]) != 1)&&(mxGetM(prhs[1])!=1))mexErrMsgTxt("world must be a string.");
+		world=mxArrayToString(prhs[1]);
+		if(world[0]==0){
+			mxFree(world);
+			world=0;
 		}
 	}
-	
-	// Devolvemos imagen como unsigned short despues de redondear al entero más cercano (redondeo empleado
-	// solo valido para números positivos)
-	for(i=0;i<numElem;i++)
-		imgSal[i] = PixelSal(imgSalDouble[i]+.5);
 
-	delete[] imgEntDouble;
-	delete[] imgSalDouble;
+	//--------------gets the specific input parameters and execute the command
+	char *aux=message;
+	int size;
+	int num;
+	double *dvalues;
+	char resp[100];
+	switch(command[0])
+	{
+	//commands with world id, and name
+	case AP_SETJOINTS:
+	case AP_CHECKJOINTS:
+		//get the double vector
+		if ( mxIsChar(prhs[3]) != 1)mexErrMsgTxt("joints must be a vector of doubles.");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("joints must be row vector.");
+		num = mxGetN(prhs[3]);
+						
+		size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else if(command[0]=AP_CHECKJOINTS){
+			conection->Receive(resp,100,-1);
+			char *auxb=resp;
+			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,100);
+			if(m){
+				//prepara vector de retorno
+				mxLogical val=0;
+				if(m->getType()==AP_TRUE)val=1;
+				plhs[0] = mxCreateLogicalScalar(val);
+				delete m;
+			}
+		}
+		break;
+	//commands with world only
+	case AP_UPDATEWORLD:
+		//ApoloUpdate
+		size=ApoloMessage::writeUpdateWorld(message,0);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		break;
+	}
+
+
+	
+
+
+	if(command)mxFree(command);
+	if(name)mxFree(name);
+	if(world)mxFree(world);
 }
+
+
 

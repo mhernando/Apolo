@@ -82,7 +82,7 @@ ADD_LIBRARY(apoloMex MODULE
 	apoloMex.h
 	../apoloMessage.cpp
 	../apoloMessage.h
-	socketClient.cpp
+	
 )
 
 # Indicamos la extensión que debe tener la librería en función de la arquitectura y del S.O. en que la compilemos
@@ -120,8 +120,13 @@ SET(MATLAB_LIBRARIES
   ${MATLAB_MX_LIBRARY}
   ${MATLAB_ENG_LIBRARY}
 )
-TARGET_LINK_LIBRARIES(apoloMex
-	${MATLAB_LIBRARIES}
-)
+
+IF(WIN32)	
+	TARGET_LINK_LIBRARIES(apoloMex debug mrcore_d ${MATLAB_LIBRARIES})	
+	TARGET_LINK_LIBRARIES(apoloMex optimized mrcore ${MATLAB_LIBRARIES})
+ELSE(WIN32) #LINUX		
+	TARGET_LINK_LIBRARIES(apoloMex mrcore ${MATLAB_LIBRARIES})
+ENDIF(WIN32)
+
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
