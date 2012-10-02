@@ -20,7 +20,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 //1, obtengo el nombre de la función a ejecutar y hago un switch
 //el primer argumento es el nombre de la funcion
 	char *command;
-    if(nrhs!=1)mexErrMsgTxt("One input required.");
+    if(nrhs<1)mexErrMsgTxt("One input required.");
     if ( mxIsChar(prhs[0]) != 1)mexErrMsgTxt("Input must be a string.");
 
     /* input must be a row vector */
@@ -82,7 +82,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_SETJOINTS:
 	case AP_CHECKJOINTS:
 		//get the double vector
-		if ( mxIsChar(prhs[3]) != 1)mexErrMsgTxt("joints must be a vector of doubles.");
+		if ( mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("joints must be a vector of doubles.");
 		dvalues = mxGetPr(prhs[3]);
 		//  get the dimension of the row vector 
 		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("joints must be row vector.");
@@ -90,17 +90,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 						
 		size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
-		else if(command[0]=AP_CHECKJOINTS){
+		else if(command[0]==AP_CHECKJOINTS){
 			conection->Receive(resp,100,-1);
 			char *auxb=resp;
 			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,100);
+			mxLogical val=0;
 			if(m){
 				//prepara vector de retorno
-				mxLogical val=0;
 				if(m->getType()==AP_TRUE)val=1;
-				plhs[0] = mxCreateLogicalScalar(val);
 				delete m;
 			}
+			plhs[0] = mxCreateLogicalScalar(val);
 		}
 		break;
 	//commands with world only

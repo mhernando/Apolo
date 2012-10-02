@@ -1,4 +1,4 @@
 
-function apoloCheckRobotJoints(world,robot,values)
-
-return apoloMex('j',world,robot,values)
+function ret=apoloCheckRobotJoints(world,robot,values)
+ret=apoloMex('j',world,robot,values)
+return 
