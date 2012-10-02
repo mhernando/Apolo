@@ -1,7 +1,7 @@
 #ifndef __APOLO__INITIAL_PROPERTIES__H
 #define __APOLO__INITIAL_PROPERTIES__H  
 
-#include "mainWindow.h"
+
 #include "positionableWidget.h"
 #include "designWidget.h"
 #include "canvas.h"
@@ -9,6 +9,7 @@
 
 
 class PositionableWidget;
+class MainWindow;
 class FaceWindow;
 class FaceWidget;
 
@@ -42,6 +43,7 @@ private:
 	wxString defName;
 	double red,green,blue;
 	wxWindowID wID;
+	MainWindow* mainWin;
 	
 
 	DECLARE_EVENT_TABLE();

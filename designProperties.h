@@ -9,7 +9,7 @@
 //#include "designWidget.h"
 
 class DesignWidget;
-
+class MainWindow;
 //
 
 class DesignProperties:public wxDialog
@@ -28,6 +28,7 @@ private:
 	wxButton *cancel;
 	NodeTree *node;
 	SimulatedWorld *world;
+	MainWindow* mainWin;
 
 	
 	

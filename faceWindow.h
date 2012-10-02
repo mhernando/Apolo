@@ -8,16 +8,17 @@
 #include "nodeTree.h"
 #include "simulatedWorld.h"
 
-#include "wx/grid.h"
+
 #include "canvas.h"
 #include "genericSlider.h"
-
+#include <wx/grid.h>
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 #include <wx/splitter.h>
 
 class FaceWidget;
 class PointsList;
+class MainWindow;
 
 
 class FaceWindow : public wxPanel
@@ -36,7 +37,7 @@ private:
 	double red,green,blue;
 	wxRadioBox *align;
 	FaceWidget *canvas;
-	GenericSlider *roll,*pitch,*plane_dis,*transparency;
+	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
 	wxTextCtrl *transp_box;
 	wxButton *af,*cView;
 	wxPoint point;
@@ -44,6 +45,7 @@ private:
 	wxSplitterWindow *drawFace;
 	SimulatedWorld *world;
 	NodeTree *node;
+	MainWindow* mainWin;
 	DECLARE_EVENT_TABLE();
 
 };

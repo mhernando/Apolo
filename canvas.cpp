@@ -30,6 +30,16 @@ void Canvas::AddObject(GLObject * obj)
 	else scene2D.addObject(obj);
 }
 
+void Canvas::ChangeBackGroundColour(wxColour colour)
+{
+	if(dimension) 
+	{	
+		scene.BackgroundColor((float)colour.Red()/255.0f,(float)colour.Green()/255.0f,(float)colour.Blue()/255.0f);
+		Refresh();
+	}
+	else return;
+}
+
 void Canvas::InitGL()
 {
 	SetCurrent();

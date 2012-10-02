@@ -177,8 +177,11 @@ void DesignWidget::GetDefaultValues()
 	if(type==N_SpherePart)
 		defRadio=nodeW->pointer.spherepart->getRadius();
 
-	else if(type==N_CylindricalPart)	
+	else if(type==N_CylindricalPart)
+	{
+		//defRadio=nodeW->pointer.cylindricalpart->getRadius();
 		defHeight=nodeW->pointer.cylindricalpart->getHeight();
+	}
 	
 	else if( type==N_PrismaticPart || type==N_IrregularPrismaticPart)
 	{

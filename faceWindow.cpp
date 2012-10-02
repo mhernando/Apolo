@@ -17,7 +17,7 @@ END_EVENT_TABLE()
 FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, const wxPoint& pos,const wxSize& size)
 : wxPanel(parent, wxID_ANY, pos, size)
 {
-	
+	mainWin=(MainWindow*)parent->GetParent();;
 	world=obj->getSimu();
 	node=obj;
 	worldView=false;
@@ -41,13 +41,15 @@ void FaceWindow::CreatePanel()
 		canvas=new FaceWidget(drawFace,world,wxDefaultPosition,wxDefaultSize);
 		canvas->AssociatePointTable(points);
 		
-		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,MainWindow::slider,false);
+		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
 		drawFace->SplitHorizontally(canvas,pw,0);
 		
 		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
 		roll = new GenericSlider(this,wxT("Face Roll"),wxDefaultPosition,wxDefaultSize,false);//true = vertical
 		pitch = new GenericSlider(this,wxT("Face Pitch"),wxDefaultPosition,wxDefaultSize,false);
-		plane_dis = new GenericSlider(this,wxT("Normal Distance (Z)"),wxDefaultPosition,wxDefaultSize,true);
+		x_pos = new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,false);
+		y_pos = new GenericSlider(this,wxT("Y position)"),wxDefaultPosition,wxDefaultSize,false);
+		plane_dis = new GenericSlider(this,wxT("Normal Distance (Z)"),wxDefaultPosition,wxDefaultSize,false);
 		wxString string[2]={wxT("1"), wxT("0")};
 		wxString string2[2]={wxT("On"), wxT("Off")};
 		//trans = new wxRadioBox(this,wxID_ANY,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,2,string);
@@ -58,6 +60,10 @@ void FaceWindow::CreatePanel()
 		roll->setValue(0);
 		pitch->setProperties(-180,180);
 		pitch->setValue(0);
+		x_pos->setProperties(-10,10);
+		x_pos->setValue(0);
+		y_pos->setProperties(-10,10);
+		y_pos->setValue(0);
 		plane_dis->setProperties(-10,10);
 		plane_dis->setValue(0);
 		transparency->setProperties(0,1);
@@ -66,18 +72,21 @@ void FaceWindow::CreatePanel()
 		
 		obox->Add(roll,0,wxALL|wxEXPAND,5);
 		obox->Add(pitch,0,wxALL|wxEXPAND,5);
+		obox->Add(x_pos,0,wxALL|wxEXPAND,5);
+		obox->Add(y_pos,0,wxALL|wxEXPAND,5);
 		obox->Add(plane_dis,1,wxALL|wxEXPAND,5);
 		obox->Add(transparency,0,wxEXPAND|wxALL,5);
 		obox->Add(align,0,wxEXPAND|wxALL,5);	
 		obox->Add(color_box,0,wxEXPAND|wxALL,5);
-		obox->Add(cView,0,wxEXPAND|wxALL,5);
+		
 
 		
 		fbox->Add(obox,0,wxEXPAND|wxALL,5);
 
 		fbox->Add(drawFace,1,wxEXPAND );
 		rbox->Add(points,1,wxEXPAND|wxALL,5);
-		rbox->Add(af,0,wxEXPAND);
+		rbox->Add(af,0,wxEXPAND|wxALL,5);
+		rbox->Add(cView,0,wxEXPAND|wxALL,5);
 		fbox->Add(rbox,0,wxEXPAND);
 		
 	
@@ -102,6 +111,8 @@ void FaceWindow::FaceAlign(wxCommandEvent& event)
 void FaceWindow::FaceOrientation(wxCommandEvent& WXUNUSED(event))
 {	
 	Transformation3D trans;
+	trans.position.x=x_pos->getValue();
+	trans.position.y=y_pos->getValue();
 	trans.position.z=plane_dis->getValue();
 	trans.orientation.setRPY(deg2rad(roll->getValue()),deg2rad(pitch->getValue()),0);
 	canvas->GetFace()->setBase(trans);

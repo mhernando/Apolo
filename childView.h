@@ -25,17 +25,12 @@ class MainWindow;
 class ChildView: public wxMDIChildFrame
 {
 public:
-	static wxMenu *ipro;
-	static wxMenu *osel;
-	static wxMenu *dwid;
+	
 	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
 
 	void InitToolBar(wxToolBar* toolbar);
 		
 	void InitToolBar2(wxToolBar* toolbar2);
-
-
-
 
 	void UpdateWorld();
 	void RefreshChild();
@@ -43,15 +38,14 @@ public:
 	
 	void OnClose(wxCloseEvent& event);
 	void OnTimer(wxTimerEvent& event);
-	void OnHideChild(wxCommandEvent& event);
-	void OnSimulator(wxCommandEvent& event);
-	void SplitHorizontalFirst(wxCommandEvent& event);
-	void SplitHorizontalSecond(wxCommandEvent& event);
-	void SplitVerticalFirst(wxCommandEvent& event);
-	void SplitVerticalSecond(wxCommandEvent& event);
-	void UnSplitFirst(wxCommandEvent& event);
-	void UnSplitSecond(wxCommandEvent& event);
-
+	void OnHideChild();
+	void OnSimulator(wxWindowID id);
+	void SplitHorizontalFirst();
+	void SplitHorizontalSecond();
+	void SplitVerticalFirst();
+	void SplitVerticalSecond();
+	void UnSplitFirst();
+	void UnSplitSecond();
 	void UpdateUIHorizontalFirst(wxUpdateUIEvent& event);
 	void UpdateUIHorizontalSecond(wxUpdateUIEvent& event);
 	void UpdateUIVerticalFirst(wxUpdateUIEvent& event);
@@ -63,6 +57,9 @@ public:
 	Canvas* getCanvas(){return canvas1;};
 	void SetPlaySimu(bool play){playsimu=play;}
 	bool getPlaysimu(){return playsimu;}
+	void SetIsActivated(bool active){isActivated=active;}
+	bool getIsActivated(){return isActivated;}
+	void ChangeBackgroundColor();
 	
 private:
 	Canvas* canvas1;
@@ -73,17 +70,10 @@ private:
 	wxSplitterWindow* m_splitter;
 	wxSplitterWindow* m_splitterSub;
 	bool playsimu;
+	bool isActivated;
 	wxTimer m_timer;
 	wxToolBar* toolbar;
-	/////
 	wxToolBar* toolbar2;
-	/////
-	wxMenu * file_menu;
-	wxMenu * file_menu2;
-	wxMenu * file_menu3;
-	wxMenu * file_menu4;
-	wxMenu * file_menu5;
-	wxMenuBar * menubar;
 	DECLARE_EVENT_TABLE()
 	
 };

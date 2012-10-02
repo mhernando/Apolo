@@ -69,6 +69,15 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_CONVER, MainWindow::OnConverter)
 	EVT_MENU(ID_MOVE, MainWindow::OnWheeledBasePanelCtrl)
 	EVT_MENU(ID_ROBOT, MainWindow::OnRobotSimPanelCtrl)
+	EVT_MENU(ID_SPLITHF,MainWindow::HandleChildViews)
+	EVT_MENU(ID_SPLITHS, MainWindow::HandleChildViews)
+	EVT_MENU(ID_SPLITVF, MainWindow::HandleChildViews)
+	EVT_MENU(ID_SPLITVS, MainWindow::HandleChildViews)
+	EVT_MENU(ID_UNSPLITF, MainWindow::HandleChildViews)
+	EVT_MENU(ID_UNSPLITS, MainWindow::HandleChildViews)
+	EVT_MENU(ID_PLAY, MainWindow::HandleChildViews)
+	EVT_MENU(ID_STOP2,MainWindow::HandleChildViews)
+	EVT_MENU(ID_CANVASCOLOR,MainWindow::HandleChildViews)
 	EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, MainWindow::OnCloseNotebook)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
@@ -77,9 +86,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 
 END_EVENT_TABLE()
 
-bool MainWindow::slider=true;
-bool MainWindow::popmenu=true;
-bool MainWindow::design_slider=true;
+
 
 
 MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos,const wxSize& size, const long style)
@@ -88,6 +95,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	
 	Centre();
 	treeVisible=true;
+	slider=true;
+	popmenu=true;
+	design_slider=true;
 	
 	
 
@@ -96,6 +106,10 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	SetStatusText(wxT("Welcome to APOLO"));
 #endif // wxUSE_STATUSBAR
 
+
+
+	CreateMenuBar();
+	
 	SetIcon(wxIcon(apolo_xpm));
 	GetClientSize(&w,&h);
 	CreateToolBar(wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL);
@@ -103,7 +117,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	s=new wxSashLayoutWindow(this, ID_DRAG,wxDefaultPosition, wxDefaultSize, wxSW_3D | wxCLIP_CHILDREN);
 	
 	s->SetDefaultSize(wxSize(w/4, h));
-	//s->SetOrientation(wxLAYOUT_VERTICAL);
+	s->SetOrientation(wxLAYOUT_VERTICAL);
 	s->SetAlignment(wxLAYOUT_LEFT);
 	s->SetSashVisible(wxSASH_RIGHT, true); 
 	
@@ -111,9 +125,10 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	note = new wxAuiNotebook(s, wxID_ANY,wxDefaultPosition,wxDefaultSize, wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
 	
 	tree = new Tree(note, ID_TREE);
-	tree->m_mainWin = this;
+	tree->m_mainWin = this;	
 	m_root = tree->AddRoot(wxT("Universe"), 0, 47, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
+
 
 
 	note->AddPage(tree, wxT("Universe"));
@@ -126,7 +141,135 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	
 	
 }
+	
+void MainWindow::CreateMenuBar()
+{
+	//make main Menu//
+	menuFile = new wxMenu;
+	wxMenuItem *item1 = new wxMenuItem(menuFile, ID_NEW, wxT("New world"),wxT("Create a new world"));
+	item1->SetBitmap(new_xpm);
+	menuFile->Append(item1);
+	wxMenuItem *item2 = new wxMenuItem(menuFile,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
+	item2->SetBitmap(loadWorld_xpm);
+	menuFile->Append(item2);
+	menuFile->AppendSeparator();
+	menuFile->AppendCheckItem(ID_VIS_TREE, wxT("Unvisible tree"));
+	menuFile->AppendSeparator();
+	menuFile->Append(wxID_EXIT, wxT("E&xit"), wxT("Quit the program"));
+	
+	menuAbout = new wxMenu;
+	menuAbout->Append(wxID_ABOUT, wxT("&About..."), wxT("Information program"));
+	menuSettings=new wxMenu;
 
+	ipro=new wxMenu;
+	osel=new wxMenu;
+	dwid=new wxMenu;
+	menuSettings->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
+	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
+	ipro->AppendCheckItem(SLI_VERT,wxT("Vertical Sliders"));
+	menuSettings->AppendSubMenu(osel,wxT("Object Selection"),wxT("Change display configuration of Positionable Properties"));
+	osel->AppendCheckItem(POP_MENU,wxT("Pop-Up Menu"));
+	osel->AppendCheckItem(DROP_MENU,wxT("Drop-Down Menu"));
+	menuSettings->AppendSubMenu(dwid,wxT("Design Widget"),wxT("Change display configuration of Design Properties"));
+	dwid->AppendCheckItem(DIS_SLI,wxT("Slider Menu"));
+	dwid->AppendCheckItem(DIS_CONT,wxT("Contextual Menu"));
+	CheckProperties();
+
+	menubar = new wxMenuBar;
+	menubar->Append(menuFile, wxT("&File"));
+	menubar->Append(menuAbout, wxT("About"));
+	menubar->Append(menuSettings, wxT("Settings"));
+	SetMenuBar(menubar);
+	
+
+	
+	
+		
+	//make a child menu
+	menuFile2 = new wxMenu;
+	wxMenuItem *c_item1 = new wxMenuItem(menuFile2, ID_NEW, wxT("New world"),wxT("Create a new world"));
+	c_item1->SetBitmap(new_xpm);
+	menuFile2->Append(c_item1);
+	wxMenuItem *c_item2 = new wxMenuItem(menuFile2,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
+	c_item2->SetBitmap(loadWorld_xpm);
+	menuFile2->Append(c_item2);
+	wxMenuItem *c_item3 = new wxMenuItem(menuFile2,ID_LOADOBJ, wxT("Load Object"), wxT("Add object to current World select"));
+	c_item3->SetBitmap(loadObject_xpm);
+	menuFile2->Append(c_item3);
+	menuFile2->AppendSeparator();
+	menuFile2->Append(ID_LOADMESH, wxT("Import .stl"), wxT("Import .stl file"));
+	menuFile2->AppendSeparator();
+	menuFile2->Append(ID_CONVER, wxT("Converter .stl"), wxT("Converter .stl file"));
+	menuFile2->AppendSeparator();
+	wxMenuItem *c_item4 = new wxMenuItem(menuFile2,ID_SAVEWORLD, wxT("Save World"),wxT("Save world select"));
+	c_item4->SetBitmap(saveWorld_xpm);
+	menuFile2->Append(c_item4);
+	wxMenuItem *c_item5 = new wxMenuItem(menuFile2,ID_SAVEOBJ, wxT("Save Object"), wxT("Save object select"));
+	c_item5->SetBitmap(saveObject_xpm);
+	menuFile2->Append(c_item5);
+	menuFile2->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
+	menuFile2->AppendSeparator();
+	menuFile2->AppendCheckItem(ID_VIS_TREE,wxT("Unvisible Tree"));
+	menuFile2->AppendCheckItem(ID_VIS_CONNLOG, wxT("Unvisible ConnectionLog"));
+	menuFile2->AppendSeparator();
+	menuFile2->Append(wxID_EXIT, wxT("Close all"), wxT("Quit the program"));
+
+	menuView = new wxMenu;
+	wxMenuItem *itemV1 = new wxMenuItem(menuView, ID_SPLITHF, wxT("Double horizontal"));
+	itemV1->SetBitmap(V1_xpm);
+	wxMenuItem *itemV2 = new wxMenuItem(menuView, ID_SPLITVF, wxT("Double vertical"));
+	itemV2->SetBitmap(V2_xpm);
+	wxMenuItem *itemV3 = new wxMenuItem(menuView, ID_SPLITHS, wxT("Triple horizontal"));
+	itemV3->SetBitmap(V4_xpm);
+	wxMenuItem *itemV4 = new wxMenuItem(menuView, ID_SPLITVS, wxT("Triple vertical"));
+	itemV4->SetBitmap(V3_xpm);
+	wxMenuItem *itemV5 = new wxMenuItem(menuView, ID_UNSPLITF, wxT("Simple"));
+	itemV5->SetBitmap(V5_xpm);
+	menuView->Append(itemV1);
+	menuView->Append(itemV2);
+	menuView->Append(itemV3);
+	menuView->Append(itemV4);
+	menuView->Append(itemV5);
+	menuView->Append(ID_UNSPLITS, wxT("Double"));
+	menuView->Append(ID_HIDE, wxT("Hide World"));
+	menuView->AppendSeparator();
+	menuView->Append(ID_CANVASCOLOR, wxT("Change background color"));
+	menuSimulator = new wxMenu;
+	wxMenuItem *Iplay = new wxMenuItem(menuSimulator, ID_PLAY, wxT("Play Simulator"));
+	Iplay->SetBitmap(play_xpm);
+	wxMenuItem *Istop = new wxMenuItem(menuSimulator, ID_STOP2, wxT("Stop Simulator"));
+	Istop->SetBitmap(stop2_xpm);
+	menuSimulator->Append(Iplay);
+	menuSimulator->Append(Istop);
+	
+}
+
+void MainWindow::OnReplaceMenuBar()
+{
+	
+	if(listWorlds.size()==0)
+	{	
+		
+		while(menubar->GetMenuCount()>0)GetMenuBar()->Remove(0);
+		menubar->Append(menuFile,wxT("File"));
+		menubar->Append(menuAbout,wxT("About"));
+		menubar->Append(menuSettings,wxT("Settings"));
+	
+	}
+
+	
+	else if(menubar->GetMenuCount()==3)
+	{
+		menubar->Replace(0,menuFile2,wxT("&File"));
+		menubar->Replace(1,menuView,wxT("Views"));
+		menubar->Replace(2,menuSimulator,wxT("Run"));
+		menubar->Append(menuAbout,wxT("About"));
+		menubar->Append(menuSettings, wxT("Settings") );
+	}
+
+
+
+}
 void MainWindow::OnSashDrag(wxSashEvent& event)
 {
   
@@ -216,6 +359,73 @@ void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 		Close(true);
 	
 }
+void MainWindow::HandleChildViews(wxCommandEvent &event)
+{
+	for(unsigned int i=0;i<listWorlds.size();i++)
+	{
+		if(listWorlds[i]->getChild()-IsMouseInWindow())
+		{	
+			for(unsigned int j=0;j<listWorlds.size();j++)listWorlds[j]->getChild()->SetIsActivated(false);
+			listWorlds[i]->getChild()->SetIsActivated(true);
+			break;
+		}
+	}
+			
+	for(unsigned int i=0;i<listWorlds.size();i++)
+	{
+		
+		if(listWorlds[i]->getChild()->getIsActivated())
+		{
+
+			switch(event.GetId())
+			{
+			case ID_UNSPLITF:
+				listWorlds[i]->getChild()->UnSplitFirst();
+				break;
+
+				case ID_UNSPLITS:
+					listWorlds[i]->getChild()->UnSplitSecond();
+					break;
+
+				case ID_SPLITVF:
+					listWorlds[i]->getChild()->SplitVerticalFirst();
+					break;
+				
+				case ID_SPLITVS:
+					listWorlds[i]->getChild()->SplitVerticalSecond();
+					break;
+
+				case ID_SPLITHF:
+					listWorlds[i]->getChild()->SplitHorizontalFirst();
+					break;
+
+				case ID_SPLITHS:
+					listWorlds[i]->getChild()->SplitHorizontalSecond();
+					break;
+					
+				case ID_HIDE:
+					listWorlds[i]->getChild()->OnHideChild();
+					break;
+
+				case ID_PLAY:
+					listWorlds[i]->getChild()->OnSimulator(ID_PLAY);
+					break;
+
+				case ID_STOP2:
+					listWorlds[i]->getChild()->OnSimulator(ID_STOP2);
+					break;
+				case ID_CANVASCOLOR:
+					listWorlds[i]->getChild()->ChangeBackgroundColor();
+					break;
+
+			}
+			
+		}
+	}
+			
+
+}
+
 void MainWindow::OnVisibleTree(wxCommandEvent& WXUNUSED(event))
 {
 	if(treeVisible)
@@ -273,14 +483,13 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 			for(unsigned int i=0;i<listWorlds.size();i++)
 				if(listWorlds[i]->getTreeItem()==tree->GetWorld(tree->GetSelection()))
 					listWorlds[i]->DeleteObject(tree->GetSelection());
+			
 					
 			
 				
 		
 		
 }
-
-
 
 void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 {
@@ -428,7 +637,8 @@ void MainWindow::OnNewWorld(wxCommandEvent& WXUNUSED(event))
 	simuWorld = new SimulatedWorld(w);
 	listWorlds.push_back(simuWorld);
 	tree->Expand(tree->GetRootItem());
-	CheckProperties();
+	OnReplaceMenuBar();
+
 }
 void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
 {
@@ -464,6 +674,7 @@ void MainWindow::OnLoadWorld(wxCommandEvent& WXUNUSED(event))
 	tree->Expand(tree->GetRootItem());
 	tree->Expand(tree->GetLastChild(tree->GetRootItem()));
 	Search(tree->GetLastChild(tree->GetRootItem()),toolbar->GetToolState(ID_COMPRS));
+	OnReplaceMenuBar();
 }
 void MainWindow::OnLoadMesh(wxCommandEvent& WXUNUSED(event))
 {
@@ -611,6 +822,9 @@ void MainWindow::OnDeleteWorld(wxCommandEvent& WXUNUSED(event))
 	}
 	delete (listWorlds[deletePartWorld]);
 	listWorlds.erase(listWorlds.begin()+deletePartWorld);
+	OnReplaceMenuBar();
+
+
 }
 void MainWindow::UpdateUILoadObject(wxUpdateUIEvent& event)
 {
@@ -624,45 +838,8 @@ void MainWindow::UpdateUISaveWorld(wxUpdateUIEvent& event)
 {
 	event.Enable(listWorlds.size()!=0);
 }
-void MainWindow::OnShowCanvas()
-{
-	wxTreeItemId itemId = tree->GetSelection();
-	for(unsigned int i= 0; i<listWorlds.size(); i++)
-	{
-		if(listWorlds[i]->getTreeItem()==itemId)
-		{
-			if(listWorlds[i]->getChild()->IsShown()==false)
-				listWorlds[i]->getChild()->Show();
-			listWorlds[i]->getChild()->Restore();
-			listWorlds[i]->getChild()->Raise();
-			listWorlds[i]->getChild()->Update();
-			listWorlds[i]->getChild()->SetFocus();
-		}
-		else listWorlds[i]->getChild()->Lower();
-	}
-}
-/*
-void MainWindow::showTree(bool sh)
-{
-	treeVisible=sh;
-	int w, h;
-	GetClientSize(&w,&h);
-	if(treeVisible)
-	{
-		note->Show(true);
-		note->SetSize(0,0,230,h);
-		GetClientWindow()->SetSize(230,0,w-230,h);
-		Refresh(false);
-		wxLogStatus(wxT("Visible tree"));
-	}
-	else
-	{
-		note->Show(false);
-		GetClientWindow()->SetSize(0,0,w,h);					
-		Refresh(false);
-		wxLogStatus(wxT("Unvisible tree"));
-	}
-}*/
+
+
 void MainWindow::ShowBox(bool box)
 {
 	drawBox = box;
@@ -706,36 +883,36 @@ void MainWindow::CheckProperties()
 
 	if(popmenu==true)
 	{
-		ChildView::osel->Check(POP_MENU,true);
-		ChildView::osel->Check(DROP_MENU,false);
+		osel->Check(POP_MENU,true);
+		osel->Check(DROP_MENU,false);
 	}
 	else
 	{
-		ChildView::osel->Check(DROP_MENU,true);
-		ChildView::osel->Check(POP_MENU,false);
+		osel->Check(DROP_MENU,true);
+		osel->Check(POP_MENU,false);
 		
 	}
 	if(design_slider==true)
 	{
-		ChildView::dwid->Check(DIS_SLI,true);
-		ChildView::dwid->Check(DIS_CONT,false);
+		dwid->Check(DIS_SLI,true);
+		dwid->Check(DIS_CONT,false);
 	}
 	else
 	{
-		ChildView::dwid->Check(DIS_SLI,false);
-		ChildView::dwid->Check(DIS_CONT,true);
+		dwid->Check(DIS_SLI,false);
+		dwid->Check(DIS_CONT,true);
 		
 	}
 	
 	if(slider==true)
 	{
-		ChildView::ipro->Check(SLI_VERT,true);
-		ChildView::ipro->Check(CONT_MENU,false);
+		ipro->Check(SLI_VERT,true);
+		ipro->Check(CONT_MENU,false);
 	}
 	else
 	{
-		ChildView::ipro->Check(SLI_VERT,false);
-		ChildView::ipro->Check(CONT_MENU,true);
+		ipro->Check(SLI_VERT,false);
+		ipro->Check(CONT_MENU,true);
 	}
 }
 void MainWindow::ShowSelection(wxCommandEvent& event)

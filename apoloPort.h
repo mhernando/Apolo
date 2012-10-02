@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef __APOLO__APOLO_PORT__H
 #define __APOLO__APOLO_PORT__H
 
@@ -27,3 +28,34 @@ private:
 };
 
 #endif // __APOLO__APOLO_PORT__H
+=======
+#ifndef __APOLO__APOLO_PORT__H
+#define __APOLO__APOLO_PORT__H
+
+#include "mrcore.h"
+#include "simulatedWorld.h"
+
+class ApoloPort 
+
+{
+	PositionableEntity *getElement(char *nworld,char *name,int *worldindex);
+public:
+	ApoloPort(int port,vector<SimulatedWorld*>*listWorlds);
+	void *handleConnections(void *server);
+	
+
+
+
+private:
+	Socket *sock;
+	vector<SimulatedWorld*>*world;
+	Thread<ApoloPort> Thid;
+	bool closeServer;
+	
+	
+	
+	
+};
+
+#endif // __APOLO__APOLO_PORT__H
+>>>>>>> a3e81e23bcd7d9f2f5ab72f9e4e7d6c558ff48fb
