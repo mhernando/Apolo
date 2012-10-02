@@ -38,15 +38,14 @@ public:
 	
 	void OnClose(wxCloseEvent& event);
 	void OnTimer(wxTimerEvent& event);
-	void OnHideChild(wxCommandEvent& event);
-	void OnSimulator(wxCommandEvent& event);
-	void SplitHorizontalFirst(wxCommandEvent& event);
-	void SplitHorizontalSecond(wxCommandEvent& event);
-	void SplitVerticalFirst(wxCommandEvent& event);
-	void SplitVerticalSecond(wxCommandEvent& event);
-	void UnSplitFirst(wxCommandEvent& event);
-	void UnSplitSecond(wxCommandEvent& event);
-	void ReplaceMenu();
+	void OnHideChild();
+	void OnSimulator(wxWindowID id);
+	void SplitHorizontalFirst();
+	void SplitHorizontalSecond();
+	void SplitVerticalFirst();
+	void SplitVerticalSecond();
+	void UnSplitFirst();
+	void UnSplitSecond();
 	void UpdateUIHorizontalFirst(wxUpdateUIEvent& event);
 	void UpdateUIHorizontalSecond(wxUpdateUIEvent& event);
 	void UpdateUIVerticalFirst(wxUpdateUIEvent& event);
@@ -58,6 +57,9 @@ public:
 	Canvas* getCanvas(){return canvas1;};
 	void SetPlaySimu(bool play){playsimu=play;}
 	bool getPlaysimu(){return playsimu;}
+	void SetIsActivated(bool active){isActivated=active;}
+	bool getIsActivated(){return isActivated;}
+	void ChangeBackgroundColor();
 	
 private:
 	Canvas* canvas1;
@@ -68,15 +70,10 @@ private:
 	wxSplitterWindow* m_splitter;
 	wxSplitterWindow* m_splitterSub;
 	bool playsimu;
+	bool isActivated;
 	wxTimer m_timer;
 	wxToolBar* toolbar;
-	/////
 	wxToolBar* toolbar2;
-	/////
-	wxMenu * filemenu;
-	wxMenu * filemenu2;
-	wxMenu * filemenu3;
-	wxMenuBar * menubar;
 	DECLARE_EVENT_TABLE()
 	
 };

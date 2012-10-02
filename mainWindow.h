@@ -74,11 +74,13 @@ public:
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
-
+	void OnReplaceMenuBar();
+	void CreateMenuBar();
 	void InitToolBar(wxToolBar* tool);
 	void ShowSelection(wxCommandEvent& event);
 	void Search(wxTreeItemId item,bool toogle);
 	void ShowReferenceComposed(wxCommandEvent& event);
+	void HandleChildViews(wxCommandEvent &event);
 	void ShowBox(bool box);
 	void ShowReference(bool refer);
 	void DeleteObject(wxCommandEvent& WXUNUSED(event));
@@ -115,9 +117,7 @@ private:
 	wxTreeItemId m_root;
 	wxToolBar* toolbar;
 	wxAuiNotebook* note;
-	wxMenu* filemenu;
-	wxMenu* menuAbout;
-	wxMenu* menuSettings;
+	wxMenu *menuFile,*menuAbout,*menuSettings,*menuFile2,*menuView,*menuSimulator;
 	wxMenu* filesubmenu3;
 	wxMenuBar* menubar;
 	wxPanel* m_panel;

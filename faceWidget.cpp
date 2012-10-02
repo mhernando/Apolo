@@ -71,12 +71,11 @@ void FaceWidget::ChangeView(bool wView)
 {
 	worldView=wView;
 	canvas2->ClearObjects();
+	
 	if(worldView)
 		canvas2->UpdateWorld(world->getWorld());
-	else
-		canvas2->AddObject(face);
-
 	
+	canvas2->AddObject(face);
 	canvas2->Refresh();
 
 }

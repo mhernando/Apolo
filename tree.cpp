@@ -4,7 +4,7 @@
 
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
-	EVT_TREE_SEL_CHANGED(wxID_ANY,Tree::ShowSelection)
+	EVT_TREE_SEL_CHANGED(ID_TREE,Tree::ShowSelection)
 	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
 END_EVENT_TABLE()
 
@@ -73,11 +73,12 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
  wxTreeItemId Tree::GetWorld(wxTreeItemId i)
 {
 	wxTreeItemId world=i;
-	if(GetItemParent(world)==root)
-		return world;
-	else
-		GetWorld(GetItemParent(world));
-	return 0;
+	if(GetItemParent(world)!=root)
+		world=GetWorld(GetItemParent(world));
+	
+	return world;
+		
+	
 }
 
 
@@ -85,6 +86,7 @@ void Tree::Parent(wxTreeItemId r)
 {
 	root = r;
 }
+
 wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
 {
 	static int num = 0;
@@ -277,30 +279,20 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 
 void Tree::OnShowCanvas(wxMouseEvent& event)
 {
+	
 	wxTreeItemId itemId  = GetSelection();
 	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
 	if(itemId.IsOk())
 	{
+		if(!itemData->getSimu()->getChild()->IsShown())
+			itemData->getSimu()->getChild()->Show();
 		wxLogStatus(wxT("Item seleccionado"));
-		for(unsigned int i=0; i<m_mainWin->listWorlds.size();i++)
-		{
-		if(m_mainWin->listWorlds[i]->getWorld()->hasObject(itemData->pointer.positionableentity))
-		{
-			if(!m_mainWin->listWorlds[i]->getChild()->IsShown())
-				m_mainWin->listWorlds[i]->getChild()->Show();
-			m_mainWin->listWorlds[i]->getChild()->Activate();
-		}
-		else if(m_mainWin->listWorlds[i]->getWorld()==itemData->pointer.world)
-		{
-			m_mainWin->listWorlds[i]->getChild()->Maximize(!m_mainWin->listWorlds[i]->getChild()->IsMaximized());
-			m_mainWin->listWorlds[i]->getChild()->Update();
-		}
-		else m_mainWin->listWorlds[i]->getChild()->Lower();
-		}
+		itemData->getSimu()->getChild()->Maximize(!itemData->getSimu()->getChild()->IsMaximized());
+		itemData->getSimu()->getChild()->Update();
 	}
 	else  wxLogStatus(wxT("No item under mouse"));
 
-	event.Skip();
+	event.StopPropagation();
 
 }
 
@@ -315,14 +307,15 @@ Tree::m_item Tree::SimplyItems(int id,wxString name, wxIcon icon)
 
 void Tree::ShowSelection(wxTreeEvent& event)
 {
-
-	if(sel)
-	{
 	wxTreeItemId itemId = GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
-
-	if(itemData->menus.menu_solid && root!=itemId)
+	if(root!=itemId)
+	{
+	if(sel)
+	{
+	
+	if(itemData->menus.menu_solid)
 		{
 			itemData->pointer.solidentity->setDrawBox();
 			itemData->getSimu()->getChild()->UpdateWorld();
@@ -334,7 +327,7 @@ void Tree::ShowSelection(wxTreeEvent& event)
 			itemId=event.GetOldItem();
 			itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
-			if(itemData->menus.menu_solid && root!=itemId)
+			if(itemData->menus.menu_solid)
 			{
 				itemData->pointer.solidentity->setDrawBox(false);
 				itemData->getSimu()->getChild()->UpdateWorld();
@@ -342,13 +335,17 @@ void Tree::ShowSelection(wxTreeEvent& event)
 		}
 	}
 
-	for(unsigned int i=0;i<m_mainWin->listWorlds.size();i++)
-		if(m_mainWin->listWorlds[i]->getTreeItem()==GetSelection())
-		{
-			if(!m_mainWin->listWorlds[i]->getChild()->IsShown())
-				m_mainWin->listWorlds[i]->getChild()->Show();
-			m_mainWin->listWorlds[i]->getChild()->Activate();
-		}
+	
+	for(unsigned int i=0;i<m_mainWin->listWorlds.size();i++)	
+		m_mainWin->listWorlds[i]->getChild()->SetIsActivated(false);
+	if(!itemData->getSimu()->getChild()->IsShown())
+			itemData->getSimu()->getChild()->Show();
+	itemData->getSimu()->getChild()->Activate();
+	itemData->getSimu()->getChild()->SetIsActivated(true);
+			
+	}
+
+	
 
 }
 

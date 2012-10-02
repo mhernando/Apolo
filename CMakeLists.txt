@@ -15,7 +15,7 @@ IF(wxWidgets_FOUND)
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp 
 	wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp 
 	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp 
-	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp)
+	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp)
 
 
 	IF(WIN32)
@@ -37,3 +37,15 @@ IF(wxWidgets_FOUND)
 	ENDIF(WIN32)
     	
 ENDIF(wxWidgets_FOUND)
+
+ADD_SUBDIRECTORY(apoloMex)
+
+
+	ADD_EXECUTABLE(DEMO_APOLO_PORT demoApoloPort/demoApoloPort.cpp apoloMessage.cpp) 
+	IF(WIN32)	
+		TARGET_LINK_LIBRARIES(DEMO_APOLO_PORT debug mrcore_d )	
+		TARGET_LINK_LIBRARIES(DEMO_APOLO_PORT optimized mrcore )
+	ELSE(WIN32) #LINUX		
+		TARGET_LINK_LIBRARIES(DEMO_APOLO_PORT mrcore ${OPENGL_LIBRARIES} ${wxWidgets_LIBRARIES})
+	ENDIF(WIN32)
+ 

@@ -29,6 +29,7 @@ public:
 	wxPoint getCursorPosition(){return pt;};
 	Vector2D getViewScale2D(){return scale2D;};
 	void Scale2D();
+	void ChangeBackGroundColour(wxColour colour);
 	
 	
 private:

@@ -37,7 +37,7 @@ private:
 	double red,green,blue;
 	wxRadioBox *align;
 	FaceWidget *canvas;
-	GenericSlider *roll,*pitch,*plane_dis,*transparency;
+	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
 	wxTextCtrl *transp_box;
 	wxButton *af,*cView;
 	wxPoint point;
