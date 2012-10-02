@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while(s.IsConnected())
 		{
 			printf("\nConnected\n");
-			printf("\nIntroduce command:\n 1-Move robot joints.\n"); 
+			printf("\nIntroduce command:\n 1-Move robot joints.\n 1-Place xyz.\n"); 
 			printf("\n 2-Mueve Puma 560 continuamente.\n"); 
 			scanf("%c",&order);
 			fflush(stdin);
@@ -97,6 +97,30 @@ int _tmain(int argc, _TCHAR* argv[])
 				else /*printf("\nEnvio de UPDATE\n")*/;
 				}
 
+
+			}
+			else if(order=='3')
+			{
+				
+				printf("\nIntroduce x y z:\n"); 
+			
+				double xyz[6]={0,0,0,0,0,0};
+				for(int i=0;i<3;i++)
+				{
+					fflush(stdin);
+					printf("\nIntroduce value:"); 
+					scanf("%lf",&(xyz[i]));
+				}
+				char *aux=message;
+				int size=ApoloMessage::writePlaceObject(message,worldName,objectName,xyz);
+	
+				if(s.Send(message,size)<size)printf("\n--ERROR---\n");
+				else printf("\nEnvio correcto de %d bytes\n",size);
+				
+				size=ApoloMessage::writeUpdateWorld(message,0);
+				if(s.Send(message,size)<size)
+				/*printf("\n--ERROR-UPDATE-\n")*/;
+				else /*printf("\nEnvio de UPDATE\n")*/;
 
 			}
 			

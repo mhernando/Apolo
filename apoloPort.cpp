@@ -95,6 +95,14 @@ void *ApoloPort::handleConnections(void *server)
 							}
 							
 							break;
+						case AP_PLACE:
+							if(element){
+								double d[6];
+								for(int i=0;i<6;i++)d[i]=m->getDoubleAt(8*i);
+								element->setAbsoluteT3D(Transformation3D(d[0],d[1],d[2],d[3],d[4],d[5]));
+								valid++;
+							}
+							break;
 						case AP_UPDATEWORLD:
 							if(worldindex>=0){//updates one world
 								(*world)[worldindex]->getChild()->RefreshChild();

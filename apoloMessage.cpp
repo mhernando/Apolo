@@ -68,6 +68,17 @@ int ApoloMessage::writeSetRobotJoints(char *buffer, char *world, char *robot, in
 	insertSize(buffer,n);
 	return n;
 }
+int ApoloMessage::writePlaceObject(char *buffer, char *world,char *object, double *xyzrpy)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_PLACE);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,object);//robot
+	for(i=0;i<6;i++)
+		n+=writeDouble(buffer+n,xyzrpy[i]);
+	insertSize(buffer,n);
+	return n;
+}
 //the same message But changes the command id
 int ApoloMessage::writeCheckColision(char *buffer, char *world, char *robot, int num, double *values)
 {
@@ -103,9 +114,8 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 	switch(type)
 	{//command with world and name
 		case AP_SETJOINTS:
-		case AP_SETXYZ:
-		case AP_SETRPY:
 		case AP_CHECKJOINTS:
+		case AP_PLACE:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];
