@@ -88,20 +88,24 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		//  get the dimension of the row vector 
 		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("joints must be row vector.");
 		num = mxGetN(prhs[3]);
-						
-		size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
+		if(command[0]==AP_SETJOINTS)				
+			size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
+		else size=ApoloMessage::writeCheckColision(message,world,name,num,dvalues);
+		
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
 		else if(command[0]==AP_CHECKJOINTS){
-			conection->Receive(resp,100,-1);
-			char *auxb=resp;
-			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,100);
 			mxLogical val=0;
+			size=conection->Receive(resp,100,100);
+			char *auxb=resp;
+			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,size);
+			
 			if(m){
 				//prepara vector de retorno
 				if(m->getType()==AP_TRUE)val=1;
 				delete m;
 			}
 			plhs[0] = mxCreateLogicalScalar(val);
+			
 		}
 		break;
 	case AP_PLACE:
