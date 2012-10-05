@@ -8,6 +8,8 @@
 #define AP_UPDATEWORLD 'U'
 #define AP_TRUE 'T'
 #define AP_FALSE 'F'
+#define AP_PLACE_WB 'p'
+
 /*************************************************************/
 /*This class implements the protocol for easily connect to apolo
   An apolo message pointers to an external buffer. Is simply an interpreter
@@ -27,6 +29,7 @@ public:
 	static int writeUpdateWorld(char *buffer, char *world);
 	static int writeBOOL(char *buffer, bool val);
 	static int writePlaceObject(char *buffer, char *world,char *object, double *xyzrpy);
+	static int writePlaceWheeledBase(char *buffer, char *world,char *robot, double *xyzy);
 
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 

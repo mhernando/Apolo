@@ -73,9 +73,20 @@ int ApoloMessage::writePlaceObject(char *buffer, char *world,char *object, doubl
 	int n=0,i;
 	n+=writeHeader(buffer,AP_PLACE);//command
 	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,object);//robot
+	n+=writeString(buffer+n,object);//object
 	for(i=0;i<6;i++)
 		n+=writeDouble(buffer+n,xyzrpy[i]);
+	insertSize(buffer,n);
+	return n;
+}
+int  ApoloMessage::writePlaceWheeledBase(char *buffer, char *world,char *robot, double *xyzy)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_PLACE_WB);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,robot);//robot
+	for(i=0;i<4;i++)//x,y,z, rot z
+		n+=writeDouble(buffer+n,xyzy[i]);
 	insertSize(buffer,n);
 	return n;
 }
@@ -116,6 +127,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_SETJOINTS:
 		case AP_CHECKJOINTS:
 		case AP_PLACE:
+		case AP_PLACE_WB:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];

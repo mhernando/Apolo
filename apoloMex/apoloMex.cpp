@@ -53,6 +53,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_SETJOINTS:
 	case AP_CHECKJOINTS:
 	case AP_PLACE:
+	case AP_PLACE_WB:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -120,7 +121,30 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
 		
 		break;
-
+	case AP_PLACE_WB:
+		//get the double vector
+		if ( mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("location must be a vector of doubles.");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("location must be row vector.");
+		if(mxGetN(prhs[3])!=4)mexErrMsgTxt("position must be a 4-row vector.");
+						
+		size=ApoloMessage::writePlaceWheeledBase(message,world,name,dvalues);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else{
+			mxLogical val=0;
+			size=conection->Receive(resp,100,100);
+			char *auxb=resp;
+			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,size);
+			
+			if(m){
+				//prepara vector de retorno
+				if(m->getType()==AP_TRUE)val=1;
+				delete m;
+			}
+			plhs[0] = mxCreateLogicalScalar(val);
+		}
+		break;
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate

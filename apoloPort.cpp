@@ -48,6 +48,7 @@ void *ApoloPort::handleConnections(void *server)
 	Socket socket=*aux_sock;
 	PositionableEntity *pos;
 	RobotSim *robot;
+	WheeledBaseSim *wb;
 	static int valid=0, total=0;
 	
 	while(1)
@@ -83,9 +84,10 @@ void *ApoloPort::handleConnections(void *server)
 							robot=dynamic_cast<RobotSim*>(element);
 							int numJoints=m->getCharAt(0);
 							for(int i=0;i<numJoints;i++)
-							robot->setJointValue(i,m->getDoubleAt(1+8*i));
+							   if(robot)robot->setJointValue(i,m->getDoubleAt(1+8*i));
 							if(m->getType()==AP_CHECKJOINTS){
-								bool res=robot->checkRobotColision();
+								bool res=false;
+								if(robot)res=robot->checkRobotColision();
 								char resp[50];
 								int tam=ApoloMessage::writeBOOL(resp,res);
 								temp->Send(resp,tam);
@@ -100,6 +102,20 @@ void *ApoloPort::handleConnections(void *server)
 								double d[6];
 								for(int i=0;i<6;i++)d[i]=m->getDoubleAt(8*i);
 								element->setAbsoluteT3D(Transformation3D(d[0],d[1],d[2],d[3],d[4],d[5]));
+								valid++;
+							}
+							break;
+						case AP_PLACE_WB: //place a wheeled based robot. computes the grounded location and collision
+							if(element){
+								wb=dynamic_cast<WheeledBaseSim *>(element);
+								bool res=false;
+								double d[4];
+								for(int i=0;i<4;i++)d[i]=m->getDoubleAt(8*i);
+								if(wb)res=wb->dropWheeledBase(Transformation3D(d[0],d[1],d[2],Axis::Z_AXIS,d[3]));
+								//if(res)res=wb->getWorld()->checkCollisionWith(*wb);
+								char resp[50];
+								int tam=ApoloMessage::writeBOOL(resp,res);
+								temp->Send(resp,tam);
 								valid++;
 							}
 							break;
