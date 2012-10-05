@@ -112,7 +112,16 @@ void *ApoloPort::handleConnections(void *server)
 								double d[4];
 								for(int i=0;i<4;i++)d[i]=m->getDoubleAt(8*i);
 								if(wb)res=wb->dropWheeledBase(Transformation3D(d[0],d[1],d[2],Axis::Z_AXIS,d[3]));
-								//if(res)res=wb->getWorld()->checkCollisionWith(*wb);
+								if(res){
+									//subo ligeramente el robot
+									/*Vector3D aux=wb->getRelativePosition();
+									Vector3D aux2(aux);
+									aux[2]=aux[2]+0.01;
+									wb->setRelativePosition(aux2);*/
+									res=!(wb->getWorld()->checkCollisionWith(*wb));
+									//wb->setRelativePosition(aux);
+								}
+								
 								char resp[50];
 								int tam=ApoloMessage::writeBOOL(resp,res);
 								temp->Send(resp,tam);
