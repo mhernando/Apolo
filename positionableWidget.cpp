@@ -12,12 +12,14 @@ PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,const wxSt
 									   const wxSize& size,bool sliders ,bool color_w): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
-	s_world=obj->getSimu();
+	
 	slider=sliders;
 	parent=window;
 	name=label;
 	defPosition=obj->pointer.positionableentity->getRelativePosition();
 	obj->pointer.positionableentity->getRelativeOrientation(defOrientation.x,defOrientation.y,defOrientation.z);
+	if(color_w)
+		obj->pointer.solidentity->getColor(defRed,defGreen,defBlue);
 	node=obj;
 	CreatePanel(sliders,color_w);	
 	
@@ -205,7 +207,7 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	t.orientation.setRPY(deg2rad(orientation.x),deg2rad(orientation.y),deg2rad(orientation.z));
 	node->pointer.positionableentity->setRelativeT3D(t);
 	
-	s_world->getChild()->UpdateWorld();
+	node->getSimu()->getChild()->UpdateWorld();
 
 }
 
@@ -221,7 +223,7 @@ void  PositionableWidget::ColorChanged(wxCommandEvent& event)
 			blue = color.Blue();
 
 			node->pointer.solidentity->setColor(red/255,green/255,blue/255);
-			s_world->getChild()->UpdateWorld();
+			node->getSimu()->getChild()->UpdateWorld();
 		
 		}		
 }

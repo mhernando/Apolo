@@ -170,4 +170,3 @@ global workspace.\nResetting count.\n");
     /* Destroy array */
     mxDestroyArray(array_ptr);
 }
-

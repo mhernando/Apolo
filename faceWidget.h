@@ -32,16 +32,13 @@ public:
 
 	
 private:
-	bool created;
 	bool tableAssociated;
 	bool align,h;
 	bool worldView;
-	wxWindow *window;
-	float x,y;
+	double x,y;
 	Face *face,*faceCopy;
 	PointsList *points;
 	SimulatedWorld *world;
-	wxPoint point;
 	Canvas *canvas1,*canvas2;
 	wxSplitterWindow *canvas;
 	DECLARE_EVENT_TABLE();

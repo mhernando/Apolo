@@ -4,7 +4,7 @@
 
 BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 	EVT_CLOSE(ChildView::OnClose)
-	EVT_TIMER(ID_TIMER, ChildView::OnTimer)
+	EVT_TIMER(ID_TIMER, ChildView::OnTimer)	
 	EVT_UPDATE_UI(ID_SPLITHF, ChildView::UpdateUIHorizontalFirst)
 	EVT_UPDATE_UI(ID_SPLITHS, ChildView::UpdateUIHorizontalSecond)
 	EVT_UPDATE_UI(ID_SPLITVF, ChildView::UpdateUIVerticalFirst)
@@ -13,18 +13,21 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 	EVT_UPDATE_UI(ID_UNSPLITS, ChildView::UpdateUIUnsplitSecond)
 	EVT_UPDATE_UI(ID_PLAY, ChildView::UpdateUIPlay)
 	EVT_UPDATE_UI(ID_STOP2, ChildView::UpdateUIStop)
+	EVT_UPDATE_UI(wxID_ANY,ChildView::UpdateIsActivated)
 
 
 END_EVENT_TABLE()
 
 
-ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
+ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, SimulatedWorld *sw)
 : wxMDIChildFrame(parent, wxID_ANY, title, wxPoint(50,50), wxSize(500,400), wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE),m_timer(this,ID_TIMER)
 {
+	
 	mainWin = (MainWindow*)parent;
 	m_splitter = (wxSplitterWindow *) NULL;
 	toolbar = 0;
-	m_world = w;
+	s_world= sw;
+	m_world = sw->getWorld();
 	playsimu=false;
 	isActivated=true;
 	//call timer
@@ -43,7 +46,7 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, World *w)
 void ChildView::InitToolBar(wxToolBar* toolbar)
 {
 	int a=0, b=0;
-	wxBitmap bitmaps[7];
+	wxBitmap bitmaps[8];
 	bitmaps[0] = wxBitmap ( V1_xpm);
 	bitmaps[1] = wxBitmap ( V2_xpm);
 	bitmaps[2] = wxBitmap ( V3_xpm);
@@ -51,6 +54,7 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	bitmaps[4] = wxBitmap ( V5_xpm);
 	bitmaps[5] = wxBitmap ( play_xpm);
 	bitmaps[6] = wxBitmap ( stop2_xpm);
+	bitmaps[7] = wxBitmap ( colour_xpm);
 
 
 	toolbar->AddTool(ID_UNSPLITF, bitmaps[4], wxT("view unsplit simple"));
@@ -61,6 +65,8 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	toolbar->AddSeparator();
 	toolbar->AddTool(ID_PLAY, bitmaps[5], wxT("PLAY"));
 	toolbar->AddTool(ID_STOP2, bitmaps[6], wxT("STOP"));
+	toolbar->AddSeparator();
+	toolbar->AddTool(ID_CANVASCOLOR, bitmaps[7], wxT("Change Background Colour"));
 	toolbar->AddSeparator();
 	toolbar->Realize();
 	
@@ -129,10 +135,7 @@ void ChildView::ChangeBackgroundColor()
 			canvas3->ChangeBackGroundColour(colour);
 		}
 }
-void ChildView::OnHideChild()
-{
-	this->Show(false);
-}
+
 void ChildView::OnSimulator(wxWindowID id)
 {
 	if(id == ID_PLAY)SetPlaySimu(true);
@@ -190,6 +193,14 @@ void ChildView::UnSplitSecond()
 void ChildView::UpdateUIHorizontalFirst(wxUpdateUIEvent& event)
 {
 	event.Enable(( (!m_splitter->IsSplit()) || (m_splitterSub->IsSplit()) || (m_splitter->GetSplitMode() != wxSPLIT_HORIZONTAL)));
+}
+void ChildView::UpdateIsActivated(wxUpdateUIEvent& event)
+{
+	#ifdef _WIN32
+	if(IsMouseInWindow())
+		getSimuWorld()->tree->SelectItem(getSimuWorld()->getTreeItem());
+	#endif
+	
 }
 void ChildView::UpdateUIHorizontalSecond(wxUpdateUIEvent& event)
 {

@@ -3,8 +3,6 @@
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
 
 EVT_COMMAND(wxID_ANY,wxEVT_FACEVERTEX_ADDED,FaceWidget::GetPoint)
-//EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, OnChangeSplitter)
-//EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,FaceWidget::AddVertex)
 
 END_EVENT_TABLE()
 
@@ -15,7 +13,6 @@ FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,
 {
 	face=NULL;
 	faceCopy=NULL;
-	window=parent;
 	h=horizontal;
 	world=simu;
 	align=true;
@@ -83,6 +80,8 @@ void FaceWidget::GetPoint(wxCommandEvent& event)
 {
 	Vector2D scale;
 	Vector2D scaleTrans;
+	wxPoint point;
+
 	point=canvas1->getCursorPosition();
 	scale=canvas1->getViewScale2D();
 	wxSize c_size=canvas1->GetSize();
@@ -129,13 +128,6 @@ void FaceWidget::AddVertex()
 
 }
 
-
-//void FaceWidget::OnChangeSplitter(wxSplitterEvent &event)
-//{
-
-	
-		
-//}
 
 void FaceWidget::RefreshCanvas()
 {

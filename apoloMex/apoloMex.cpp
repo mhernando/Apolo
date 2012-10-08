@@ -1,3 +1,4 @@
+
 #include "apoloMex.h" //de momento inutil ...habrá que borrarlo 
 #include "../apoloMessage.h"
 #include "mrcore.h"
@@ -19,7 +20,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 //1, obtengo el nombre de la función a ejecutar y hago un switch
 //el primer argumento es el nombre de la funcion
 	char *command;
-    if(nrhs!=1)mexErrMsgTxt("One input required.");
+    if(nrhs<1)mexErrMsgTxt("One input required.");
     if ( mxIsChar(prhs[0]) != 1)mexErrMsgTxt("Input must be a string.");
 
     /* input must be a row vector */
@@ -51,6 +52,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	//commands with world id, and name
 	case AP_SETJOINTS:
 	case AP_CHECKJOINTS:
+	case AP_PLACE:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -81,27 +83,44 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_SETJOINTS:
 	case AP_CHECKJOINTS:
 		//get the double vector
-		if ( mxIsChar(prhs[3]) != 1)mexErrMsgTxt("joints must be a vector of doubles.");
+		if ( mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("joints must be a vector of doubles.");
 		dvalues = mxGetPr(prhs[3]);
 		//  get the dimension of the row vector 
 		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("joints must be row vector.");
 		num = mxGetN(prhs[3]);
-						
-		size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
+		if(command[0]==AP_SETJOINTS)				
+			size=ApoloMessage::writeSetRobotJoints(message,world,name,num,dvalues);
+		else size=ApoloMessage::writeCheckColision(message,world,name,num,dvalues);
+		
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
-		else if(command[0]=AP_CHECKJOINTS){
-			conection->Receive(resp,100,-1);
+		else if(command[0]==AP_CHECKJOINTS){
+			mxLogical val=0;
+			size=conection->Receive(resp,100,100);
 			char *auxb=resp;
-			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,100);
+			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,size);
+			
 			if(m){
 				//prepara vector de retorno
-				mxLogical val=0;
 				if(m->getType()==AP_TRUE)val=1;
-				plhs[0] = mxCreateLogicalScalar(val);
 				delete m;
 			}
+			plhs[0] = mxCreateLogicalScalar(val);
+			
 		}
 		break;
+	case AP_PLACE:
+		//get the double vector
+		if ( mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("location must be a vector of doubles.");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("location must be row vector.");
+		if(mxGetN(prhs[3])!=6)mexErrMsgTxt("location must be a 6-row vector.");
+						
+		size=ApoloMessage::writePlaceObject(message,world,name,dvalues);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		
+		break;
+
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate
@@ -118,6 +137,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	if(name)mxFree(name);
 	if(world)mxFree(world);
 }
+
 
 
 

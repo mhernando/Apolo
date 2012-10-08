@@ -1,9 +1,9 @@
+
 #pragma once
 
 #define AP_NONE 0
 #define AP_SETJOINTS 'J'
-#define AP_SETXYZ 'P'
-#define AP_SETRPY 'O'
+#define AP_PLACE 'P'
 #define AP_CHECKJOINTS 'j'
 #define AP_UPDATEWORLD 'U'
 #define AP_TRUE 'T'
@@ -26,6 +26,7 @@ public:
 	static int writeCheckColision(char *buffer, char *world, char *robot, int num, double *values);
 	static int writeUpdateWorld(char *buffer, char *world);
 	static int writeBOOL(char *buffer, bool val);
+	static int writePlaceObject(char *buffer, char *world,char *object, double *xyzrpy);
 
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 

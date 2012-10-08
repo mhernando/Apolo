@@ -1,3 +1,4 @@
+
 # Indicamos el nombre que queremos que tenga nuestro proyecto
 PROJECT(apoloMex)
 
@@ -127,6 +128,5 @@ IF(WIN32)
 ELSE(WIN32) #LINUX		
 	TARGET_LINK_LIBRARIES(apoloMex mrcore ${MATLAB_LIBRARIES})
 ENDIF(WIN32)
-
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)

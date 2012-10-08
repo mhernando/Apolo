@@ -129,8 +129,6 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	m_root = tree->AddRoot(wxT("Universe"), 0, 47, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
 
-
-
 	note->AddPage(tree, wxT("Universe"));
 	
 	rToogle=false;
@@ -231,7 +229,6 @@ void MainWindow::CreateMenuBar()
 	menuView->Append(itemV4);
 	menuView->Append(itemV5);
 	menuView->Append(ID_UNSPLITS, wxT("Double"));
-	menuView->Append(ID_HIDE, wxT("Hide World"));
 	menuView->AppendSeparator();
 	menuView->Append(ID_CANVASCOLOR, wxT("Change background color"));
 	menuSimulator = new wxMenu;
@@ -361,15 +358,6 @@ void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 }
 void MainWindow::HandleChildViews(wxCommandEvent &event)
 {
-	for(unsigned int i=0;i<listWorlds.size();i++)
-	{
-		if(listWorlds[i]->getChild()-IsMouseInWindow())
-		{	
-			for(unsigned int j=0;j<listWorlds.size();j++)listWorlds[j]->getChild()->SetIsActivated(false);
-			listWorlds[i]->getChild()->SetIsActivated(true);
-			break;
-		}
-	}
 			
 	for(unsigned int i=0;i<listWorlds.size();i++)
 	{
@@ -403,9 +391,6 @@ void MainWindow::HandleChildViews(wxCommandEvent &event)
 					listWorlds[i]->getChild()->SplitHorizontalSecond();
 					break;
 					
-				case ID_HIDE:
-					listWorlds[i]->getChild()->OnHideChild();
-					break;
 
 				case ID_PLAY:
 					listWorlds[i]->getChild()->OnSimulator(ID_PLAY);
@@ -562,7 +547,7 @@ void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
 			wxString textOutside;
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Move");
 			WheeledBasePanel* wheeledBaseCtrl;
-			wheeledBaseCtrl = new WheeledBasePanel(this,wxID_ANY,itemData);
+			wheeledBaseCtrl = new WheeledBasePanel(note,wxID_ANY,itemData);
 			wheeledBaseCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(wheeledBaseCtrl,textOutside);
 			wxLogStatus(wxT("Wheeled Base Panel"));
@@ -580,11 +565,14 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 			wxString textOutside;
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Joints");
 			RobotSimPanel* robotSimCtrl;
-			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,itemData);
+			robotSimCtrl = new RobotSimPanel(note,wxID_ANY,itemData);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(robotSimCtrl,textOutside);
+			
+			
 			wxLogStatus(wxT("Robot Sim Panel"));
 		}
+		
 	}
 }
 void MainWindow::OnDrawBox(wxCommandEvent& WXUNUSED(event))
