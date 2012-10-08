@@ -38,6 +38,14 @@ inline int writeDouble(char *buffer, double val){
 	for(int i=0;i<8;i++)buffer[i]=aux.bytes[i];
 	return 8;
 }
+inline int writeUInt16(char *message, int &num)
+{
+	if(num>65535)num=65535;
+	if(num<0)num=0;
+	((uchar *)message)[0]=(uchar)(num%255);
+	((uchar *)message)[1]=(uchar)(num/255);
+	return 2;
+}
 inline void insertSize(char *message, int size)//size including the header
 {
 	((uchar *)message)[2]=(uchar)(size%255);
@@ -79,6 +87,17 @@ int ApoloMessage::writePlaceObject(char *buffer, char *world,char *object, doubl
 	insertSize(buffer,n);
 	return n;
 }
+int ApoloMessage::writeMoveWheeledBase(char *buffer, char *world,char *robot, double *sp_rs_t)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_MOVE_WB);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,robot);//robot
+	for(i=0;i<3;i++)//speed, rot speed, time
+		n+=writeDouble(buffer+n,sp_rs_t[i]);
+	insertSize(buffer,n);
+	return n;
+}
 int  ApoloMessage::writePlaceWheeledBase(char *buffer, char *world,char *robot, double *xyzy)
 {
 	int n=0,i;
@@ -97,11 +116,38 @@ int ApoloMessage::writeCheckColision(char *buffer, char *world, char *robot, int
 	buffer[4]=AP_CHECKJOINTS;
 	return n;
 }
+int ApoloMessage::writeGetLocation(char *buffer, char *world,char *object)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_GETLOCATION);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,object);//robot
+	return n;
+}
+int ApoloMessage::writeGetLocationWheeledBase(char *buffer, char *world,char *robot)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_GETLOCATION_WB);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,robot);//robot
+	return n;
+}
 int ApoloMessage::writeUpdateWorld(char *buffer, char *world)
 {
 	int n=0;
 	n+=writeHeader(buffer,AP_UPDATEWORLD);//command
 	n+=writeString(buffer+n,world);//world
+	insertSize(buffer,n);
+	return n;
+}
+int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
+{
+	int n=0;
+
+	n+=writeHeader(buffer,AP_DVECTOR);//command
+	n+=writeUInt16(buffer+n,num);
+	for(int i=0;i<num;i++)
+		n+=writeDouble(buffer+n,d[i]);
 	insertSize(buffer,n);
 	return n;
 }
@@ -128,6 +174,9 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_CHECKJOINTS:
 		case AP_PLACE:
 		case AP_PLACE_WB:
+		case AP_MOVE_WB:
+		case AP_GETLOCATION_WB:
+		case AP_GETLOCATION:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];
@@ -147,6 +196,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		break;
 		default: //commands without world neither
 			bindata=pData+5;
+		break;
 	}
 	
 }
@@ -179,6 +229,11 @@ int ApoloMessage::getIntAt(int offset)
 	if(offset+(bindata-pData)+4>size)return 0;
 	for(int i=0;i<4;i++)aux.bytes[i]=bindata[offset+i];
 	return aux.integer;
+}
+int ApoloMessage::getUInt16At(int offset)
+{
+	if(offset+(bindata-pData)+2>size)return 0;
+	return (((uchar *)(bindata))[offset])+(((uchar *)(bindata))[offset+1])*255;
 }
 double ApoloMessage::getDoubleAt(int offset)
 {

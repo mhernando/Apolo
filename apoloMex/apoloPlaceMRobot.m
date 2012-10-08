@@ -1,4 +1,5 @@
 
-function ret=apoloPlaceMRobot(world,robot,pose,angle)
+function ret=apoloPlaceMRobot(robot,pose,angle,world)
+if(nargin==3)world='';end;
 ret=apoloMex('p',world,robot,[pose angle]);
 return 

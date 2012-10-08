@@ -9,7 +9,10 @@
 #define AP_TRUE 'T'
 #define AP_FALSE 'F'
 #define AP_PLACE_WB 'p'
-
+#define AP_MOVE_WB 'm'
+#define AP_GETLOCATION 'G'
+#define AP_GETLOCATION_WB 'g'
+#define AP_DVECTOR 'D'
 /*************************************************************/
 /*This class implements the protocol for easily connect to apolo
   An apolo message pointers to an external buffer. Is simply an interpreter
@@ -30,7 +33,10 @@ public:
 	static int writeBOOL(char *buffer, bool val);
 	static int writePlaceObject(char *buffer, char *world,char *object, double *xyzrpy);
 	static int writePlaceWheeledBase(char *buffer, char *world,char *robot, double *xyzy);
-
+	static int writeMoveWheeledBase(char *buffer, char *world,char *robot, double *sp_rs_t); //speed,rot_speed,time
+	static int writeGetLocation(char *buffer, char *world,char *object);
+	static int writeGetLocationWheeledBase(char *buffer, char *world,char *robot);
+	static int writeDoubleVector(char *buffer, int num, double *d);
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}
@@ -38,6 +44,7 @@ public:
 	char getType(){return type;}
 	int getSize(){return size;}
 	int getIntAt(int offset);
+	int getUInt16At(int offset);
 	double getDoubleAt(int offset);
 	char getCharAt(int offset);
 

@@ -38,11 +38,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	   exit function after the conexion has been opened successfully*/
 	mexAtExit(CloseConection);
 
-/*#define AP_SETJOINTS 'J'
-#define AP_SETXYZ 'P'
-#define AP_SETRPY 'O'
-#define AP_CHECKJOINTS 'j'
-#define AP_UPDATEWORLD 'U'*/
+
 
 	//--------------gets the input parameters that are common to most cases
 	char *world=0,*name=0;
@@ -54,6 +50,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_CHECKJOINTS:
 	case AP_PLACE:
 	case AP_PLACE_WB:
+	case AP_MOVE_WB:
+	case AP_GETLOCATION:
+	case AP_GETLOCATION_WB:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -77,7 +76,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	int size;
 	int num;
 	double *dvalues;
-	char resp[100];
+	char resp[300];
 	switch(command[0])
 	{
 	//commands with world id, and name
@@ -145,10 +144,53 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 			plhs[0] = mxCreateLogicalScalar(val);
 		}
 		break;
+		case AP_MOVE_WB:
+		//get the double vector
+		if ( mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("speeds and time must be a vector of doubles.");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if(mxGetM(prhs[3])!=1)mexErrMsgTxt("speeds must be row vector.");
+		if(mxGetN(prhs[3])!=3)mexErrMsgTxt("speeds and time must be a 3-row vector.");
+						
+		size=ApoloMessage::writeMoveWheeledBase(message,world,name,dvalues);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		
+		break;
+
+	case AP_GETLOCATION:
+	case AP_GETLOCATION_WB:
+		if(command[0]==AP_GETLOCATION)
+			size=ApoloMessage::writeGetLocation(message,world,name);
+		else size=ApoloMessage::writeGetLocationWheeledBase(message,world,name);
+		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else{
+			
+			size=conection->Receive(resp,300,-1);
+			char *auxb=resp;
+					
+			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,size);
+			if(m){
+				//prepara vector de retorno
+				if(m->getType()==AP_DVECTOR){
+
+					int num=m->getUInt16At(0);
+				
+					plhs[0] = mxCreateDoubleMatrix(1,num, mxREAL);
+					double *z = mxGetPr(plhs[0]);
+					for(int i=0;i<num;i++)z[i]=m->getDoubleAt(2+i*8);
+				}
+				else mexErrMsgTxt("Mensaje de respuesta erroneo");
+				delete m;
+			}
+			else mexErrMsgTxt("Mensaje de respuesta no identificado");
+			
+		}
+		break;
+	
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate
-		size=ApoloMessage::writeUpdateWorld(message,0);
+		size=ApoloMessage::writeUpdateWorld(message,world);
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
 		break;
 	}

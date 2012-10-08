@@ -97,6 +97,26 @@ void *ApoloPort::handleConnections(void *server)
 							}
 							
 							break;
+						case AP_GETLOCATION:
+						case AP_GETLOCATION_WB:
+							if(element){
+								double d[6];
+								Vector3D p=element->getRelativePosition();
+								double o[3];
+								element->getRelativeOrientation(d[3],d[4],d[5]);
+								for(int i=0;i<3;i++)d[i]=p[i];
+	
+								char resp[70];
+								int tam;
+								if(m->getType()==AP_GETLOCATION)tam=ApoloMessage::writeDoubleVector(resp,6,d);
+								else {
+									d[3]=d[5];
+									tam=ApoloMessage::writeDoubleVector(resp,4,d);
+								}
+								temp->Send(resp,tam);
+								valid++;
+							}
+							break;
 						case AP_PLACE:
 							if(element){
 								double d[6];
@@ -113,18 +133,26 @@ void *ApoloPort::handleConnections(void *server)
 								for(int i=0;i<4;i++)d[i]=m->getDoubleAt(8*i);
 								if(wb)res=wb->dropWheeledBase(Transformation3D(d[0],d[1],d[2],Axis::Z_AXIS,d[3]));
 								if(res){
-									//subo ligeramente el robot
-									/*Vector3D aux=wb->getRelativePosition();
-									Vector3D aux2(aux);
-									aux[2]=aux[2]+0.01;
-									wb->setRelativePosition(aux2);*/
+
 									res=!(wb->getWorld()->checkCollisionWith(*wb));
-									//wb->setRelativePosition(aux);
+							
 								}
 								
 								char resp[50];
 								int tam=ApoloMessage::writeBOOL(resp,res);
 								temp->Send(resp,tam);
+								valid++;
+							}
+							break;
+						case AP_MOVE_WB:
+							
+							if(element){
+								wb=dynamic_cast<WheeledBaseSim *>(element);
+								double d[3];
+								for(int i=0;i<3;i++)d[i]=m->getDoubleAt(8*i);
+								wb->move(d[0],d[1]);
+								wb->simulate(d[2]);
+								wb->move(0,0);
 								valid++;
 							}
 							break;
