@@ -336,7 +336,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Author:Esther LLorente 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.8.11 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente García 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 bool MainWindow::checkPanelExist(NodeTree* node)
@@ -500,9 +500,10 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 	int id = event.GetId();
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	Converter* conver;
 	if(id == ID_CONVERMESH)
 	{
-		Converter* conver;
+		
 		conver = new Converter(this,ID_CONVERMESH,wxT("CPP CODE"));
 		conver->OnlyRead(itemData->pointer.meshpart);
 		conver->ShowModal();
@@ -511,12 +512,13 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 	}
 	if(id == ID_CONVER)
 	{
-		Converter* conver;
+		
 		conver = new Converter(this,ID_CONVER,wxT("Converter .stl"));
 		conver->ShowModal();
 		wxLogStatus(wxT("Converter"));
 	}
 
+	delete conver;
 }
 void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 {
@@ -532,7 +534,9 @@ void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 		locationCtrl->setItemData(itemData);
 		locationCtrl->ShowModal();	
 		wxLogStatus(wxT("Change Location"));
+		delete locationCtrl;
 	}
+	
 	event.Skip();
 }
 void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
@@ -595,7 +599,8 @@ void MainWindow::OnDesign(wxCommandEvent& WXUNUSED(event))
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
 	DesignProperties *design=new DesignProperties(this,itemData,wxT("Design Properties"));
-	design->ShowModal();		  			
+	design->ShowModal();
+	delete design;
 }
 
 void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
@@ -985,14 +990,14 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 
 	int id=event.GetId();
 	wxTreeItemId item=tree->GetSelection();
-	NodeTree *server = item.IsOk() ? (NodeTree *) tree->GetItemData(item)
+	NodeTree *object = item.IsOk() ? (NodeTree *) tree->GetItemData(item)
 		:NULL;
 
 	if(id==ID_LNSERVER)
 	{
 		
-		connection->SendData(server);
-		if(server->typeConnection==1)tree->SetItemTextColour(item,*wxRED);
+		connection->SendData(object);
+		if(object->typeConnection==1)tree->SetItemTextColour(item,*wxRED);
 		
 	}
 
@@ -1001,14 +1006,14 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 	else if(id==ID_LNCLIENT)
 	{
 		
-		connection->ReceiveData(server);
-		if(server->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
+		connection->ReceiveData(object);
+		if(object->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
 	}
 
 	else if(id==ID_STCLIENT || id==ID_STSERVER)
 	{
 		
-		connection->Disconnect(server);
+		connection->Disconnect(object);
 		tree->SetItemTextColour(item,*wxBLACK);
 	}
 
