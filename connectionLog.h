@@ -17,7 +17,7 @@ public:
 	ConnectionLog(wxWindow *window,wxString name);
 	void CreatePanel();
 	void AddConnection(NodeTree *robot);
-	void StateConnection(NodeTree *robot,bool connected);
+	void StateConnection(NodeTree *robot,bool connected, bool errorData=false);
 	void DeleteConnection(NodeTree *robot);
 	bool IsObjectConnected();
 	wxGrid *grid;

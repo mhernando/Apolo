@@ -12,7 +12,6 @@ DesignWidget::DesignWidget(wxWindow *window,NodeTree *node,const wxString label 
 {
 	slider=sliders;
 	orientation=orient;
-	simu=node->getSimu();
 	nodeW=node;
 	type=node->getTipo();
 	GetDefaultValues();
@@ -167,7 +166,7 @@ void DesignWidget::SetSpecificValues(bool def)
 			}
 		}
 	}
-	 simu->getChild()->UpdateWorld();
+	nodeW->getSimu()->getChild()->UpdateWorld();
 	
 
 }
@@ -179,7 +178,7 @@ void DesignWidget::GetDefaultValues()
 
 	else if(type==N_CylindricalPart)
 	{
-		//defRadio=nodeW->pointer.cylindricalpart->getRadius();
+		defRadio=nodeW->pointer.cylindricalpart->getRadius();
 		defHeight=nodeW->pointer.cylindricalpart->getHeight();
 	}
 	

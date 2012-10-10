@@ -41,6 +41,7 @@ ENDIF(wxWidgets_FOUND)
 ADD_SUBDIRECTORY(apoloMex)
 
 
+
 	ADD_EXECUTABLE(DEMO_APOLO_PORT demoApoloPort/demoApoloPort.cpp apoloMessage.cpp) 
 	IF(WIN32)	
 		TARGET_LINK_LIBRARIES(DEMO_APOLO_PORT debug mrcore_d )	

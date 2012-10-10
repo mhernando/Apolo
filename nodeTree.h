@@ -97,7 +97,6 @@ struct MRPointer
 {
 	union{
 	SimpleJoint* simplejoint;
-	Joint* joint;
 	CylindricalPart* cylindricalpart;
 	PrismaticPart* prismaticpart;
 	LMS200Sim* lms200sim;
@@ -112,7 +111,6 @@ struct MRPointer
 	CameraSim* cameraSim;
 	KinectSim* kinectSim;
 	NemoLaserSensor3DSim* nemolasersensor3dsim;
-	LaserSensor3DSim* lasersensor3dsim;
 	MeshPart* meshpart;
 	AdeptOneSim* adeptone;
 	SpherePart * spherepart;
@@ -125,6 +123,8 @@ struct MRPointer
 	World* world;
 	RobotSim* robotsim;
 	LaserSensorSim* lasersensorsim;
+	LaserSensor3DSim* lasersensor3dsim;
+	Joint* joint;
 };
 struct MRServer
 {
@@ -174,24 +174,26 @@ struct ContextualMenu
 	bool menu_robotsim;
 	bool menu_world;
 	bool menu_meshpart;
-	bool menu_server;
+	bool menu_connection;
 	bool menu_laser;
+	bool menu_design;
 	
 };
-class SimulatedWorld;
 
+class SimulatedWorld;
 class NodeTree : public wxTreeItemData 
 {
-class RobotConnection;
 
 public:
-	NodeTree(World* world,SimulatedWorld *simu);
 	NodeTree(PositionableEntity* pos,SimulatedWorld *simu);
+	NodeTree(SimulatedWorld *simu);
 	TypeNode getTipo(){return tipo;}
 	void setTipo(TypeNode type){tipo=type;}
 	void setName(wxString _name){name=_name;}
 	wxString getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
+
+
 	int typeConnection; //0 Nothing //1 Server //2 Client
 	Bitmap bit;
 	BitmapSelect bitsel;
@@ -199,12 +201,10 @@ public:
 	MRServer server;
 	MRClient client;
 	ContextualMenu menus;
-	Thread<RobotConnection>Thid;
 
 private:
 	TypeNode tipo;
-	wxString name;
-	
+	wxString name;	
 	SimulatedWorld *simuWorld;
 	
 };

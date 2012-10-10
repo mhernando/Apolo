@@ -7,19 +7,19 @@ SimulatedWorld::SimulatedWorld(World *world)
 {
 	static int numWorld = 0;
 	objConnected=false;
-	childView = new ChildView(mainWin, wxT("WORLD"), world);
+	
 	wxString defName=wxT("World");
 	defName.Printf(wxT("%s %d"),defName, ++numWorld);
 	name=defName.ToStdString();
-
+	m_world = world;
 	
+	childView = new ChildView(mainWin, wxT("WORLD"),this);
 	childView ->SetTitle(name);
 	childView ->SetIcon(wxIcon(worldSelect_xpm));
 	childView ->UpdateWorld();
 	childView ->RefreshChild();
-	mainNode = tree->GenerateSubTree(world,this);
-
-	m_world = world;
+	mainNode = tree->GenerateSubTree(this);
+	tree->SelectItem(mainNode);
 
 }
 
@@ -120,6 +120,7 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		tree->Delete(tree->GetLastChild(tree->GetSelection()));
 	}
 	childView->UpdateWorld();
+	delete ini;
 
 	
 }

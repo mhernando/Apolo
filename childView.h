@@ -21,12 +21,13 @@
 using namespace std;
 
 class MainWindow;
+class SimulatedWorld;
 
 class ChildView: public wxMDIChildFrame
 {
 public:
 	
-	ChildView(wxMDIParentFrame *parent, const wxString& title, World * w);
+	ChildView(wxMDIParentFrame *parent, const wxString& title, SimulatedWorld * w);
 
 	void InitToolBar(wxToolBar* toolbar);
 		
@@ -38,7 +39,6 @@ public:
 	
 	void OnClose(wxCloseEvent& event);
 	void OnTimer(wxTimerEvent& event);
-	void OnHideChild();
 	void OnSimulator(wxWindowID id);
 	void SplitHorizontalFirst();
 	void SplitHorizontalSecond();
@@ -47,6 +47,7 @@ public:
 	void UnSplitFirst();
 	void UnSplitSecond();
 	void UpdateUIHorizontalFirst(wxUpdateUIEvent& event);
+	void UpdateIsActivated(wxUpdateUIEvent& event);
 	void UpdateUIHorizontalSecond(wxUpdateUIEvent& event);
 	void UpdateUIVerticalFirst(wxUpdateUIEvent& event);
 	void UpdateUIVerticalSecond(wxUpdateUIEvent& event);
@@ -59,12 +60,14 @@ public:
 	bool getPlaysimu(){return playsimu;}
 	void SetIsActivated(bool active){isActivated=active;}
 	bool getIsActivated(){return isActivated;}
+	SimulatedWorld* getSimuWorld(){return s_world;}
 	void ChangeBackgroundColor();
 	
 private:
 	Canvas* canvas1;
 	Canvas* canvas2;
 	Canvas* canvas3;
+	SimulatedWorld* s_world;
 	World* m_world;
 	MainWindow *mainWin;
 	wxSplitterWindow* m_splitter;

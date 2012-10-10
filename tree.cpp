@@ -87,11 +87,12 @@ void Tree::Parent(wxTreeItemId r)
 	root = r;
 }
 
-wxTreeItemId Tree::GenerateSubTree(World* w,SimulatedWorld* simu)
+wxTreeItemId Tree::GenerateSubTree(SimulatedWorld* simu)
 {
 	static int num = 0;
+	World* w=simu->getWorld();
 	text.Printf(wxT("World %d"),++num);
-	NodeTree *auxW = new NodeTree(w,simu);
+	NodeTree *auxW = new NodeTree(simu);
 	wxTreeItemId node = AppendItem(root, text, 37, 38,auxW);
 	auxW->SetId(node);
 	for (int i=0;i<w->getNumObjects();i++)
@@ -165,8 +166,8 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.AppendSubMenu(composed,wxT("Add Complex Entities"));
 		
 		///Number of items for Simple Entities Menu///
-		#define NUMBER_S 10
-		#define NUMBER_C 12
+		#define NUMBER_S 6
+		#define NUMBER_C 11
 		m_item simples[NUMBER_S];
 		m_item compos[NUMBER_C];
 		wxMenuItem *item_s[NUMBER_S];
@@ -178,10 +179,10 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		simples[3]=SimplyItems(ID_ADDPRI,wxT("Prism"),wxIcon(prismatic_xpm));
 		simples[4]=SimplyItems(ID_ADDIRRPRI,wxT("Irregular Prism"),wxIcon(prismatic_xpm));	
 		simples[5]=SimplyItems(ID_WHEEL,wxT("Wheeled Base"),wxIcon(wheeledBase_xpm));
-		simples[6]=SimplyItems(ID_KINECT,wxT("Kinect"),wxIcon(laser_xpm));
-		simples[7]=SimplyItems(ID_CAMERA,wxT("Camera"),wxIcon(laser_xpm));
-		simples[8]=SimplyItems(ID_LASER,wxT("Laser"),wxIcon(laser_xpm));
-		simples[9]=SimplyItems(ID_LASER3D,wxT("Laser3D"),wxIcon(laser_xpm));
+	//	simples[6]=SimplyItems(ID_KINECT,wxT("Kinect"),wxIcon(laser_xpm));
+	//	simples[7]=SimplyItems(ID_CAMERA,wxT("Camera"),wxIcon(laser_xpm));
+	//	simples[8]=SimplyItems(ID_LASER,wxT("Laser"),wxIcon(laser_xpm));
+		//simples[9]=SimplyItems(ID_LASER3D,wxT("Laser3D"),wxIcon(laser_xpm));
 		
 		
 
@@ -196,7 +197,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		compos[8]=SimplyItems(ID_NEMOLASER,wxT("NemoLaser Sensor 3D "),wxIcon(nemolaser_xpm));
 		compos[9]=SimplyItems(ID_QUADROTOR,wxT("Quadrotor"),wxIcon(powercube_xpm));
 		compos[10]=SimplyItems(ID_PERSON,wxT("Person"),wxIcon(laser_xpm));
-		compos[11]=SimplyItems(ID_MOBILEROBOT,wxT("Mobile Robot"),wxIcon(nemolaser_xpm));			
+	//	compos[11]=SimplyItems(ID_MOBILEROBOT,wxT("Mobile Robot"),wxIcon(nemolaser_xpm));			
 		
 		for( int i=0; i<NUMBER_S;i++)
 		{
@@ -241,15 +242,15 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuLaser->Append(ID_LASMOD2, wxT("Contour"));
 		menuLaser->Append(ID_LASMOD3, wxT("Detection"));
 		///////
-		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
-		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
-		if(itemData->menus.menu_composed && !itemData->menus.menu_server) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
+		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
+		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
+		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
-		if(itemData->menus.menu_solid && itemData->menus.menu_composed==false && itemData->getTipo()!=N_FaceSetPart) menuTree.Append(ID_DIS, wxT("Change design properties"));
+		if(itemData->menus.menu_design) menuTree.Append(ID_DIS, wxT("Change design properties"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==1) menuTree.Append(ID_REFER, wxT("Undraw Reference System"));
 		if(itemData->menus.menu_positionable && itemData->pointer.positionableentity->getDrawReferenceSystem()==0) menuTree.Append(ID_REFER, wxT("Draw Reference System"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_NAME, wxT("Change name"));
@@ -265,11 +266,11 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_laser) menuTree.AppendSubMenu(menuLaser,wxT("Laser Styles"));
 		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();
 		if(itemData->menus.menu_meshpart) menuTree.Append(ID_CONVERMESH, wxT("See Cpp Code"));
-		if(itemData->menus.menu_server) menuTree.AppendSeparator();
-		if(itemData->menus.menu_server && itemData->typeConnection==0) menuTree.Append(ID_LNSERVER, wxT("Launch Server"));
-		if(itemData->menus.menu_server && itemData->typeConnection==1) menuTree.Append(ID_STSERVER, wxT("Stop Sending Data"));
-		if(itemData->menus.menu_server && itemData->typeConnection==0) menuTree.Append(ID_LNCLIENT, wxT("Launch Client"));
-		if(itemData->menus.menu_server && itemData->typeConnection==2) menuTree.Append(ID_STCLIENT, wxT("Stop Receiving Data"));
+		if(itemData->menus.menu_connection) menuTree.AppendSeparator();
+		if(itemData->menus.menu_connection && itemData->typeConnection==0) menuTree.Append(ID_LNSERVER, wxT("Launch Server"));
+		if(itemData->menus.menu_connection && itemData->typeConnection==1) menuTree.Append(ID_STSERVER, wxT("Stop Sending Data"));
+		if(itemData->menus.menu_connection && itemData->typeConnection==0) menuTree.Append(ID_LNCLIENT, wxT("Launch Client"));
+		if(itemData->menus.menu_connection && itemData->typeConnection==2) menuTree.Append(ID_STCLIENT, wxT("Stop Receiving Data"));
 
 
 		PopupMenu(&menuTree,pt);
@@ -335,7 +336,7 @@ void Tree::ShowSelection(wxTreeEvent& event)
 		}
 	}
 
-	
+
 	for(unsigned int i=0;i<m_mainWin->listWorlds.size();i++)	
 		m_mainWin->listWorlds[i]->getChild()->SetIsActivated(false);
 	if(!itemData->getSimu()->getChild()->IsShown())
