@@ -86,31 +86,32 @@ void ObjectSelection::PreliminarView(wxListEvent &event)
 		preView->SetViewCenter(0,0,0);
 		preView->SetViewPoint(2,0,30);
 		
-		if(itemIndex<4)
+		if(itemIndex<3)
 		{
 			preView->SetViewCenter(0,0,0.75);
 			preView->SetViewPoint(4,0,0);
 			if(itemIndex==0){preliminar=new AdeptOneSim;	object=ID_ADDSCARA;}
 			else if(itemIndex==1){preliminar=new  Puma560Sim;	object=ID_ADDPUMA;}
 			else if(itemIndex==2){preliminar=new AseaIRB2000Sim;	object=ID_ADDASEA;}
-			else if(itemIndex==3){preliminar=new PersonSim;object=ID_PERSON;}
+			
 		}
-		else if(itemIndex<7)
+		else if(itemIndex<6)
 		{	
-			if(itemIndex==4){preliminar=new  Pioneer3ATSim;	object=ID_ADDNEO;}
-			else if(itemIndex==5){preliminar=new PatrolbotSim;	object=ID_PATROL;}
-			else if(itemIndex==6){preliminar=new QuadrotorSim;object=ID_QUADROTOR;}
+			if(itemIndex==3){preliminar=new  Pioneer3ATSim;	object=ID_ADDNEO;}
+			else if(itemIndex==4){preliminar=new PatrolbotSim;	object=ID_PATROL;}
+			else if(itemIndex==5){preliminar=new QuadrotorSim;object=ID_QUADROTOR;}
 		}
 			
 		
 		else
 		{
 			preView->SetViewPoint(1.5,0,30);
-			if(itemIndex==7){preView->SetViewCenter(0,0,-0.1);preliminar=new LMS100Sim;	object=ID_LMS100;}
-			else if(itemIndex==8){preliminar=new LMS200Sim;	object=ID_LMS200;}
-			else if(itemIndex==9){preliminar=new PowerCube70Sim; preliminar->setDrawReferenceSystem(false);	object=ID_POWERCUBE;}
-			else if(itemIndex==10){preliminar=new NemoLaserSensor3DSim; preliminar->setDrawReferenceSystem(false); object=ID_NEMOLASER;}
-			else if(itemIndex==11){preliminar=new MobileRobot("Robot") ;object=ID_MOBILEROBOT;}
+			if(itemIndex==6){preView->SetViewCenter(0,0,-0.1);preliminar=new LMS100Sim;	object=ID_LMS100;}
+			else if(itemIndex==7){preliminar=new LMS200Sim;	object=ID_LMS200;}
+			else if(itemIndex==8){preliminar=new PowerCube70Sim; preliminar->setDrawReferenceSystem(false);	object=ID_POWERCUBE;}
+			else if(itemIndex==9){preliminar=new NemoLaserSensor3DSim; preliminar->setDrawReferenceSystem(false); object=ID_NEMOLASER;}
+			else if(itemIndex==10){preView->SetViewCenter(0,0,0.75); preView->SetViewPoint(4,0,0); preliminar=new PersonSim;object=ID_PERSON;}
+			//else if(itemIndex==11){preliminar=new MobileRobot("Robot") ;object=ID_MOBILEROBOT;}
 		}
 		
 		
@@ -174,10 +175,10 @@ void ObjectSelection::CreateList()
 	
 
 
-	ob_list->InsertItem(index,wxT("Laser Sensor 3D"),9);	ob_list->SetItem(index,1,wxT("Add a Laser Sensor 3D")); 
-	ob_list->InsertItem(index,wxT("Laser Sensor"),9);		ob_list->SetItem(index,1,wxT("Add a Laser Sensor")); 
-	ob_list->InsertItem(index,wxT("Camera"),0);				ob_list->SetItem(index,1,wxT("Add a  Kinect  object")); 
-	ob_list->InsertItem(index,wxT("Kinect"),0);				ob_list->SetItem(index,1,wxT("Add a  camera object")); 
+	//ob_list->InsertItem(index,wxT("Laser Sensor 3D"),9);	ob_list->SetItem(index,1,wxT("Add a Laser Sensor 3D")); 
+	//ob_list->InsertItem(index,wxT("Laser Sensor"),9);		ob_list->SetItem(index,1,wxT("Add a Laser Sensor")); 
+	//ob_list->InsertItem(index,wxT("Camera"),0);				ob_list->SetItem(index,1,wxT("Add a  Kinect  object")); 
+	//ob_list->InsertItem(index,wxT("Kinect"),0);				ob_list->SetItem(index,1,wxT("Add a  camera object")); 
 	ob_list->InsertItem(index,wxT("WheeledBase"),8);		ob_list->SetItem(index,1,wxT("Add a Wheeled Base")); 
 	ob_list->InsertItem(index,wxT("Irregular Prism"),4);	ob_list->SetItem(index,1,wxT("Add a irregular prismatic object"));
 	ob_list->InsertItem(index,wxT("Prism"),4);				ob_list->SetItem(index,1,wxT("Add a prismatic object"));
@@ -191,15 +192,15 @@ void ObjectSelection::CreateList()
 	if(type==ID_ADDCOMP)
 	{
 		SetSize(1250,600);
-		ob_list->InsertItem(index,wxT("MobileRobot"),10);			ob_list->SetItem(index,1,wxT("Add MobileRobot"));  
+		//ob_list->InsertItem(index,wxT("MobileRobot"),10);			ob_list->SetItem(index,1,wxT("Add MobileRobot"));
+		ob_list->InsertItem(index,wxT("Person"),10);				ob_list->SetItem(index,1,wxT("Add Human Figure"));   
 		ob_list->InsertItem(index,wxT("NemoLaser Sensor 3D"),10);	ob_list->SetItem(index,1,wxT("Add NemoLaser Sensor 3D, a laser formed with the SickLMS200 and the PowerCube")); 
 		ob_list->InsertItem(index,wxT("PowerCube"),6);				ob_list->SetItem(index,1,wxT("Add PowerCube,it provides the basis for flexible combinatorics in automation")); 
 		ob_list->InsertItem(index,wxT("SickLMS200"),7);				ob_list->SetItem(index,1,wxT("Add SickLMS200, an extremely accurate distance measurement sensor")); 
 		ob_list->InsertItem(index,wxT("SickLMS100"),7);				ob_list->SetItem(index,1,wxT("Add SickLMS100, a  laser measurement system")); 
 		ob_list->InsertItem(index,wxT("Quadrotor"),10);				ob_list->SetItem(index,1,wxT("Add Quadrotor"));
 		ob_list->InsertItem(index,wxT("Robot PATROLBOT"),8);		ob_list->SetItem(index,1,wxT("Add PATROLBOT, a service robot which scan buildings and create floor plans")); 
-		ob_list->InsertItem(index,wxT("Robot PIONNER"),1);			ob_list->SetItem(index,1,wxT("Add PIONEER 3-AT, a versatile four wheel drive robotic platform")); 
-		ob_list->InsertItem(index,wxT("Person"),10);				ob_list->SetItem(index,1,wxT("Add Human Figure")); 
+		ob_list->InsertItem(index,wxT("Robot PIONNER"),1);			ob_list->SetItem(index,1,wxT("Add PIONEER 3-AT, a versatile four wheel drive robotic platform")); 	
 		ob_list->InsertItem(index,wxT("Robot ASEA"),5);				ob_list->SetItem(index,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
 		ob_list->InsertItem(index,wxT("Robot PUMA"),5);				ob_list->SetItem(index,1,wxT("Add PUMA560, a 6 degrees of freedom robot due to 6 revolution joints"));
 		ob_list->InsertItem(index,wxT("Robot SCARA"),3);			ob_list->SetItem(index,1,wxT("Add ADEPTONE-MV,a robot with 3 rotational and 1 translational joints"));

@@ -26,7 +26,6 @@ private:
 	GenericSlider *c_vertex;
 	Canvas *base;
 	TypeNode type;
-	SimulatedWorld *simu;
 	double defRadio,defHeight,defVertex;
 	bool slider,orientation;
 	double r,h,v;

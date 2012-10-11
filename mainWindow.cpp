@@ -129,8 +129,6 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	m_root = tree->AddRoot(wxT("Universe"), 0, 47, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
 
-
-
 	note->AddPage(tree, wxT("Universe"));
 	
 	rToogle=false;
@@ -231,7 +229,6 @@ void MainWindow::CreateMenuBar()
 	menuView->Append(itemV4);
 	menuView->Append(itemV5);
 	menuView->Append(ID_UNSPLITS, wxT("Double"));
-	menuView->Append(ID_HIDE, wxT("Hide World"));
 	menuView->AppendSeparator();
 	menuView->Append(ID_CANVASCOLOR, wxT("Change background color"));
 	menuSimulator = new wxMenu;
@@ -339,7 +336,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Author:Esther LLorente 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.8.11 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente García 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 bool MainWindow::checkPanelExist(NodeTree* node)
@@ -361,15 +358,6 @@ void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 }
 void MainWindow::HandleChildViews(wxCommandEvent &event)
 {
-	for(unsigned int i=0;i<listWorlds.size();i++)
-	{
-		if(listWorlds[i]->getChild()-IsMouseInWindow())
-		{	
-			for(unsigned int j=0;j<listWorlds.size();j++)listWorlds[j]->getChild()->SetIsActivated(false);
-			listWorlds[i]->getChild()->SetIsActivated(true);
-			break;
-		}
-	}
 			
 	for(unsigned int i=0;i<listWorlds.size();i++)
 	{
@@ -403,9 +391,6 @@ void MainWindow::HandleChildViews(wxCommandEvent &event)
 					listWorlds[i]->getChild()->SplitHorizontalSecond();
 					break;
 					
-				case ID_HIDE:
-					listWorlds[i]->getChild()->OnHideChild();
-					break;
 
 				case ID_PLAY:
 					listWorlds[i]->getChild()->OnSimulator(ID_PLAY);
@@ -515,9 +500,10 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 	int id = event.GetId();
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	Converter* conver;
 	if(id == ID_CONVERMESH)
 	{
-		Converter* conver;
+		
 		conver = new Converter(this,ID_CONVERMESH,wxT("CPP CODE"));
 		conver->OnlyRead(itemData->pointer.meshpart);
 		conver->ShowModal();
@@ -526,12 +512,13 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 	}
 	if(id == ID_CONVER)
 	{
-		Converter* conver;
+		
 		conver = new Converter(this,ID_CONVER,wxT("Converter .stl"));
 		conver->ShowModal();
 		wxLogStatus(wxT("Converter"));
 	}
 
+	delete conver;
 }
 void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 {
@@ -547,7 +534,9 @@ void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 		locationCtrl->setItemData(itemData);
 		locationCtrl->ShowModal();	
 		wxLogStatus(wxT("Change Location"));
+		delete locationCtrl;
 	}
+	
 	event.Skip();
 }
 void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
@@ -562,7 +551,7 @@ void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
 			wxString textOutside;
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Move");
 			WheeledBasePanel* wheeledBaseCtrl;
-			wheeledBaseCtrl = new WheeledBasePanel(this,wxID_ANY,itemData);
+			wheeledBaseCtrl = new WheeledBasePanel(note,wxID_ANY,itemData);
 			wheeledBaseCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(wheeledBaseCtrl,textOutside);
 			wxLogStatus(wxT("Wheeled Base Panel"));
@@ -580,11 +569,14 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 			wxString textOutside;
 			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Joints");
 			RobotSimPanel* robotSimCtrl;
-			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,itemData);
+			robotSimCtrl = new RobotSimPanel(note,wxID_ANY,itemData);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			note->AddPage(robotSimCtrl,textOutside);
+			
+			
 			wxLogStatus(wxT("Robot Sim Panel"));
 		}
+		
 	}
 }
 void MainWindow::OnDrawBox(wxCommandEvent& WXUNUSED(event))
@@ -607,7 +599,8 @@ void MainWindow::OnDesign(wxCommandEvent& WXUNUSED(event))
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
 	DesignProperties *design=new DesignProperties(this,itemData,wxT("Design Properties"));
-	design->ShowModal();		  			
+	design->ShowModal();
+	delete design;
 }
 
 void MainWindow::OnColor(wxCommandEvent& WXUNUSED(event))
@@ -997,14 +990,14 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 
 	int id=event.GetId();
 	wxTreeItemId item=tree->GetSelection();
-	NodeTree *server = item.IsOk() ? (NodeTree *) tree->GetItemData(item)
+	NodeTree *object = item.IsOk() ? (NodeTree *) tree->GetItemData(item)
 		:NULL;
 
 	if(id==ID_LNSERVER)
 	{
 		
-		connection->SendData(server);
-		if(server->typeConnection==1)tree->SetItemTextColour(item,*wxRED);
+		connection->SendData(object);
+		if(object->typeConnection==1)tree->SetItemTextColour(item,*wxRED);
 		
 	}
 
@@ -1013,14 +1006,14 @@ void MainWindow::OnConnection(wxCommandEvent& event)
 	else if(id==ID_LNCLIENT)
 	{
 		
-		connection->ReceiveData(server);
-		if(server->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
+		connection->ReceiveData(object);
+		if(object->typeConnection==2)tree->SetItemTextColour(item,*wxGREEN);
 	}
 
 	else if(id==ID_STCLIENT || id==ID_STSERVER)
 	{
 		
-		connection->Disconnect(server);
+		connection->Disconnect(object);
 		tree->SetItemTextColour(item,*wxBLACK);
 	}
 

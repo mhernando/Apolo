@@ -26,22 +26,12 @@ public:
 
 private:
 	
-	FaceWindow *face;
 	FaceWidget *base;
-	Canvas *canvas1,*canvas2;
 	bool b_sel;
-	wxButton *accept;
-	wxButton *cancel;
-	wxButton *df;
-	SimulatedWorld *world;
-	NodeTree *pos;
-	Transformation3D t;
-	string text;
-	double x,y,z,r,p,yw;
-	PositionableWidget *pw;
+	NodeTree *node;	
 	DesignWidget *dp;
+	PositionableWidget *pw;
 	wxString defName;
-	double red,green,blue;
 	wxWindowID wID;
 	MainWindow* mainWin;
 	

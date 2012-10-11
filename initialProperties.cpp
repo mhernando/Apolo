@@ -20,10 +20,9 @@ InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxSt
 {
 	mainWin=(MainWindow*)parent;
 	b_sel=true;
-	world=obj->getSimu();
-	pos=obj;
+	node=obj;
 	wID=id;
-	defName=world->tree->GetItemText(world->tree->GetLastChild(world->tree->GetSelection()));
+	defName=node->getSimu()->tree->GetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()));
 	CreatePanel();
 	
 }
@@ -38,19 +37,19 @@ void InitialProperties::CreatePanel()
 	bool color=true;
 	
 	
-	if(pos->getSimu()->mainWin->getToogleReference())
-	{	Tree *tree=world->tree;
-		pos->getSimu()->mainWin->Search(tree->GetLastChild(tree->GetSelection()),true);
+	if(node->getSimu()->mainWin->getToogleReference())
+	{	Tree *tree=node->getSimu()->tree;
+		node->getSimu()->mainWin->Search(tree->GetLastChild(tree->GetSelection()),true);
 	}
 		
-	if(dynamic_cast<ComposedEntity *>(pos->pointer.positionableentity))	
+	if(dynamic_cast<ComposedEntity *>(node->pointer.positionableentity))	
 		color=false;
 		
 	
 	if(wID==ID_ADDFACESET)
 	{
-		pos->pointer.facesetpart=dynamic_cast<FaceSetPart *>(pos->pointer.positionableentity);
-		face=new FaceWindow(this,pos,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+		node->pointer.facesetpart=dynamic_cast<FaceSetPart *>(node->pointer.positionableentity);
+		FaceWindow *face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 		vbox->Add(face,0,wxEXPAND);	
 	}
 			
@@ -58,11 +57,11 @@ void InitialProperties::CreatePanel()
 	{
 	
 
-	dp=new DesignWidget(this,pos,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
+	dp=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
 	
-	pw=new PositionableWidget(this,pos,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
+	pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
 	
-	df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
+	wxButton *df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	
 	vbox->Add(df,0,wxEXPAND | wxALL ,12);
 	vbox->Add(pw,0,wxEXPAND);
@@ -74,7 +73,7 @@ void InitialProperties::CreatePanel()
 
 		wxStaticBoxSizer *pri=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Base Design"));
 		
-		base=new FaceWidget(this,world,wxDefaultPosition,wxDefaultSize,false);
+		base=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxDefaultSize,false);
 		base->ChangeView(true);
 		PointsList *points=new PointsList(this);
 		wxButton *pri_base = new wxButton(this,ID_PRIBASE,wxT("Create"),wxDefaultPosition,wxSize(60,25));
@@ -92,8 +91,8 @@ void InitialProperties::CreatePanel()
 
 	////Buttom box///
 	wxBoxSizer *b_box=new wxBoxSizer(wxHORIZONTAL);
-	accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxSize(60,25));
-	cancel = new wxButton(this,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxSize(60,25));
+	wxButton *accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxSize(60,25));
+	wxButton *cancel = new wxButton(this,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxSize(60,25));
 	b_box->Add(accept,1,wxALIGN_BOTTOM | wxALL,5);
 	b_box->Add(cancel,1,wxALIGN_BOTTOM | wxALL ,5);	
 
@@ -115,7 +114,7 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 	
 	if(id == ID_PRIBASE)	
 	{
-		pos->pointer.prismaticpart->setPolygonalBase(*(base->GetFace()));
+		node->pointer.prismaticpart->setPolygonalBase(*(base->GetFace()));
 		base->CreateFace();	
 	}
 
@@ -123,13 +122,14 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 
 	if(id == ID_DEFAULT)
 	{
+		Transformation3D t;
 		t.position=pw->getDefPosition();
 		Vector3D defOrientation=pw->getDefOrientation();
 		t.orientation.setRPY(defOrientation.x,defOrientation.y,defOrientation.z);
-		pos->pointer.positionableentity->setRelativeT3D(t);
+		node->pointer.positionableentity->setRelativeT3D(t);
 		dp->SetSpecificValues(true);
-		world->tree->SetItemText(world->tree->GetLastChild(world->tree->GetSelection()),defName);
-		pos->pointer.solidentity->setColor(pw->getDefRedColor(),pw->getDefGreenColor(),pw->getDefBlueColor());
+		node->getSimu()->tree->SetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()),defName);
+		node->pointer.solidentity->setColor(pw->getDefRedColor(),pw->getDefGreenColor(),pw->getDefBlueColor());
 		Destroy();
 
 	}

@@ -6,7 +6,6 @@ EVT_BUTTON(ID_OTHERFACE, FaceWindow::FaceButton)
 EVT_BUTTON(ID_CHANGEVIEW, FaceWindow::FaceButton)
 EVT_BUTTON(ID_COLOR, FaceWindow::ColorChanged)	
 EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, FaceWindow::FaceOrientation)
-//EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,FaceWindow::AddVertex)
 EVT_RADIOBOX(wxID_ANY, FaceWindow::FaceAlign)
 
 
@@ -18,11 +17,10 @@ FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, con
 : wxPanel(parent, wxID_ANY, pos, size)
 {
 	mainWin=(MainWindow*)parent->GetParent();;
-	world=obj->getSimu();
 	node=obj;
 	worldView=false;
+	red=green=blue=1.0f;
 	CreatePanel();
-	red=blue=green=1.0f;
 
 }
 
@@ -32,13 +30,13 @@ void FaceWindow::CreatePanel()
 		wxBoxSizer *rbox=new wxBoxSizer(wxVERTICAL);	
 		
 		
-		points=new PointsList(this,wxT("Face Coordenates"));
-		af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
+		PointsList *points=new PointsList(this,wxT("Face Coordenates"));
+		wxButton *af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
 		cView = new wxButton(this,ID_CHANGEVIEW,wxT("World View3D"),wxDefaultPosition,wxDefaultSize);
 		wxSplitterWindow *drawFace= new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
 		drawFace->SetMinimumPaneSize(200);
 		
-		canvas=new FaceWidget(drawFace,world,wxDefaultPosition,wxDefaultSize);
+		canvas=new FaceWidget(drawFace,node->getSimu(),wxDefaultPosition,wxDefaultSize);
 		canvas->AssociatePointTable(points);
 		
 		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
@@ -85,8 +83,8 @@ void FaceWindow::CreatePanel()
 
 		fbox->Add(drawFace,1,wxEXPAND );
 		rbox->Add(points,1,wxEXPAND|wxALL,5);
-		rbox->Add(af,0,wxEXPAND|wxALL,5);
 		rbox->Add(cView,0,wxEXPAND|wxALL,5);
+		rbox->Add(af,0,wxEXPAND|wxALL,5);
 		fbox->Add(rbox,0,wxEXPAND);
 		
 	
@@ -137,7 +135,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 	{
 		node->pointer.facesetpart->addFace((*canvas->GetFace()));
 		canvas->GetCanvas3D()->ClearObjects();
-		canvas->GetCanvas3D()->UpdateWorld(world->getWorld());
+		canvas->GetCanvas3D()->UpdateWorld(node->getSimu()->getWorld());
 		roll->setValue(0);
 		pitch->setValue(0);
 		plane_dis->setValue(0);
@@ -159,7 +157,7 @@ void  FaceWindow::ColorChanged(wxCommandEvent& event)
 			green = color.Green();
 			blue = color.Blue();
 			canvas->GetFace()->setColor(red/255,green/255,blue/255,transparency->getValue());
-			world->getChild()->UpdateWorld();
+			canvas->RefreshCanvas();
 		
 		}		
 }

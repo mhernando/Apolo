@@ -106,7 +106,7 @@ bool ConnectionLog::IsObjectConnected()
 		return false;
 }
 
-void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
+void ConnectionLog::StateConnection(NodeTree *robot,bool connected, bool errorData)
 {
 
 	mutex.Lock();
@@ -139,8 +139,18 @@ void ConnectionLog::StateConnection(NodeTree *robot,bool connected)
 			{
 				if(connected)
 				{
-					state=wxT("Receiving Data");
-					colour=*wxGREEN;
+					if(!errorData)
+					{
+						state=wxT("Receiving Data");
+						colour=*wxGREEN;
+					}
+					else
+					{
+						state=wxT("Receiving Erroneus Data");
+						wxColourDatabase col;
+						colour=col.Find(wxT("ORANGE"));
+						
+					}
 					
 					host=robot->client.Host;
 					

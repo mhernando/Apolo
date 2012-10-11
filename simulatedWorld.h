@@ -36,8 +36,8 @@ public:
 	static Tree *tree;
 	
 private:
+
 	bool objConnected;
-	int cont;
 	wxTreeItemId mainNode;
 	string name;
 	ChildView* childView;
