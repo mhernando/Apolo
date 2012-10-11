@@ -4,11 +4,8 @@
 #include "mainWindow.h"
 #include "mrcore.h"
 #include "faceWidget.h"
-
 #include "nodeTree.h"
 #include "simulatedWorld.h"
-
-
 #include "canvas.h"
 #include "genericSlider.h"
 #include <wx/grid.h>
@@ -28,7 +25,7 @@ public:
 	void CreatePanel();
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
-	void  ColorChanged(wxCommandEvent& event);
+	void ColorChanged(wxCommandEvent& event);
 	void FaceAlign(wxCommandEvent& event);
 	
 private:
@@ -38,12 +35,7 @@ private:
 	wxRadioBox *align;
 	FaceWidget *canvas;
 	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
-	wxTextCtrl *transp_box;
-	wxButton *af,*cView;
-	wxPoint point;
-	PointsList *points;
-	wxSplitterWindow *drawFace;
-	SimulatedWorld *world;
+	wxButton *cView;
 	NodeTree *node;
 	MainWindow* mainWin;
 	DECLARE_EVENT_TABLE();

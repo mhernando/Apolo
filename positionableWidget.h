@@ -39,7 +39,6 @@ private:
 	wxWindow *parent;
 	wxString text,name,title;
 	NodeTree *node;
-	SimulatedWorld *s_world;
 	DECLARE_EVENT_TABLE();
 	
 };
