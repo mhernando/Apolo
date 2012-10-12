@@ -178,7 +178,8 @@ void DesignWidget::GetDefaultValues()
 
 	else if(type==N_CylindricalPart)
 	{
-		defRadio=nodeW->pointer.cylindricalpart->getRadius();
+//		defRadio=nodeW->pointer.cylindricalpart->getRadius();
+		defRadio=5.0F; //FIXME: de momento hasta realizar la actualización del core
 		defHeight=nodeW->pointer.cylindricalpart->getHeight();
 	}
 	

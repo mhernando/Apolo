@@ -11,11 +11,16 @@ IF(wxWidgets_FOUND)
 		INCLUDE_DIRECTORIES(/usr/local/mrcore/include/mrcore)
 		LINK_DIRECTORIES(/usr/local/mrcore/lib)
 	ENDIF(WIN32)
+IF(WIN32)
+	SET(RESOURCES "apolo.rc") 
+ELSE(WIN32)
+	SET(RESOURCES "")
+ENDIF(WIN32)
 
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp 
 	wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp 
 	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp 
-	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp)
+	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp ${RESOURCES})
 
 
 	IF(WIN32)

@@ -1,0 +1,4 @@
+apolo ICON "./bitmaps/apolo.ico"
+#include "wx/msw/wx.rc"
+
+
