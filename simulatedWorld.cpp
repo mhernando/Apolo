@@ -19,6 +19,7 @@ SimulatedWorld::SimulatedWorld(World *world)
 	childView ->UpdateWorld();
 	childView ->RefreshChild();
 	mainNode = tree->GenerateSubTree(this);
+	tree->UnselectAll();
 	tree->SelectItem(mainNode);
 
 }
@@ -146,8 +147,8 @@ void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 
 SimulatedWorld::~SimulatedWorld()
 {
-	childView ->Destroy();
 	tree->Delete(mainNode);
+	childView->Destroy();	
 	delete m_world;
 
 }

@@ -196,7 +196,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		compos[7]=SimplyItems(ID_POWERCUBE,wxT("PowerCube"),wxIcon(powercube_xpm));
 		compos[8]=SimplyItems(ID_NEMOLASER,wxT("NemoLaser Sensor 3D "),wxIcon(nemolaser_xpm));
 		compos[9]=SimplyItems(ID_QUADROTOR,wxT("Quadrotor"),wxIcon(powercube_xpm));
-		compos[10]=SimplyItems(ID_PERSON,wxT("Person"),wxIcon(laser_xpm));
+		compos[10]=SimplyItems(ID_PERSON,wxT("Person"),wxIcon(positionable_xpm));
 	//	compos[11]=SimplyItems(ID_MOBILEROBOT,wxT("Mobile Robot"),wxIcon(nemolaser_xpm));			
 		
 		for( int i=0; i<NUMBER_S;i++)

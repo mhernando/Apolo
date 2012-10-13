@@ -12,7 +12,7 @@
 #include "bitmaps/laser.xpm"
 #include "bitmaps/nemolaser.xpm"
 #include "bitmaps/asea.xpm"
-
+#include "bitmaps/positionable.xpm"
 
 
 BEGIN_EVENT_TABLE(ObjectSelection, wxDialog)
@@ -136,7 +136,7 @@ void ObjectSelection::CreateList()
 
 
 	wxImageList *im_list=new wxImageList(16,16);
-	wxIcon icons[13];
+	wxIcon icons[14];
 	icons[0]=wxIcon(sphere_xpm);
 	icons[1]=wxIcon(pioneer_xpm);
 	icons[2]=wxIcon(cylindrical_xpm);
@@ -150,7 +150,7 @@ void ObjectSelection::CreateList()
 	icons[10]=wxIcon(nemolaser_xpm);
 	icons[11]=wxIcon(asea_xpm);
 	icons[12]=wxIcon(faceSetPart_xpm);
-
+	icons[13]=wxIcon(positionable_xpm);
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 		im_list->Add(icons[i]);
@@ -193,7 +193,7 @@ void ObjectSelection::CreateList()
 	{
 		SetSize(1250,600);
 		//ob_list->InsertItem(index,wxT("MobileRobot"),10);			ob_list->SetItem(index,1,wxT("Add MobileRobot"));
-		ob_list->InsertItem(index,wxT("Person"),10);				ob_list->SetItem(index,1,wxT("Add Human Figure"));   
+		ob_list->InsertItem(index,wxT("Person"),13);				ob_list->SetItem(index,1,wxT("Add Human Figure"));   
 		ob_list->InsertItem(index,wxT("NemoLaser Sensor 3D"),10);	ob_list->SetItem(index,1,wxT("Add NemoLaser Sensor 3D, a laser formed with the SickLMS200 and the PowerCube")); 
 		ob_list->InsertItem(index,wxT("PowerCube"),6);				ob_list->SetItem(index,1,wxT("Add PowerCube,it provides the basis for flexible combinatorics in automation")); 
 		ob_list->InsertItem(index,wxT("SickLMS200"),7);				ob_list->SetItem(index,1,wxT("Add SickLMS200, an extremely accurate distance measurement sensor")); 
