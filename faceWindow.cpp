@@ -58,11 +58,11 @@ void FaceWindow::CreatePanel()
 		roll->setValue(0);
 		pitch->setProperties(-180,180);
 		pitch->setValue(0);
-		x_pos->setProperties(-10,10);
+		x_pos->setProperties(-10,10,false);
 		x_pos->setValue(0);
-		y_pos->setProperties(-10,10);
+		y_pos->setProperties(-10,10,false);
 		y_pos->setValue(0);
-		plane_dis->setProperties(-10,10);
+		plane_dis->setProperties(-10,10,false);
 		plane_dis->setValue(0);
 		transparency->setProperties(0,1);
 		transparency->setValue(1);
