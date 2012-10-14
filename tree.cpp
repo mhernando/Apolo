@@ -281,7 +281,13 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 void Tree::OnShowCanvas(wxMouseEvent& event)
 {
 	
-	wxTreeItemId itemId  = GetSelection();
+	wxTreeItemId itemId;
+
+	if( GetSelection()==root)
+		return;
+	else
+		itemId=GetSelection();
+
 	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
 	if(itemId.IsOk())
 	{

@@ -1,7 +1,7 @@
 /* XPM */
 static const char * icon2_xpm[] = {
 /* columns rows colors chars-per-pixel */
-"32 32 15 1",
+"16 16 15 1",
 ". c Black",
 "O c #97C4E7",
 "$ c #63B3DE",
