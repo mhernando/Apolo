@@ -1,6 +1,6 @@
 
 #include "apoloPort.h"
-#include "ApoloMessage.h"
+#include "apoloMessage.h"
 ApoloPort::ApoloPort(int port,vector<SimulatedWorld*>*listWorlds)
 {
 	world=listWorlds;

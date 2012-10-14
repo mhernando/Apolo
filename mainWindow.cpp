@@ -336,7 +336,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente García 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 bool MainWindow::checkPanelExist(NodeTree* node)
