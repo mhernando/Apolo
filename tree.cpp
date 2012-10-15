@@ -291,11 +291,23 @@ void Tree::OnShowCanvas(wxMouseEvent& event)
 	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
 	if(itemId.IsOk())
 	{
-		if(!itemData->getSimu()->getChild()->IsShown())
-			itemData->getSimu()->getChild()->Show();
-		wxLogStatus(wxT("Item seleccionado"));
-		itemData->getSimu()->getChild()->Maximize(!itemData->getSimu()->getChild()->IsMaximized());
-		itemData->getSimu()->getChild()->Update();
+		if(itemData->getTipo()==N_World)
+		{
+			if(!itemData->getSimu()->getChild()->IsShown())
+				itemData->getSimu()->getChild()->Show();
+			wxLogStatus(wxT("Item seleccionado"));
+			itemData->getSimu()->getChild()->Maximize(!itemData->getSimu()->getChild()->IsMaximized());
+			itemData->getSimu()->getChild()->Update();
+		}
+		else
+		{
+			if(itemData->pointer.solidentity)
+			{
+				bool box=itemData->pointer.solidentity->getDrawBox();
+				itemData->pointer.solidentity->setDrawBox(!box);
+				itemData->getSimu()->getChild()->Refresh();
+			}
+		}
 	}
 	else  wxLogStatus(wxT("No item under mouse"));
 
@@ -317,8 +329,9 @@ void Tree::ShowSelection(wxTreeEvent& event)
 	wxTreeItemId itemId = GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId)
 										:NULL;
-	if(root!=itemId)
-	{
+	if(root==itemId)
+		return;
+	
 	if(sel)
 	{
 	
@@ -350,7 +363,7 @@ void Tree::ShowSelection(wxTreeEvent& event)
 	itemData->getSimu()->getChild()->Activate();
 	itemData->getSimu()->getChild()->SetIsActivated(true);
 			
-	}
+	
 
 	
 
