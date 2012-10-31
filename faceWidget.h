@@ -9,12 +9,12 @@
 #include "canvas.h"
 #include "mrcore.h"
 
-
+DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 
 class FaceWidget : public wxPanel
 {
 public:
-	FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal=true);
+	FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal=true, bool pre=false);
 	void CreatePanel();
 	void RefreshCanvas();
 	void GetPoint(wxCommandEvent& event);
@@ -35,6 +35,7 @@ private:
 	bool tableAssociated;
 	bool align,h;
 	bool worldView;
+	bool noPreliminar3D;
 	double x,y;
 	Face *face,*faceCopy;
 	PointsList *points;
