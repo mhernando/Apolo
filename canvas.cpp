@@ -171,9 +171,11 @@ void Canvas::OnMouse(wxMouseEvent& event)
 		
 		if(event.LeftDown())
 		{
+		
 		wxCommandEvent CanvasEvent( wxEVT_FACEVERTEX_ADDED,GetId() );
 		CanvasEvent.SetEventObject( window);
 		GetEventHandler()->ProcessEvent(CanvasEvent);
+		
 		}
 	}
 
