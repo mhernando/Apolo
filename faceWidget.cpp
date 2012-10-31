@@ -1,18 +1,19 @@
 #include "faceWidget.h"
 
+DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
+
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
-
-EVT_COMMAND(wxID_ANY,wxEVT_FACEVERTEX_ADDED,FaceWidget::GetPoint)
-
+	EVT_COMMAND(wxID_ANY,wxEVT_FACEVERTEX_ADDED,FaceWidget::GetPoint)
 END_EVENT_TABLE()
 
 
 
-FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal)
+FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal,bool pre)
 : wxPanel(parent, wxID_ANY, pos, size)
 {
 	face=NULL;
 	faceCopy=NULL;
+	noPreliminar3D=pre;
 	h=horizontal;
 	world=simu;
 	align=true;
@@ -72,7 +73,7 @@ void FaceWidget::ChangeView(bool wView)
 	if(worldView)
 		canvas2->UpdateWorld(world->getWorld());
 	
-	canvas2->AddObject(face);
+	if(noPreliminar3D==false) canvas2->AddObject(face);
 	canvas2->Refresh();
 
 }
@@ -125,7 +126,10 @@ void FaceWidget::AddVertex()
 	
 	world->getChild()->UpdateWorld();
 	RefreshCanvas();
-
+	
+	wxCommandEvent pointAddedEvent( wxEVT_POINT_ADDED,GetId() );
+	pointAddedEvent.SetEventObject(GetParent());
+	GetEventHandler()->ProcessEvent(pointAddedEvent);
 }
 
 

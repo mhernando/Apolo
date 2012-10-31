@@ -9,10 +9,8 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 	EVT_BUTTON(ID_ACCEPT, InitialProperties::OnButton)
 	EVT_BUTTON(ID_CANCEL, InitialProperties::OnButton)
 	EVT_BUTTON(ID_DEFAULT, InitialProperties::OnButton)
-	EVT_BUTTON(ID_PRIBASE, InitialProperties::OnButton)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::RefreshCanvas)
 	EVT_CLOSE(InitialProperties::OnClose)
-	//VT_WINDOW_CREATE(InitialProperties::Update)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxString& title,wxWindowID id)
@@ -20,6 +18,7 @@ InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxSt
 {
 	mainWin=(MainWindow*)parent;
 	b_sel=true;
+	worldView=true;
 	node=obj;
 	wID=id;
 	defName=node->getSimu()->tree->GetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()));
@@ -69,22 +68,13 @@ void InitialProperties::CreatePanel()
 	vbox->AddSpacer(40);
 
 	if(wID==ID_ADDIRRPRI)
-		{
+	{
 
-		wxStaticBoxSizer *pri=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Base Design"));
-		
-		base=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxDefaultSize,false);
-		base->ChangeView(true);
-		PointsList *points=new PointsList(this);
-		wxButton *pri_base = new wxButton(this,ID_PRIBASE,wxT("Create"),wxDefaultPosition,wxSize(60,25));
-		base->AssociatePointTable(points);
-		
-		pri->Add(base,1,wxEXPAND);
-		pri->Add(points,0,wxEXPAND |wxALL, 5);
-		pri->Add(pri_base,0,wxEXPAND |wxALL, 5);	
-		tbox->Add(pri,1,wxEXPAND | wxALL,5);	
+		priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+		tbox->Add(priW,1,wxEXPAND | wxALL,5);	
 	
-		}
+	}
+	
 	}
 
 	
@@ -112,11 +102,6 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 	
 	int id=event.GetId();
 	
-	if(id == ID_PRIBASE)	
-	{
-		node->pointer.prismaticpart->setPolygonalBase(*(base->GetFace()));
-		base->CreateFace();	
-	}
 
 	if(id == ID_ACCEPT)	Destroy();
 
@@ -144,6 +129,6 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 void InitialProperties::RefreshCanvas(wxCommandEvent &event)
 {
 	if(wID==ID_ADDIRRPRI)
-		base->RefreshCanvas();
+		priW->RefreshCanvas();
 }
 

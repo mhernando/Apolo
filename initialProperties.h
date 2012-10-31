@@ -4,12 +4,14 @@
 
 #include "positionableWidget.h"
 #include "designWidget.h"
+#include "prismWindow.h"
 #include "canvas.h"
 #include "faceWindow.h"
 
 
 class PositionableWidget;
 class MainWindow;
+class PrismWindow;
 class FaceWindow;
 class FaceWidget;
 
@@ -27,9 +29,11 @@ public:
 private:
 	
 	FaceWidget *base;
-	bool b_sel;
+	wxButton *cView;
+	bool b_sel, worldView;
 	NodeTree *node;	
 	DesignWidget *dp;
+	PrismWindow *priW;
 	PositionableWidget *pw;
 	wxString defName;
 	wxWindowID wID;
