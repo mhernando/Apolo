@@ -47,7 +47,7 @@ void ObjectSelection::PreliminarView(wxListEvent &event)
 {	
 	long itemIndex=-1;
 	wxListItem id=event.GetItem();
-	
+
 	itemIndex=ob_list->GetNextItem(itemIndex,wxLIST_NEXT_ALL,wxLIST_STATE_SELECTED);
 	
 	

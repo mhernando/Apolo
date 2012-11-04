@@ -20,6 +20,7 @@ public:
 	void SetShowFrame(bool show);
 	void ClearObjects();
 	void Paint(wxPaintEvent& event);
+	void DrawGrid(bool draw=true);
 	void Resized(wxSizeEvent& event);
 	void OnMouseM(wxMouseEvent& event);
 	void OnMouse(wxMouseEvent& event);
