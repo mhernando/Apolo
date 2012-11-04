@@ -46,7 +46,7 @@ void PrismWindow::OnButton(wxCommandEvent& event)
 	{
 		worldView=!worldView;
 		base->ChangeView(worldView);
-		if(worldView) cView->SetLabel(wxT("Face\nView3D"));
+		if(worldView) cView->SetLabel(wxT("Prism\nView3D"));
 		else	
 		{
 			cView->SetLabel(wxT("World\nView3D"));

@@ -222,3 +222,12 @@ void Canvas::SetShowFrame(bool show)
 		scene.setShowFrame(show);
 	
 }
+
+void Canvas::DrawGrid(bool draw)
+{
+	if(dimension)
+		scene.setShowGrid(draw);
+	//else
+		//scene2D.setShowGrid(draw); /// implementar setShowGrid en MRCore en glscene2D
+
+}
