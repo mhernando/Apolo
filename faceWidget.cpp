@@ -68,11 +68,21 @@ void FaceWidget::AssociatePointTable(PointsList *point)
 void FaceWidget::ChangeView(bool wView)
 {
 	worldView=wView;
+	wxColourDatabase selCol;
 	canvas2->ClearObjects();
 	
 	if(worldView)
+	{
 		canvas2->UpdateWorld(world->getWorld());
-	
+		canvas2->ChangeBackGroundColour(selCol.Find(wxT("DARK GREY")));
+		canvas2->DrawGrid(false);
+	}
+	else
+	{
+		
+		canvas2->ChangeBackGroundColour(*wxBLACK);
+		canvas2->DrawGrid();
+	}
 	if(noPreliminar3D==false) canvas2->AddObject(face);
 	canvas2->Refresh();
 
