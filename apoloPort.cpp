@@ -166,6 +166,20 @@ void *ApoloPort::handleConnections(void *server)
 							}
 							valid++;
 							break;
+						case AP_LINK_TO_ROBOT_TCP:
+						if(element){
+							robot=dynamic_cast<RobotSim*>(element);
+							char *objectname=m->getStringAt(0);
+							PositionableEntity *target=getElement(nworld,objectname,&worldindex);
+							if(target&&robot){
+								target->LinkTo(robot->getTcp());
+							}
+							
+
+							valid++;
+							}
+							break;
+
 					}
 
 					delete m;//aseguro limpieza

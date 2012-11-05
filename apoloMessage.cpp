@@ -140,6 +140,15 @@ int ApoloMessage::writeUpdateWorld(char *buffer, char *world)
 	insertSize(buffer,n);
 	return n;
 }
+int ApoloMessage::writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object)
+{
+	int n=0,i;
+	n+=writeHeader(buffer,AP_LINK_TO_ROBOT_TCP);//command
+	n+=writeString(buffer+n,world);//world
+	n+=writeString(buffer+n,robot);//robot
+	n+=writeString(buffer+n,object);//robot
+	return n;
+}
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;
@@ -177,6 +186,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_MOVE_WB:
 		case AP_GETLOCATION_WB:
 		case AP_GETLOCATION:
+		case AP_LINK_TO_ROBOT_TCP:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];
@@ -247,4 +257,11 @@ char ApoloMessage::getCharAt(int offset)
 	if(offset+(bindata-pData)+1>size)return 0;
 	return bindata[offset];
 }
-
+char *ApoloMessage::getStringAt(int offset)
+{
+	if(offset+(bindata-pData)+1>size)return 0;
+	uchar tam=((uchar *)(bindata))[offset];
+	if(tam==0)return 0;
+	if(offset+(bindata-pData)+tam+1>size)return 0;
+	else return bindata+offset+1;
+}

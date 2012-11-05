@@ -41,7 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 
 	//--------------gets the input parameters that are common to most cases
-	char *world=0,*name=0;
+	char *world=0,*name=0,*auxname=0;
 	char message[500];
 	switch(command[0])
 	{
@@ -53,6 +53,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_MOVE_WB:
 	case AP_GETLOCATION:
 	case AP_GETLOCATION_WB:
+	case AP_LINK_TO_ROBOT_TCP:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -186,7 +187,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 			
 		}
 		break;
-	
+	case AP_LINK_TO_ROBOT_TCP:
+		//get the object name vector
+		if(nrhs<4)mexErrMsgTxt(" target name parameter not present");
+		if (( mxIsChar(prhs[3]) != 1)&&(mxGetM(prhs[3])!=1))mexErrMsgTxt("target name must be a string.");
+		auxname=mxArrayToString(prhs[3]);
+		if(auxname[0]==0){
+			mxFree(auxname);
+			auxname=0;
+		}
+		else{				
+			size=ApoloMessage::writeLinkToRobotTCP(message,world,name,auxname);
+			if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		}
+		break;
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate
@@ -201,6 +215,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 	if(command)mxFree(command);
 	if(name)mxFree(name);
+	if(auxname)mxFree(auxname);
 	if(world)mxFree(world);
 }
 

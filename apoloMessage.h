@@ -13,6 +13,7 @@
 #define AP_GETLOCATION 'G'
 #define AP_GETLOCATION_WB 'g'
 #define AP_DVECTOR 'D'
+#define AP_LINK_TO_ROBOT_TCP 'L'
 /*************************************************************/
 /*This class implements the protocol for easily connect to apolo
   An apolo message pointers to an external buffer. Is simply an interpreter
@@ -37,6 +38,7 @@ public:
 	static int writeGetLocation(char *buffer, char *world,char *object);
 	static int writeGetLocationWheeledBase(char *buffer, char *world,char *robot);
 	static int writeDoubleVector(char *buffer, int num, double *d);
+	static int writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object);
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}
@@ -47,6 +49,7 @@ public:
 	int getUInt16At(int offset);
 	double getDoubleAt(int offset);
 	char getCharAt(int offset);
+	char *getStringAt(int offset);
 
 
 };

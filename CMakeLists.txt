@@ -43,7 +43,7 @@ ENDIF(WIN32)
     	
 ENDIF(wxWidgets_FOUND)
 
-#ADD_SUBDIRECTORY(apoloMex)
+ADD_SUBDIRECTORY(apoloMex)
 
 
 
