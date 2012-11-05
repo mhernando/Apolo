@@ -122,6 +122,7 @@ int ApoloMessage::writeGetLocation(char *buffer, char *world,char *object)
 	n+=writeHeader(buffer,AP_GETLOCATION);//command
 	n+=writeString(buffer+n,world);//world
 	n+=writeString(buffer+n,object);//robot
+	insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeGetLocationWheeledBase(char *buffer, char *world,char *robot)
@@ -130,6 +131,7 @@ int ApoloMessage::writeGetLocationWheeledBase(char *buffer, char *world,char *ro
 	n+=writeHeader(buffer,AP_GETLOCATION_WB);//command
 	n+=writeString(buffer+n,world);//world
 	n+=writeString(buffer+n,robot);//robot
+	insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeUpdateWorld(char *buffer, char *world)
@@ -147,6 +149,7 @@ int ApoloMessage::writeLinkToRobotTCP(char *buffer, char *world,char *robot,char
 	n+=writeString(buffer+n,world);//world
 	n+=writeString(buffer+n,robot);//robot
 	n+=writeString(buffer+n,object);//robot
+	insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
