@@ -87,7 +87,9 @@ void *ApoloPort::handleConnections(void *server)
 							   if(robot)robot->setJointValue(i,m->getDoubleAt(1+8*i));
 							if(m->getType()==AP_CHECKJOINTS){
 								bool res=false;
-								if(robot)res=robot->checkRobotColision();
+								if(robot){
+									res=robot->checkRobotColision();
+								}
 								char resp[50];
 								int tam=ApoloMessage::writeBOOL(resp,res);
 								temp->Send(resp,tam);
@@ -131,7 +133,8 @@ void *ApoloPort::handleConnections(void *server)
 								bool res=false;
 								double d[4];
 								for(int i=0;i<4;i++)d[i]=m->getDoubleAt(8*i);
-								if(wb)res=wb->dropWheeledBase(Transformation3D(d[0],d[1],d[2],Axis::Z_AXIS,d[3]));
+								Transformation3D taux(d[0],d[1],d[2],Axis::Z_AXIS,d[3]);
+								if(wb)res=wb->dropWheeledBase(taux);
 								if(res){
 
 									res=!(wb->getWorld()->checkCollisionWith(*wb));
