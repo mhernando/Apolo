@@ -21,6 +21,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	menus.menu_meshpart = false;
 	menus.menu_connection = false;
 	menus.menu_design = false;
+	menus.menu_simplejoint = false;
 
 
 
@@ -33,6 +34,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	if(dynamic_cast<LaserSensorSim *>(pos)) menus.menu_laser=true;
 	if(dynamic_cast<RobotSim *>(pos)) menus.menu_robotsim = true;
 	if(dynamic_cast<MeshPart *>(pos)) menus.menu_meshpart = true;
+	if(dynamic_cast<SimpleJoint *>(pos)) menus.menu_simplejoint = true;
 	
 
 
@@ -362,6 +364,7 @@ NodeTree::NodeTree(SimulatedWorld *simu)
 	menus.menu_robotsim=false;
 	menus.menu_meshpart=false;
 	menus.menu_laser = false;
+	menus.menu_simplejoint = false;
 	pointer.world = simu->getWorld();
 	tipo = N_World;
 	bit = Bit_world;

@@ -8,6 +8,7 @@
 #include "pointsList.h"
 #include "canvas.h"
 #include "mrcore.h"
+#include "faceDesign.h"
 
 DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 
@@ -18,7 +19,7 @@ public:
 	void CreatePanel();
 	void RefreshCanvas();
 	void GetPoint(wxCommandEvent& event);
-	void AddVertex();
+	void SetVertex(bool addvertex=true,bool changevertex=false,bool deletevertex=false,int deleteRow=0);
 	void OnChangeSplitter(wxSplitterEvent &event);
 	void SetAlign(bool al){align=al;};
 	bool GetAlign(){return align;};
@@ -27,8 +28,8 @@ public:
 	void ChangeView(bool world);
 	void CreateFace();
 	Face* GetFace() {return face;};
-
-	
+	Canvas *canvas2;
+	FaceDesign* design1;
 
 	
 private:
@@ -40,8 +41,8 @@ private:
 	Face *face,*faceCopy;
 	PointsList *points;
 	SimulatedWorld *world;
-	Canvas *canvas1,*canvas2;
-	wxSplitterWindow *canvas;
+	//Poner las canvas aquí después de la corrección
+	wxSplitterWindow* canvas;
 	DECLARE_EVENT_TABLE();
 
 };

@@ -4,8 +4,10 @@
 #include "faceWidget.h"
 #include "pointsList.h"
 #include <wx/wx.h>
+#include "childView.h"
 
 
+class ChildView;
 class PrismWindow : public wxPanel
 {
 public:
@@ -13,14 +15,20 @@ public:
 	void CreatePanel();
 	void OnButton(wxCommandEvent& event);
 	void DrawBase(wxCommandEvent& event);
+	void ChangeZoom(wxCommandEvent& event);
+	void Move(wxCommandEvent& event);
 	void RefreshCanvas();
 	~PrismWindow(void);
 
+
 private:
+	double xi,yi,xf,yf;
 	bool worldView;
-	FaceWidget *base;
-	wxButton *cView;
+	FaceWidget* base;   
+	wxButton *cView,*Up,*Down,*Left,*Right;
+	wxSlider* Zoom; 
 	NodeTree *node;
+	PointsList *points;  
 	DECLARE_EVENT_TABLE();
 
 };

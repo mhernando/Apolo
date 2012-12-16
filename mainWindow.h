@@ -71,6 +71,7 @@ public:
 	void OnDeleteWorld(wxCommandEvent& event);
 	void OnConnection(wxCommandEvent& event);
 	void OnLaserStyle(wxCommandEvent& event);
+	void OnSimpleJointMove(wxCommandEvent& event);
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);

@@ -177,6 +177,7 @@ struct ContextualMenu
 	bool menu_connection;
 	bool menu_laser;
 	bool menu_design;
+	bool menu_simplejoint;
 	
 };
 

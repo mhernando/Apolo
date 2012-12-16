@@ -5,7 +5,7 @@
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
 
-DECLARE_EVENT_TYPE(wxEVT_FACEVERTEX_ADDED, -1)
+
 class Canvas : public wxGLCanvas
 {
 public:
@@ -28,15 +28,11 @@ public:
 	void UpdateMeshpart(MeshPart* m);
 	void OnKey(wxKeyEvent& event);
 	wxPoint getCursorPosition(){return pt;};
-	Vector2D getViewScale2D(){return scale2D;};
-	void Scale2D();
 	void ChangeBackGroundColour(wxColour colour);
 	
 	
 private:
 	GLScene scene;
-	GLScene2D scene2D;
-	Vector2D scale2D;
 	double x2Di,y2Di,x2Df,y2Df;
 	wxPoint pt;
 	
