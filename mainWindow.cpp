@@ -69,6 +69,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_CONVER, MainWindow::OnConverter)
 	EVT_MENU(ID_MOVE, MainWindow::OnWheeledBasePanelCtrl)
 	EVT_MENU(ID_ROBOT, MainWindow::OnRobotSimPanelCtrl)
+	EVT_MENU(ID_SIMPLEJOINT, MainWindow::OnSimpleJointMove)
 	EVT_MENU(ID_SPLITHF,MainWindow::HandleChildViews)
 	EVT_MENU(ID_SPLITHS, MainWindow::HandleChildViews)
 	EVT_MENU(ID_SPLITVF, MainWindow::HandleChildViews)
@@ -566,19 +567,33 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 	{
 		if(checkPanelExist(itemData))
 		{
-			wxString textOutside;
-			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Joints");
 			RobotSimPanel* robotSimCtrl;
-			robotSimCtrl = new RobotSimPanel(note,wxID_ANY,itemData);
+			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT("Move all Joints"),itemData);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
-			note->AddPage(robotSimCtrl,textOutside);
-			
-			
+			robotSimCtrl->Show(true);	
 			wxLogStatus(wxT("Robot Sim Panel"));
 		}
 		
 	}
 }
+void MainWindow::OnSimpleJointMove( wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	if(itemData->pointer.simplejoint)
+	{
+		if(checkPanelExist(itemData))
+		{
+			RobotSimPanel* robotSimCtrl;
+			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT ("Move only one Joint"),itemData,true);
+			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
+			robotSimCtrl->Show(true);	
+			wxLogStatus(wxT("Robot Sim Panel/Joint"));
+		}
+		
+	}
+}
+
 void MainWindow::OnDrawBox(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();

@@ -7,10 +7,11 @@
 #include <vector>
 #include <wx/wx.h>
 
-class RobotSimPanel : public ApoloPanel
+
+class RobotSimPanel : public wxFrame
 {
 public:
-	RobotSimPanel(wxWindow* parent, wxWindowID id,NodeTree* itemData);
+	RobotSimPanel(wxWindow* parent, wxWindowID id,const wxString& title_dialog, NodeTree* itemData,bool simplejoint=false);
 	void OnValueChanged(wxCommandEvent& event);
 	wxStaticText* getTitle(){return title;}
 
@@ -21,6 +22,7 @@ private:
 	int numJoints;
 	double val;
 	double min,max;
+	bool simplejoint;
 	wxString nameJoint;
 	GenericSlider* joint;
 	NodeTree* itemnode;

@@ -64,14 +64,14 @@ void InitialProperties::CreatePanel()
 	
 	vbox->Add(df,0,wxEXPAND | wxALL ,12);
 	vbox->Add(pw,0,wxEXPAND);
-	vbox->Add(dp,1,wxEXPAND | wxLEFT | wxRIGHT | wxTOP,5);
+	vbox->Add(dp,1,wxEXPAND,5);
 	vbox->AddSpacer(40);
 
 	if(wID==ID_ADDIRRPRI)
 	{
 
 		priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-		tbox->Add(priW,1,wxEXPAND | wxALL,5);	
+		tbox->Add(priW,1,wxEXPAND);	
 	
 	}
 	

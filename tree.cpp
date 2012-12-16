@@ -262,6 +262,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_wheeledbased) menuTree.Append(ID_MOVE, wxT("Move control"));
 		if(itemData->menus.menu_robotsim) menuTree.AppendSeparator();
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
+		if(itemData->menus.menu_simplejoint)menuTree.Append(ID_SIMPLEJOINT, wxT("Move joint"));//Move one only joint
 		if(itemData->menus.menu_laser) menuTree.AppendSeparator();
 		if(itemData->menus.menu_laser) menuTree.AppendSubMenu(menuLaser,wxT("Laser Styles"));
 		if(itemData->menus.menu_meshpart) menuTree.AppendSeparator();

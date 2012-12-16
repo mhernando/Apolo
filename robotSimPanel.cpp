@@ -1,53 +1,95 @@
 #include "robotSimPanel.h"
 #include "simulatedWorld.h"
 
-BEGIN_EVENT_TABLE(RobotSimPanel, ApoloPanel)
+BEGIN_EVENT_TABLE(RobotSimPanel, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, RobotSimPanel::OnValueChanged)
 END_EVENT_TABLE()
 
-RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,NodeTree* itemData)
-: ApoloPanel(itemData,parent,id)
+RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_dialog, NodeTree* itemData, bool onlyjoint)
+: wxFrame(parent, id, title_dialog, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
+	this->SetIcon(wxIcon(joint_xpm));
+
 	itemnode = itemData;
-	title = new wxStaticText(this,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	simplejoint=onlyjoint;
 
+	wxPanel* panel=new wxPanel(this, wxID_ANY);
+	title = new wxStaticText(panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	
+	wxBoxSizer *nbox = new wxBoxSizer(wxHORIZONTAL);
+	nbox->Add(title,0,wxEXPAND|wxALL,5);
 	wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
-	vbox->Add(title,0,wxLEFT|wxTOP,5);
 
-	numJoints = itemnode->pointer.robotsim->getNumJoints();
-	RobotSim* robot = itemnode->pointer.robotsim;
-	for(int i=0;i<numJoints;i++)
-	{	
-		
-		nameJoint.Printf(wxT("Joint %d"),i);
-		joint = new GenericSlider(this,nameJoint,wxDefaultPosition,wxDefaultSize/*wxSize(300,300)*/,false);
 
-		listJoints.push_back(joint);
-		vbox->Add(joint,0,wxEXPAND|wxALL,5);
-		
-	}
-	for(int i=0;i<numJoints;i++)
+	
+	if (!simplejoint)
 	{
-		double max,min,val;
-		robot->getJointLimits(i,max,min);
-		listJoints[i]->setProperties(min,max,true);
-		robot->getJointValue(i,val);
-		listJoints[i]->setValue(val);
+			numJoints = itemnode->pointer.robotsim->getNumJoints();
+			RobotSim* robot = itemnode->pointer.robotsim;
+			for(int i=0;i<numJoints;i++)
+			{	
+				
+				nameJoint.Printf(wxT("Joint %d"),i);
+				joint = new GenericSlider(panel,nameJoint,wxDefaultPosition,wxDefaultSize,false);
+
+				listJoints.push_back(joint);
+				vbox->Add(joint,0,wxEXPAND|wxALL,5);
+				vbox->AddSpacer(5);
+				
+			}
+			for(int i=0;i<numJoints;i++)
+			{
+				double max,min,val;
+				robot->getJointLimits(i,max,min);
+				listJoints[i]->setProperties(min,max,true);
+				robot->getJointValue(i,val);
+				listJoints[i]->setValue(val);
+			}
 	}
-	SetSizer(vbox);
-	vbox->SetSizeHints( this );	
+	else
+	{
+				SimpleJoint* simplejoint = itemnode->pointer.simplejoint;
+				nameJoint.Printf(wxT("Joint"));
+				joint = new GenericSlider(panel,nameJoint,wxDefaultPosition,wxDefaultSize,false);
+				vbox->Add(joint,0,wxEXPAND|wxALL,5);
+				
+				double max1,min1,val1;
+				simplejoint->getMaxMin(max1,min1);
+				joint->setProperties(min1,max1,true);
+				val1=simplejoint->getValue();
+				joint->setValue(val1);
+
+	}
+	wxBoxSizer *tbox = new wxBoxSizer(wxVERTICAL);
+	tbox->Add(nbox,0,wxEXPAND|wxALIGN_TOP,5);
+	tbox->Add(vbox,0,wxEXPAND|wxALIGN_BOTTOM,5);
+
+
+	panel->SetSizer(tbox);
+	tbox->SetMinSize(300,300);
+	tbox->SetSizeHints( this );
+	
 }
 void RobotSimPanel::OnValueChanged(wxCommandEvent& event)
 {
 	
-	for(int i=0;i<numJoints;i++)
+	if (!simplejoint)
+	
+		for(int i=0;i<numJoints;i++)
+		{
+		//	if(listJoints[i]->IsMouseInWindow()) // Comment because in linux compiler it says " IsMouseInWindow doesn't exist 
+		//	{
+				double value = listJoints[i]->getValue();
+				itemnode->pointer.robotsim->setJointValue(i,value);
+				itemnode->getSimu()->getChild()->RefreshChild();
+		//	}
+		}
+	
+	else
 	{
-	//	if(listJoints[i]->IsMouseInWindow()) // Comment because in linux compiler it says " IsMouseInWindow doesn't exist 
-	//	{
-			double value = listJoints[i]->getValue();
-			itemnode->pointer.robotsim->setJointValue(i,value);
-			itemnode->getSimu()->getChild()->RefreshChild();
-	//	}
+		double value = joint->getValue();
+		itemnode->pointer.simplejoint->setValue(value);
+		itemnode->getSimu()->getChild()->RefreshChild();
 	}
 	event.Skip();
 }
