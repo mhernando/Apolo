@@ -112,11 +112,11 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 	else
 	{
 		wxBoxSizer *sbox;
+		
 
 	
 		sbox=new wxBoxSizer(wxHORIZONTAL);
 		
-	
 		xs=new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,true);
 		ys=new GenericSlider(this,wxT("Y position"),wxDefaultPosition,wxDefaultSize,true);
 		zs=new GenericSlider(this,wxT("Z position"),wxDefaultPosition,wxDefaultSize,true);
@@ -135,15 +135,15 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		ps->setValue(orientation.y);
 		yws->setValue(orientation.z);
 
-		sbox->Add(xs,1,wxEXPAND);
-		sbox->Add(ys,1,wxEXPAND);
-		sbox->Add(zs,1,wxEXPAND);
-		sbox->Add(rs,1,wxEXPAND);
-		sbox->Add(ps,1,wxEXPAND);
-		sbox->Add(yws,1,wxEXPAND);
+		sbox->Add(xs,0,wxEXPAND);
+		sbox->Add(ys,0,wxEXPAND);
+		sbox->Add(zs,0,wxEXPAND);
+
+		sbox->Add(rs,0,wxEXPAND);
+		sbox->Add(ps,0,wxEXPAND);
+		sbox->Add(yws,0,wxEXPAND);
 		
 		pE->Add(sbox,0,wxEXPAND);
-		
 		}
 
 	rbox->Add(name_text,0,wxCENTRE);

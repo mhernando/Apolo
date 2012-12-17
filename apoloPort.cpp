@@ -133,7 +133,7 @@ void *ApoloPort::handleConnections(void *server)
 								bool res=false;
 								double d[4];
 								for(int i=0;i<4;i++)d[i]=m->getDoubleAt(8*i);
-								Transformation3D taux(d[0],d[1],d[2],Axis::Z_AXIS,d[3]);
+								Transformation3D taux(d[0],d[1],d[2],mr::Z_AXIS,d[3]);
 								if(wb)res=wb->dropWheeledBase(taux);
 								if(res){
 

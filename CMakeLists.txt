@@ -19,8 +19,8 @@ ENDIF(WIN32)
 
 	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp 
 	wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp 
-	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp 
-	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp prismWindow.cpp ${RESOURCES})
+	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp faceDesign.cpp
+	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp changeVertex.cpp prismWindow.cpp ${RESOURCES})
 
 
 	IF(WIN32)
