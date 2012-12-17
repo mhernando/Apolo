@@ -103,9 +103,9 @@ void *ApoloPort::handleConnections(void *server)
 						case AP_GETLOCATION_WB:
 							if(element){
 								double d[6];
-								Vector3D p=element->getRelativePosition();
+								Vector3D p=element->getAbsoluteT3D().position;
 								double o[3];
-								element->getRelativeOrientation(d[3],d[4],d[5]);
+								element->getAbsoluteT3D().orientation.getRPY(d[3],d[4],d[5]);
 								for(int i=0;i<3;i++)d[i]=p[i];
 	
 								char resp[70];
