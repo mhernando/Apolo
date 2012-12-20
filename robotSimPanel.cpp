@@ -3,15 +3,17 @@
 
 BEGIN_EVENT_TABLE(RobotSimPanel, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, RobotSimPanel::OnValueChanged)
+	EVT_CLOSE(RobotSimPanel::OnClose)
 END_EVENT_TABLE()
 
-RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_dialog, NodeTree* itemData, bool onlyjoint)
-: wxFrame(parent, id, title_dialog, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
+RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData, bool onlyjoint)
+: wxFrame(parent, id,title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
 	this->SetIcon(wxIcon(joint_xpm));
-
 	itemnode = itemData;
+
 	simplejoint=onlyjoint;
+
 
 	wxPanel* panel=new wxPanel(this, wxID_ANY);
 	title = new wxStaticText(panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
@@ -66,7 +68,6 @@ RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& tit
 
 
 	panel->SetSizer(tbox);
-	tbox->SetMinSize(300,300);
 	tbox->SetSizeHints( this );
 	
 }
@@ -77,12 +78,11 @@ void RobotSimPanel::OnValueChanged(wxCommandEvent& event)
 	
 		for(int i=0;i<numJoints;i++)
 		{
-		//	if(listJoints[i]->IsMouseInWindow()) // Comment because in linux compiler it says " IsMouseInWindow doesn't exist 
-		//	{
+
 				double value = listJoints[i]->getValue();
 				itemnode->pointer.robotsim->setJointValue(i,value);
 				itemnode->getSimu()->getChild()->RefreshChild();
-		//	}
+
 		}
 	
 	else
@@ -94,3 +94,19 @@ void RobotSimPanel::OnValueChanged(wxCommandEvent& event)
 	event.Skip();
 }
 
+void RobotSimPanel::setManageWindow (ManageWindows* mg)
+{
+	managewindow=mg;
+	mg->addWindowRobotSim(this);
+
+}
+
+
+
+void RobotSimPanel::OnClose(wxCloseEvent& event)
+{
+
+	managewindow->WindowRobotSimIsClosed(this);
+	Destroy();	
+
+}
