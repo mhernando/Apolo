@@ -99,7 +99,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	slider=true;
 	popmenu=true;
 	design_slider=true;
-	
+	managewindow=new ManageWindows();
 	
 
 #if wxUSE_STATUSBAR
@@ -340,18 +340,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
-bool MainWindow::checkPanelExist(NodeTree* node)
-{
-	int numPage = note->GetPageCount();
-	for(int i=0;i<numPage;i++)
-	{
-		if(((ApoloPanel *)note->GetPage(i))->getItemNode() == node)
-		{
-			return false;
-		}
-	}
-	return true;
-}
+
 void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 		Close(true);
@@ -547,14 +536,15 @@ void MainWindow::OnWheeledBasePanelCtrl(wxCommandEvent& WXUNUSED(event))
 
 	if(itemData->pointer.wheeledbasesim)
 	{
-		if(checkPanelExist(itemData))
+		if(managewindow->CheckWindowsExist(itemData))
 		{
-			wxString textOutside;
-			textOutside<< itemData->getSimu()->getChild()->GetTitle()<< wxT(" Move");
+
+
 			WheeledBasePanel* wheeledBaseCtrl;
-			wheeledBaseCtrl = new WheeledBasePanel(note,wxID_ANY,itemData);
+			wheeledBaseCtrl = new WheeledBasePanel(this,wxID_ANY,wxT(" Move"),itemData);
 			wheeledBaseCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
-			note->AddPage(wheeledBaseCtrl,textOutside);
+			wheeledBaseCtrl->setManageWindow(managewindow);
+			wheeledBaseCtrl->Show(true);
 			wxLogStatus(wxT("Wheeled Base Panel"));
 		}
 	}
@@ -565,11 +555,12 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
 	if(itemData->pointer.robotsim)
 	{
-		if(checkPanelExist(itemData))
+		if(managewindow->CheckWindowsExist(itemData))
 		{
 			RobotSimPanel* robotSimCtrl;
 			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT("Move all Joints"),itemData);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
+			robotSimCtrl->setManageWindow(managewindow);
 			robotSimCtrl->Show(true);	
 			wxLogStatus(wxT("Robot Sim Panel"));
 		}
@@ -582,11 +573,12 @@ void MainWindow::OnSimpleJointMove( wxCommandEvent& WXUNUSED(event))
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
 	if(itemData->pointer.simplejoint)
 	{
-		if(checkPanelExist(itemData))
+		if(managewindow->CheckWindowsExist(itemData))
 		{
 			RobotSimPanel* robotSimCtrl;
 			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT ("Move only one Joint"),itemData,true);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
+			robotSimCtrl->setManageWindow(managewindow);
 			robotSimCtrl->Show(true);	
 			wxLogStatus(wxT("Robot Sim Panel/Joint"));
 		}

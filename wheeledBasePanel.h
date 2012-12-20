@@ -5,6 +5,7 @@
 #include "definitions.h"
 #include "nodeTree.h"
 #include "simulatedWorld.h"
+#include "manageWindows.h"
 
 #include <wx/wx.h>
 #include "bitmaps/up.xpm"
@@ -14,13 +15,16 @@
 #include "bitmaps/stop.xpm"
 
 class MainWindow;
-
-class WheeledBasePanel : public ApoloPanel
+class ManageWindows;
+class WheeledBasePanel : public wxFrame
 {
 public:
-	WheeledBasePanel(wxWindow *parent,wxWindowID id,NodeTree* itemData);
+	WheeledBasePanel(wxWindow *parent,wxWindowID id,const wxString& title_frame,NodeTree* itemData);
 	void OnButton(wxCommandEvent& event);
 	wxStaticText* getTitle(){return title;}
+	NodeTree*  getItemNode () {return itemnode;}
+	void OnClose(wxCloseEvent& event);
+	void setManageWindow (ManageWindows* mg);
 	
 private:
 	wxStaticText* title;
@@ -32,6 +36,8 @@ private:
 	wxButton *stop;
 	wxButton *left;
 	wxButton *right;
+	ManageWindows* managewindow;
+
 	DECLARE_EVENT_TABLE();
 
 };

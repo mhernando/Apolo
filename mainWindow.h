@@ -16,6 +16,7 @@
 #include "apoloPanel.h"
 #include "objectSelection.h"
 #include "apoloPort.h"
+#include "manageWindows.h"
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -39,7 +40,7 @@
 using namespace std;
 
 class ApoloPort;
-
+class ManageWindows;
 class MainWindow : public wxMDIParentFrame
 {
 public:
@@ -85,7 +86,7 @@ public:
 	void ShowBox(bool box);
 	void ShowReference(bool refer);
 	void DeleteObject(wxCommandEvent& WXUNUSED(event));
-	bool getToogleReference(){return rToogle;};
+	bool getToogleReference(){return rToogle;}
 
 	bool checkPanelExist(NodeTree* node);
 	bool getTreeVisible(){return treeVisible;}
@@ -125,6 +126,7 @@ private:
 	wxSashLayoutWindow *s;
 	int w, h;
 	wxMenu *ipro,*osel,*dwid;
+	ManageWindows*	managewindow;
 	DECLARE_EVENT_TABLE();
 
 };
