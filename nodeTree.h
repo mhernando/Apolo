@@ -195,6 +195,7 @@ public:
 	SimulatedWorld * getSimu(){return simuWorld;}
 
 
+
 	int typeConnection; //0 Nothing //1 Server //2 Client
 	Bitmap bit;
 	BitmapSelect bitsel;
@@ -202,11 +203,12 @@ public:
 	MRServer server;
 	MRClient client;
 	ContextualMenu menus;
-
-private:
 	TypeNode tipo;
+private:
+
 	wxString name;	
 	SimulatedWorld *simuWorld;
+
 	
 };
 

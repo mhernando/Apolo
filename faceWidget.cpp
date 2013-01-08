@@ -2,8 +2,13 @@
 
 DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
 
+
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
 EVT_COMMAND(wxID_ANY,wxEVT_ALIGN_DONE,FaceWidget::GetPoint)
+EVT_COMMAND(wxID_ANY,wxEVT_CHECK_POINT_SELECTED,FaceWidget::CheckPointToMove)
+EVT_COMMAND(wxID_ANY,wxEVT_SET_NEW_POINT,FaceWidget::ChangePoint)
+
+
 END_EVENT_TABLE()
 
 
@@ -29,8 +34,8 @@ void FaceWidget::CreatePanel()
 		wxBoxSizer *fbox=new wxBoxSizer(wxVERTICAL);
 		canvas=new wxSplitterWindow(this, ID_DRAG, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
 		canvas->SetMinimumPaneSize (80);
-		design1=new FaceDesign(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+		design1=new FaceDesign(canvas, wxID_ANY, wxDefaultPosition, wxSize(200,200));
+		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxSize(200,200));
 		if(h)	canvas->SplitVertically(design1,canvas2,0);
 		else	canvas->SplitHorizontally(design1,canvas2,0);
 		fbox->Add(canvas,5,wxEXPAND);
@@ -89,29 +94,125 @@ void FaceWidget::ChangeView(bool wView)
 }
 
 
+
+
 void FaceWidget::GetPoint(wxCommandEvent& event)
 {
-	/*if(align)
+	//Si la alineación está activada
+	if(design1->GetAlign()==true)
 	{
-		if(x>=0)x=(int)(x+0.5);
-		else x=(int)(x-0.5);
-	
-		if(y>=0)y=(int)(y+0.5);
-		else y=(int)(y-0.5);
-	}
-	*/
-	if(tableAssociated)
-		points->SetPoints(design1->getXCalibrated(),design1->getYCalibrated());
+		if(tableAssociated)
+		{
+		
+		//Ajuste X a la rejilla del design
+			x=design1->getXCalibrated();
+			int x1=(int)x;
+			
+			if (x1>0)
+			{
+				if ((x1%2)!=0) x=x+1;
+			}
 
-	else
-		SetVertex();
+			if (x1<0)
+			{
+				if ((x1%2)!=0) x=x-1;
+			}
+			x=(int)x;
+
+			
+			//Ajuste Y a la rejilla del design 
+			y=design1->getYCalibrated();
+			int y1=(int)y;
+			
+			if (y1>0)
+			{
+				if ((y1%2)!=0) y=y+1;
+			}
+
+			if (y1<0)
+			{
+				if ((y1%2)!=0) y=y-1;
+			}
+			y=(int)y;
+
+
+			points->SetPoints(x,y);
+		}
+		else SetVertex();
+	}
 	
+
+	if(design1->GetAlign()==false)
+	{
+		if(tableAssociated)
+		{
+			points->SetPoints(design1->getXCalibrated(),design1->getYCalibrated());
+		}
+		else
+			SetVertex();
+	}
 }
 
 
 
 
-void FaceWidget::SetVertex(bool addvertex,bool changevertex,bool deletevertex,int deleteRow)
+
+
+void FaceWidget::ChangePoint(wxCommandEvent& event)   //Cambiará el punto arrastrado por otro en la nueva posición
+{
+	if(tableAssociated)
+	{
+		//Si la alineación está activada
+		if(design1->GetAlign()==true)
+		{
+			//Ajuste X a la rejilla del design
+			x=design1->getXCalibrated();
+			int x1=(int)x;
+			
+			if (x1>0)
+			{
+				if ((x1%2)!=0) x=x+1;
+			}
+
+			if (x1<0)
+			{
+				if ((x1%2)!=0) x=x-1;
+			}
+			x=(int)x;
+
+			
+			//Ajuste Y a la rejilla del design 
+			y=design1->getYCalibrated();
+			int y1=(int)y;
+			
+			if (y1>0)
+			{
+				if ((y1%2)!=0) y=y+1;
+			}
+
+			if (y1<0)
+			{
+				if ((y1%2)!=0) y=y-1;
+			}
+			y=(int)y;
+		
+			if (resp>-1) points->MovedPoint(resp,x,y);
+		}
+		else
+		{
+			if (resp>-1) points->MovedPoint(resp,design1->getXCalibrated(),design1->getYCalibrated());
+		}
+
+		resp=-1; 
+		design1->FinishedChange();
+	}
+}
+
+
+
+
+
+void FaceWidget::SetVertex(bool addvertex,bool changevertex,bool deletevertex,bool movepoint, int deleteRow)
 {
 	if (addvertex)
 	{
@@ -142,6 +243,15 @@ void FaceWidget::SetVertex(bool addvertex,bool changevertex,bool deletevertex,in
 			face->deleteVertex (ind);
 			faceCopy->deleteVertex (ind);
 		}
+	if (movepoint)
+	{
+
+			Vector2D vertex=points->getMovedPointAdded();
+			//int dir=points->getAuxRow();
+			face->changeVertex(resp,vertex.x,vertex.y);
+			faceCopy->changeVertex(resp,vertex.x,vertex.y);
+
+	}
 
 
 	world->getChild()->UpdateWorld();
@@ -162,4 +272,15 @@ void FaceWidget::RefreshCanvas()
 	design1->Refresh();
 	canvas2->Refresh();
 }
+
+
+
+
+void FaceWidget::CheckPointToMove(wxCommandEvent& event)
+{
+	resp=points->CheckPoint(design1->getXCalibrated(),design1->getYCalibrated());
+}
+
+
+
 

@@ -5,7 +5,10 @@
 #include "wx/grid.h"
 #include "wx/wx.h"
 #include "faceWidget.h"
-#include "changeVertex.h"
+#include "ChangeVertex.h"
+
+
+
 
 //DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 class FaceWidget;
@@ -23,6 +26,8 @@ public:
 	Vector2D getLastPointAdded(){return lastPoint;}
 	Vector2D getChangePointAdded(){return changePoint;}
 	Vector2D getDeletePointAdded(){return deletePoint;}
+	Vector2D getMovedPointAdded(){return movedPoint;}
+
 	double getAuxRow(){return auxrow;} 
 	void ChangePoint();
 	void OnMenuChangePoint(wxCommandEvent& event);
@@ -30,6 +35,8 @@ public:
 	void OnMenuDeletePoint(wxCommandEvent& event);
 	void OnItemMenu(wxGridEvent& event);
 	void RefreshGrid();
+	int CheckPoint(double x,double y);
+	void MovedPoint(int rowtochange,double x,double y);
 	wxGrid *grid;
 	
 
@@ -40,7 +47,7 @@ private:
 	wxWindow *parent;
 	ChangeVertex *changeVertex;
 	double row,col,auxrow; 
-	Vector2D lastPoint, changePoint,deletePoint;
+	Vector2D lastPoint, changePoint,deletePoint,movedPoint;
 
 	
 	DECLARE_EVENT_TABLE();

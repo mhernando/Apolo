@@ -18,6 +18,7 @@ public:
 	void ChangeZoom(wxCommandEvent& event);
 	void Move(wxCommandEvent& event);
 	void RefreshCanvas();
+	void DesignAlign(wxCommandEvent& event);
 	~PrismWindow(void);
 
 
@@ -28,7 +29,8 @@ private:
 	wxButton *cView,*Up,*Down,*Left,*Right;
 	wxSlider* Zoom; 
 	NodeTree *node;
-	PointsList *points;  
+	PointsList *points; 
+	wxRadioBox* radioButton1;
 	DECLARE_EVENT_TABLE();
 
 };

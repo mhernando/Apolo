@@ -25,7 +25,8 @@ public:
 	NodeTree*  getItemNode () {return itemnode;}
 	void OnClose(wxCloseEvent& event);
 	void setManageWindow (ManageWindows* mg);
-	
+	void Delete();
+
 private:
 	wxStaticText* title;
 	MainWindow *mainWin;
