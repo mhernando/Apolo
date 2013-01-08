@@ -22,8 +22,9 @@ public:
 	void WindowRobotSimIsClosed (RobotSimPanel* rb);
 	void addWindowWheeledBase(WheeledBasePanel* wh);
 	void WindowWheeledBaseIsClosed (WheeledBasePanel* wh);
-
-
+	vector<NodeTree*> getVectorWindows(){return vectorwindows;}
+	vector<RobotSimPanel*> getVectorRobotSimPanel(){return robotsim;}
+	vector<WheeledBasePanel*> getVectorWheeledBasePanel(){return wheelebase;}
 
 
 private:

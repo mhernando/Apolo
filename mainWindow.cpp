@@ -451,20 +451,76 @@ void MainWindow::AddObject(wxCommandEvent& event)
 
 void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 {
-		wxString msg;
+
+
+	wxString msg;
         msg.Printf(wxT("Are you sure you want to delete this object?"));
         if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
         else
+		{	
+			int rb=0,smp=0,wh=0;
+			vector <RobotSimPanel*> robot=managewindow->getVectorRobotSimPanel();
+			vector <WheeledBasePanel*> wheeled=managewindow->getVectorWheeledBasePanel();
+
+			wxTreeItemId itemid=tree->GetWorld(tree->GetSelection());
+
+			wxTreeItemId itemId = tree->GetSelection();
+			NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
 			for(unsigned int i=0;i<listWorlds.size();i++)
-				if(listWorlds[i]->getTreeItem()==tree->GetWorld(tree->GetSelection()))
-					listWorlds[i]->DeleteObject(tree->GetSelection());
-			
+				if(listWorlds[i]->getTreeItem()==itemid)
+				{
+					int size=0;
+
+					if (robot.size()>wheeled.size())//Comprobamos cuál es el de mayor tamaño para que no haya problemas con los vectores
+						size=robot.size();
+					else
+						size=wheeled.size(); //Si tuviésemos mas ventanas es fácil de implementar
+
+						for (int j=size-1;j>=0;j--) //Vamos de atrás a adelante para no dejarnos nada por eliminar
+						{	
+							
+							rb=smp=wh=0; //Actualizamos los indicadores de tipo cada vuelta en el bucle
+						
+							if ((robot.empty()==false) && (j<robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
+								if (robot[j]->getItemNode ()== itemData)
+									rb=1;				//ponemos a 1 si es de tipo robotsimpanel
+								else if (robot[j]->getItemParentData()==itemData)
+									smp=1;				//si es de tìpo simplejoint
+
+							if ((wheeled.empty()==false) && (j<wheeled.size()))
+								if (wheeled[j]->getItemNode ()==itemData)
+									wh=1;
+									
+							if (rb || smp) //Si los menus son de tipo simplejoint o robotsim
+								robot[j]->Delete(); //Ya localizados los menús pertenecientes al padre los eliminamos todos
+
+							else if(wh) //Si los menus son de tipo WheeledBasePanel
+								wheeled[j]->Delete();
+							
+						}
 					
+					listWorlds[i]->DeleteObject(tree->GetSelection()); // Borramos el icono del árbol del mundo y el objeto en sí
+				}
+		}
 			
-				
-		
-		
 }
+
+
+/*bool MainWindow::checkPanelExist(NodeTree* node)
+{
+	int numPage = note->GetPageCount();
+	for(int i=0;i<numPage;i++)
+	{
+		if(((ApoloPanel *)note->GetPage(i))->getItemNode() == node)
+		{
+			return false;
+		}
+	}
+	return true;
+}*/
+
+
 
 void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 {
@@ -571,12 +627,16 @@ void MainWindow::OnSimpleJointMove( wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
 	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
+	wxTreeItemId parentItem=tree->GetItemParent(itemId);
+	NodeTree *parentData = parentItem.IsOk() ? (NodeTree *) tree->GetItemData(parentItem):NULL;
+
 	if(itemData->pointer.simplejoint)
 	{
 		if(managewindow->CheckWindowsExist(itemData))
 		{
 			RobotSimPanel* robotSimCtrl;
-			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT ("Move only one Joint"),itemData,true);
+			robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT ("Move only one Joint"),itemData,parentData,true);
 			robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
 			robotSimCtrl->setManageWindow(managewindow);
 			robotSimCtrl->Show(true);	

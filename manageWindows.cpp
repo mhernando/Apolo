@@ -92,3 +92,5 @@ void ManageWindows::RefreshVectorPages (NodeTree* node)
 	
 
 }
+
+

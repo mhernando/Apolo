@@ -4,6 +4,7 @@
 BEGIN_EVENT_TABLE(PrismWindow, wxPanel)
 	EVT_BUTTON(ID_CHANGEVIEW, PrismWindow::OnButton)
 	EVT_COMMAND(wxID_ANY,wxEVT_POINT_ADDED,PrismWindow::DrawBase)
+	EVT_RADIOBOX(wxID_ANY,PrismWindow::DesignAlign)
 	EVT_SLIDER(ID_ZOOMDESIGN,PrismWindow::ChangeZoom)
 	EVT_BUTTON(ID_MOVERIGHT, PrismWindow::Move)
 	EVT_BUTTON(ID_MOVEUP, PrismWindow::Move)
@@ -17,6 +18,7 @@ PrismWindow::PrismWindow(wxWindow *parent,NodeTree *obj,const wxString& title, c
 	node=obj;
 	worldView=false;
 	CreatePanel();
+	radioButton1->SetSelection(1);
 
 
 }
@@ -25,6 +27,7 @@ void PrismWindow::CreatePanel()
 {
 
 		wxStaticBoxSizer *pri=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Base Design"));
+		wxStaticBoxSizer *canvas=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Visualization"));
 		wxStaticBoxSizer *Size=new wxStaticBoxSizer(wxHORIZONTAL,this,wxT("Canvas2D"));//Creacion de un nuevo wxStaticSizer
 		wxStaticBoxSizer *Buttons=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Canvas3D"));//Creacion de un nuevo wxStaticSizer
 		wxStaticBoxSizer *Controls=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Controls"));//Creacion de un nuevo wxStaticSizer
@@ -42,7 +45,7 @@ void PrismWindow::CreatePanel()
 		Left=new wxButton(this,ID_MOVELEFT,wxT("Left"),wxDefaultPosition,wxSize(33,30));
 		Down=new wxButton(this,ID_MOVEDOWN,wxT("Down"),wxDefaultPosition,wxSize(25,25));
 		base->AssociatePointTable(points);
-		pri->Add(base,10,wxEXPAND);
+		canvas->Add(base,10,wxEXPAND);
 		Buttons->Add(cView,0,wxEXPAND);
 		Size->Add(Zoom,0,wxEXPAND);
 		Navigate->Add(Up,0,wxEXPAND);
@@ -50,9 +53,13 @@ void PrismWindow::CreatePanel()
 		NavigateH->Add(Right,0,wxEXPAND);
 		Navigate->Add(NavigateH,0,wxEXPAND);
 		Navigate->Add(Down,0,wxEXPAND);
-		Size->Add(Navigate,0,wxEXPAND);
+		wxString string[2]={wxT("On"), wxT("Off")}; //Los posibles valores que va a tener el RadioBox
+		radioButton1=new wxRadioBox(this,wxID_ANY,wxT("Align"),wxDefaultPosition,wxDefaultSize,2,string); //Botón para alinear los puntos 
+		Size->Add(Navigate,0,wxEXPAND,20);
 		Controls->Add(Size,0,wxEXPAND);
+		Controls->Add(radioButton1,0,wxEXPAND,20);
 		Controls->Add(Buttons,0,wxEXPAND);
+		pri->Add(canvas,0,wxEXPAND);
 		pri->Add(Controls,0,wxEXPAND);
 		pri->Add(points,0,wxEXPAND |wxALL, 5);
 		SetSizer(pri);
@@ -130,6 +137,14 @@ void PrismWindow::Move(wxCommandEvent& event)
 
 }
 
+
+
+void PrismWindow::DesignAlign(wxCommandEvent& event)
+{
+	if (radioButton1->GetSelection()==0)
+		base->design1->SetAlign(true);
+	else base->design1->SetAlign(false);
+}
 
 
 

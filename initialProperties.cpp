@@ -90,7 +90,7 @@ void InitialProperties::CreatePanel()
 	//Close Dialog Design//
 	
 	vbox->Add(b_box,1,wxEXPAND);
-	
+	vbox->SetMinSize(vbox->GetMinSize());
 	SetSizer(tbox);
 	tbox->SetSizeHints(this);
 	
