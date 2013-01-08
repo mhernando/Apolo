@@ -31,6 +31,7 @@ public:
 	ChildView* getChild(){return childView;}
 
 
+
 	
 	static MainWindow *mainWin;
 	static Tree *tree;
@@ -42,6 +43,7 @@ private:
 	string name;
 	ChildView* childView;
 	World* m_world;
+
 	
 };
 #endif //__APOLO__SIMULATED_WORLD__H

@@ -21,7 +21,7 @@ FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, con
 	worldView=false;
 	red=green=blue=1.0f;
 	CreatePanel();
-
+	align->SetSelection(1); //Establecemos la alineación en OFF al arrancar
 }
 
 void FaceWindow::CreatePanel()
@@ -98,10 +98,9 @@ void FaceWindow::CreatePanel()
 void FaceWindow::FaceAlign(wxCommandEvent& event)
 {
 	if(align->GetSelection()==0)
-		canvas->SetAlign(true);
+		canvas->design1->SetAlign(true);
 	else
-		canvas->SetAlign(false);
-
+		canvas->design1->SetAlign(false);
 }
 
 

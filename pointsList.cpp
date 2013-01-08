@@ -9,7 +9,6 @@ BEGIN_EVENT_TABLE(PointsList, wxPanel)
 		EVT_GRID_CELL_RIGHT_CLICK(PointsList::OnItemMenu)
 		EVT_MENU(ID_CHANGEVERTEX, PointsList::OnMenuChangePoint)
 		EVT_MENU(ID_DELETEVERTEX, PointsList::OnMenuDeletePoint)
-
 		
 		//EVT_GRID_CELL_RIGHT_CLICK(wxID_ANY,PointsList::OnPosition)
 		//EVT_GRID_CELL_LEFT_CLICK//////////////////////////////////////////////////////	
@@ -121,8 +120,6 @@ void PointsList::SetVertex(int r)
 		}
 	
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//***********************************************   NUEVO    ***********************************************
 	
 	void PointsList::OnMenuChangePoint(wxCommandEvent& event)
 {	
@@ -132,7 +129,7 @@ void PointsList::SetVertex(int r)
 		if(id == ID_CHANGEVERTEX)
 		{
 		//ChangeVertex* changeVertex;
-		changeVertex = new ChangeVertex(this, ID_CHANGEVERTEX, wxT("Change vertex"),grid->GetCellValue(auxrow,0),
+			changeVertex = new ChangeVertex(this, ID_CHANGEVERTEX, wxT("Change vertex"),grid->GetCellValue(auxrow,0),
 			grid->GetCellValue(auxrow,1));
 		
 		if (changeVertex->ShowModal()==ID_ACCEPT)
@@ -185,12 +182,30 @@ void PointsList::ChangePoint()
 			
 			}
 		}
-
-	
-
-
 }
 
+void PointsList::MovedPoint(int rowtochange,double x,double y)
+
+{
+		if(grid->GetCellValue(rowtochange,0)!=wxEmptyString && grid->GetCellValue(rowtochange,1)!=wxEmptyString) 
+		{
+			if(col==0) 	
+			{									
+					wxString value;
+					movedPoint.x=x;
+					movedPoint.y=y;
+					grid->SetCellValue(rowtochange,col,value);
+					grid->SetCellValue(rowtochange,col,value<<x);
+					value.Clear();
+					grid->SetCellValue(rowtochange,++col,value);
+					grid->SetCellValue(rowtochange,col,value<<y);
+					value.Clear();
+					col=0;
+					if(facesAssociated) faces->SetVertex(false,false,false,true);							
+					GetParent()->SendSizeEvent();
+			}
+		}
+}
 
 
 void PointsList::DeletePoint ()
@@ -203,7 +218,7 @@ void PointsList::DeletePoint ()
 	
 			grid->DeleteRows(r,1);
 			row--;
-			if(facesAssociated) faces->SetVertex(false,false,true,r);
+			if(facesAssociated) faces->SetVertex(false,false,true,false,r);
 			GetParent()->SendSizeEvent();
 			
 
@@ -224,15 +239,14 @@ void PointsList::OnItemMenu(wxGridEvent& event)
 
 
 
-//****************************************************   FIN NUEVO   *********************************************
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 void PointsList::AssociateFace(FaceWidget *face)
 {
 	faces=face;
 	facesAssociated=true;
-
 }
+
 void PointsList::RefreshGrid()
 {
 	grid->DeleteRows(0,grid->GetNumberRows());
@@ -241,4 +255,28 @@ void PointsList::RefreshGrid()
 	row=0;
 	col=0;
 
+}
+
+
+//Función que tiene que comprobar si el punto señalado está en la lista de puntos añadidos.Devuelve el número de fila donde esté el punto 
+//con el que coincida
+int PointsList::CheckPoint(double x,double y)
+{
+	int respuesta=-1;		
+	double difx=0,dify=0;
+	for(int i=0;i<grid->GetNumberRows();i++)
+	{
+		Vector2D punto;
+		wxString valueCell;
+		valueCell=grid->GetCellValue(i,0);
+		valueCell.ToDouble(&punto.x);
+		valueCell.Clear();
+		valueCell=grid->GetCellValue(i,1);
+		valueCell.ToDouble(&punto.y);
+		valueCell.Clear();
+		difx=x-punto.x;
+		dify=y-punto.y;
+		if ((abs(difx)<0.25)&&(abs(dify)<0.25)) respuesta=i;
+	}
+	return respuesta;
 }

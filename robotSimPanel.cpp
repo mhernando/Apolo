@@ -6,12 +6,13 @@ BEGIN_EVENT_TABLE(RobotSimPanel, wxFrame)
 	EVT_CLOSE(RobotSimPanel::OnClose)
 END_EVENT_TABLE()
 
-RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData, bool onlyjoint)
+RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData,
+							 NodeTree *parentData, bool onlyjoint)
 : wxFrame(parent, id,title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
 	this->SetIcon(wxIcon(joint_xpm));
 	itemnode = itemData;
-
+	itemParentData=parentData;
 	simplejoint=onlyjoint;
 
 
@@ -98,6 +99,14 @@ void RobotSimPanel::setManageWindow (ManageWindows* mg)
 {
 	managewindow=mg;
 	mg->addWindowRobotSim(this);
+
+}
+
+void RobotSimPanel::Delete()
+{
+
+	managewindow->WindowRobotSimIsClosed(this);
+	Destroy();	
 
 }
 

@@ -85,6 +85,8 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 	else 
 		obj=new PositionableEntity;
 
+
+	
 	// Object addition or world addition//
 	
 	if(tree->GetSelection()!=mainNode)

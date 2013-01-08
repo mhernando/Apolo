@@ -70,6 +70,13 @@ void WheeledBasePanel::setManageWindow (ManageWindows* mg)
 
 }
 
+void WheeledBasePanel::Delete()
+{
+
+	managewindow->WindowWheeledBaseIsClosed(this);
+	Destroy();	
+
+}
 
 void WheeledBasePanel::OnClose(wxCloseEvent& event)
 {

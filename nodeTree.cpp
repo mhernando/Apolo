@@ -3,7 +3,7 @@
 
 NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 {
-	
+
 	simuWorld=simu;
 	typeConnection=0;
 	server.Port=0;
@@ -22,7 +22,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	menus.menu_connection = false;
 	menus.menu_design = false;
 	menus.menu_simplejoint = false;
-
+	
 
 
 	//primero las clases bases que pueden ser compuestas
