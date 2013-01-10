@@ -14,7 +14,7 @@
 
 DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 
-
+class PointsList;
 class FaceWidget : public wxPanel
 {
 public:
@@ -26,13 +26,13 @@ public:
 	void SetVertex(bool addvertex=true,bool changevertex=false,bool deletevertex=false,bool movepoint=false,int deleteRow=0);
 	void CheckPointToMove(wxCommandEvent& event);  //Función que se encarga de comprobar si el punto seleccionado hay que moverlo
 	void OnChangeSplitter(wxSplitterEvent &event);
-	void SetAlign(bool al){align=al;};
-	bool GetAlign(){return align;};
+	void SetAlign(bool al){align=al;}
+	bool GetAlign(){return align;}
 	Canvas *GetCanvas3D(){return canvas2;}
 	void AssociatePointTable(PointsList *point);
 	void ChangeView(bool world);
 	void CreateFace();
-	Face* GetFace() {return face;};
+	Face* GetFace() {return face;}
 	Canvas *canvas2;
 	FaceDesign* design1;
 

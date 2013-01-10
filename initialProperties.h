@@ -38,6 +38,7 @@ private:
 	wxString defName;
 	wxWindowID wID;
 	MainWindow* mainWin;
+	FaceWindow *face;
 	
 
 	DECLARE_EVENT_TABLE();

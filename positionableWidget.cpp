@@ -9,10 +9,10 @@ BEGIN_EVENT_TABLE(PositionableWidget, wxPanel)
 END_EVENT_TABLE()
 
 PositionableWidget::PositionableWidget(wxWindow *window,NodeTree *obj,const wxString label, const wxPoint& pos ,
-									   const wxSize& size,bool sliders ,bool color_w): wxPanel( window, wxID_ANY, pos, size)
+									   const wxSize& size,bool sliders ,bool color_w,wxWindowID winid): wxPanel( window, wxID_ANY, pos, size)
 									   
 {
-	
+	wID=winid;
 	slider=sliders;
 	parent=window;
 	name=label;
@@ -115,16 +115,32 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		
 
 	
-		sbox=new wxBoxSizer(wxHORIZONTAL);
 		
-		xs=new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,true);
-		ys=new GenericSlider(this,wxT("Y position"),wxDefaultPosition,wxDefaultSize,true);
-		zs=new GenericSlider(this,wxT("Z position"),wxDefaultPosition,wxDefaultSize,true);
+		
+		if (wID!=ID_ADDIRRPRI)
+		{
+			sbox=new wxBoxSizer(wxHORIZONTAL);
+			xs=new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,true);
+			ys=new GenericSlider(this,wxT("Y position"),wxDefaultPosition,wxDefaultSize,true);
+			zs=new GenericSlider(this,wxT("Z position"),wxDefaultPosition,wxDefaultSize,true);
 
-		rs=new GenericSlider(this,wxT("Roll orientation"),wxDefaultPosition,wxDefaultSize,true);
-		ps=new GenericSlider(this,wxT("Pitch orientation"),wxDefaultPosition,wxDefaultSize,true);
-		yws=new GenericSlider(this,wxT("Yaw orientation"),wxDefaultPosition,wxDefaultSize,true);
-		
+			rs=new GenericSlider(this,wxT("Roll orientation"),wxDefaultPosition,wxDefaultSize,true);
+			ps=new GenericSlider(this,wxT("Pitch orientation"),wxDefaultPosition,wxDefaultSize,true);
+			yws=new GenericSlider(this,wxT("Yaw orientation"),wxDefaultPosition,wxDefaultSize,true);
+		}
+		else
+		{
+			sbox=new wxBoxSizer(wxVERTICAL);
+			xs=new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,false);
+			ys=new GenericSlider(this,wxT("Y position"),wxDefaultPosition,wxDefaultSize,false);
+			zs=new GenericSlider(this,wxT("Z position"),wxDefaultPosition,wxDefaultSize,false);
+
+			rs=new GenericSlider(this,wxT("Roll orientation"),wxDefaultPosition,wxDefaultSize,false);
+			ps=new GenericSlider(this,wxT("Pitch orientation"),wxDefaultPosition,wxDefaultSize,false);
+			yws=new GenericSlider(this,wxT("Yaw orientation"),wxDefaultPosition,wxDefaultSize,false);
+
+
+		}
 		
 		SliderLimits();
 		

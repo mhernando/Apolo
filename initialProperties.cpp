@@ -29,7 +29,7 @@ InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxSt
 void InitialProperties::CreatePanel()
 {
 
-	
+
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *tbox=new wxBoxSizer(wxHORIZONTAL);
 	tbox->Add(vbox,1,wxEXPAND);
@@ -48,7 +48,7 @@ void InitialProperties::CreatePanel()
 	if(wID==ID_ADDFACESET)
 	{
 		node->pointer.facesetpart=dynamic_cast<FaceSetPart *>(node->pointer.positionableentity);
-		FaceWindow *face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+		face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 		vbox->Add(face,0,wxEXPAND);	
 	}
 			
@@ -58,33 +58,37 @@ void InitialProperties::CreatePanel()
 
 	dp=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
 	
-	pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
-	
+		if (wID!=ID_ADDIRRPRI)
+			pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
+		else
+			pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color,ID_ADDIRRPRI);
+
 	wxButton *df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
 	
-	vbox->Add(df,0,wxEXPAND | wxALL ,12);
+	vbox->Add(df,0,wxEXPAND);
 	vbox->Add(pw,0,wxEXPAND);
-	vbox->Add(dp,1,wxEXPAND,5);
-	vbox->AddSpacer(40);
+	vbox->Add(dp,0,wxEXPAND);
+	//vbox->AddSpacer(40);
 
-	if(wID==ID_ADDIRRPRI)
-	{
+		if(wID==ID_ADDIRRPRI)
+		{
 
-		priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-		tbox->Add(priW,1,wxEXPAND);	
-	
-	}
-	
+			priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+			tbox->Add(priW,0,wxEXPAND);	
+		
+		}
+		
 	}
 
 	
 
 	////Buttom box///
 	wxBoxSizer *b_box=new wxBoxSizer(wxHORIZONTAL);
-	wxButton *accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxSize(60,25));
-	wxButton *cancel = new wxButton(this,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxSize(60,25));
-	b_box->Add(accept,1,wxALIGN_BOTTOM | wxALL,5);
-	b_box->Add(cancel,1,wxALIGN_BOTTOM | wxALL ,5);	
+	wxButton *accept = new wxButton(this,ID_ACCEPT,wxT("Accept"),wxDefaultPosition,wxDefaultSize);
+	wxButton *cancel = new wxButton(this,ID_CANCEL,wxT("Cancel"),wxDefaultPosition,wxDefaultSize);
+	b_box->Add(accept,1,wxALIGN_BOTTOM);
+	b_box->Add(cancel,1,wxALIGN_BOTTOM);
+
 
 	
 	//Close Dialog Design//
@@ -103,7 +107,17 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 	int id=event.GetId();
 	
 
-	if(id == ID_ACCEPT)	Destroy();
+	if(id == ID_ACCEPT)	
+	{	
+		if(wID==ID_ADDFACESET)
+		{
+			face->AddFace();
+		}
+			
+		
+		Destroy();
+
+	}
 
 	if(id == ID_DEFAULT)
 	{
