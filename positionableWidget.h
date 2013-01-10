@@ -12,7 +12,7 @@ class PositionableWidget: public wxPanel
 {
 public:
 	PositionableWidget(wxWindow *window,NodeTree *obj,const wxString label,const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(60,200),bool sliders = false, bool color_w=true,wxWindowID winid = wxID_ANY);
+                     const wxSize& size = wxSize(60,200),bool sliders = false, bool color_w=true);
 	
 	void OnValuesChanged(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
@@ -39,7 +39,6 @@ private:
 	wxWindow *parent;
 	wxString text,name,title;
 	NodeTree *node;
-	wxWindowID wID;
 	DECLARE_EVENT_TABLE();
 	
 };

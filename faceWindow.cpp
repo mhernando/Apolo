@@ -21,48 +21,39 @@ FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, con
 	worldView=false;
 	red=green=blue=1.0f;
 	CreatePanel();
-	align->SetSelection(1); //Set align OFF to start
+	align->SetSelection(1); //Establecemos la alineación en OFF al arrancar
 }
 
 void FaceWindow::CreatePanel()
 {
-		wxBoxSizer *fbox=new wxBoxSizer(wxHORIZONTAL);//general box
-		wxBoxSizer *rbox=new wxBoxSizer(wxVERTICAL);
-		wxBoxSizer *sbox=new wxBoxSizer(wxVERTICAL);
+		wxBoxSizer *fbox=new wxBoxSizer(wxHORIZONTAL);
+		wxBoxSizer *rbox=new wxBoxSizer(wxVERTICAL);	
 		
 		
 		PointsList *points=new PointsList(this,wxT("Face Coordenates"));
-		
 		wxButton *af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
 		cView = new wxButton(this,ID_CHANGEVIEW,wxT("World View3D"),wxDefaultPosition,wxDefaultSize);
-
-		canvas=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxDefaultSize);
+		wxSplitterWindow *drawFace= new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
+		drawFace->SetMinimumPaneSize(200);
+		
+		canvas=new FaceWidget(drawFace,node->getSimu(),wxDefaultPosition,wxDefaultSize);
 		canvas->AssociatePointTable(points);
 		
-		PositionableWidget *pw=new PositionableWidget(this,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
-
-		FaceControlButtons* controlButtons=new FaceControlButtons(this,ID_ADDFACESET,wxDefaultPosition,wxDefaultSize,canvas);
+		PositionableWidget *pw=new PositionableWidget(drawFace,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
+		drawFace->SplitHorizontally(canvas,pw,0);
 		
-		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
-		wxStaticBoxSizer *buttons=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Canvas3D"));
-
 		wxStaticBoxSizer *obox=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Face Properties"));
 		roll = new GenericSlider(this,wxT("Face Roll"),wxDefaultPosition,wxDefaultSize,false);//true = vertical
 		pitch = new GenericSlider(this,wxT("Face Pitch"),wxDefaultPosition,wxDefaultSize,false);
 		x_pos = new GenericSlider(this,wxT("X position"),wxDefaultPosition,wxDefaultSize,false);
 		y_pos = new GenericSlider(this,wxT("Y position)"),wxDefaultPosition,wxDefaultSize,false);
 		plane_dis = new GenericSlider(this,wxT("Normal Distance (Z)"),wxDefaultPosition,wxDefaultSize,false);
-		
 		wxString string[2]={wxT("1"), wxT("0")};
 		wxString string2[2]={wxT("On"), wxT("Off")};
-		
+		//trans = new wxRadioBox(this,wxID_ANY,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,2,string);
 		transparency = new GenericSlider(this,wxT("Face Transparency"),wxDefaultPosition,wxDefaultSize,false);
-		
 		align = new wxRadioBox(this,wxID_ANY,wxT("Align Face Drawing "),wxDefaultPosition,wxDefaultSize,2,string2);
-		
 		wxBitmapButton *color_box = new wxBitmapButton(this,ID_COLOR,wxIcon(colour_xpm),wxDefaultPosition,wxSize(100,50),4,wxDefaultValidator,wxT("Change face color"));
-		
-		//sliders
 		roll->setProperties(-180,180);
 		roll->setValue(0);
 		pitch->setProperties(-180,180);
@@ -76,37 +67,29 @@ void FaceWindow::CreatePanel()
 		transparency->setProperties(0,1);
 		transparency->setValue(1);
 
-		//sliders in box
+		
 		obox->Add(roll,0,wxALL|wxEXPAND,5);
 		obox->Add(pitch,0,wxALL|wxEXPAND,5);
 		obox->Add(x_pos,0,wxALL|wxEXPAND,5);
 		obox->Add(y_pos,0,wxALL|wxEXPAND,5);
-		obox->Add(plane_dis,0,wxALL|wxEXPAND,5);
+		obox->Add(plane_dis,1,wxALL|wxEXPAND,5);
 		obox->Add(transparency,0,wxEXPAND|wxALL,5);
 		obox->Add(align,0,wxEXPAND|wxALL,5);	
 		obox->Add(color_box,0,wxEXPAND|wxALL,5);
 		
-		buttons->Add(cView,0,wxEXPAND);
-		pbox->Add(controlButtons,1,wxEXPAND |wxALL);//horizontal
-		pbox->Add(buttons,1,wxEXPAND |wxALL);
 
-			
-	
-		sbox->Add(canvas,0,wxEXPAND );//vertical		
-		sbox->Add(pbox,0,wxEXPAND);
-		sbox->Add(pw,0,wxEXPAND);
-
-
-
-		rbox->Add(points,1,wxEXPAND|wxALL,5);//vertical
-		rbox->Add(af,0,wxEXPAND|wxALL,5);
 		
-		fbox->Add(obox,0,wxEXPAND|wxALL,5);	//horizontal
-		fbox->Add(sbox,0,wxEXPAND|wxALL,5);
+		fbox->Add(obox,0,wxEXPAND|wxALL,5);
+
+		fbox->Add(drawFace,1,wxEXPAND );
+		rbox->Add(points,1,wxEXPAND|wxALL,5);
+		rbox->Add(cView,0,wxEXPAND|wxALL,5);
+		rbox->Add(af,0,wxEXPAND|wxALL,5);
 		fbox->Add(rbox,0,wxEXPAND);
 		
 	
 		SetSizer(fbox);
+	
 	
 }
 
@@ -161,18 +144,6 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 	
 }
 
-void FaceWindow::AddFace()
-{
-
-	node->pointer.facesetpart->addFace((*canvas->GetFace()));
-	canvas->GetCanvas3D()->ClearObjects();
-	canvas->GetCanvas3D()->UpdateWorld(node->getSimu()->getWorld());
-	roll->setValue(0);
-	pitch->setValue(0);
-	plane_dis->setValue(0);
-	canvas->CreateFace();
-
-}
 
 
 void  FaceWindow::ColorChanged(wxCommandEvent& event)

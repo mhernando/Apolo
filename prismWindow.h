@@ -1,15 +1,13 @@
 #ifndef __APOLO__PRISMWINDOW__H
 #define __APOLO__PRISMWINDOW__H
 
-
+#include "faceWidget.h"
 #include "pointsList.h"
 #include <wx/wx.h>
 #include "childView.h"
-#include "faceControlButtons.h"
 
 
 class ChildView;
-class FaceControlButtons;
 class PrismWindow : public wxPanel
 {
 public:
@@ -17,6 +15,8 @@ public:
 	void CreatePanel();
 	void OnButton(wxCommandEvent& event);
 	void DrawBase(wxCommandEvent& event);
+	void ChangeZoom(wxCommandEvent& event);
+	void Move(wxCommandEvent& event);
 	void RefreshCanvas();
 	void DesignAlign(wxCommandEvent& event);
 	~PrismWindow(void);
@@ -26,9 +26,9 @@ private:
 	double xi,yi,xf,yf;
 	bool worldView;
 	FaceWidget* base;   
-	wxButton *cView;
+	wxButton *cView,*Up,*Down,*Left,*Right;
+	wxSlider* Zoom; 
 	NodeTree *node;
-	FaceControlButtons* controlButtons;
 	PointsList *points; 
 	wxRadioBox* radioButton1;
 	DECLARE_EVENT_TABLE();

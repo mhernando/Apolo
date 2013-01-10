@@ -3,6 +3,7 @@
 
 #include "mainWindow.h"
 #include "mrcore.h"
+#include "faceWidget.h"
 #include "nodeTree.h"
 #include "simulatedWorld.h"
 #include "canvas.h"
@@ -11,7 +12,6 @@
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 #include <wx/splitter.h>
-#include "faceControlButtons.h"
 
 class FaceWidget;
 class PointsList;
@@ -23,7 +23,6 @@ class FaceWindow : public wxPanel
 public:
 	FaceWindow(wxWindow *parent,NodeTree *obj, const wxString& title, const wxPoint& pos,const wxSize& size);
 	void CreatePanel();
-	void AddFace();
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
@@ -39,8 +38,6 @@ private:
 	wxButton *cView;
 	NodeTree *node;
 	MainWindow* mainWin;
-
-
 	DECLARE_EVENT_TABLE();
 
 };
