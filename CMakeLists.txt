@@ -21,7 +21,7 @@ ENDIF(WIN32)
 	wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp 
 	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp faceDesign.cpp
 	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp changeVertex.cpp prismWindow.cpp 
-	manageWindows.cpp ${RESOURCES})
+	manageWindows.cpp faceControlButtons.cpp ${RESOURCES})
 
 
 	IF(WIN32)
