@@ -31,13 +31,15 @@ FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,
 
 void FaceWidget::CreatePanel()
 {
-		wxBoxSizer *fbox=new wxBoxSizer(wxVERTICAL);
+		wxBoxSizer *fbox=new wxBoxSizer(wxHORIZONTAL);
 		canvas=new wxSplitterWindow(this, ID_DRAG, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
 		canvas->SetMinimumPaneSize (80);
-		design1=new FaceDesign(canvas, wxID_ANY, wxDefaultPosition, wxSize(200,200));
-		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxSize(200,200));
-		if(h)	canvas->SplitVertically(design1,canvas2,0);
-		else	canvas->SplitHorizontally(design1,canvas2,0);
+		design1=new FaceDesign(canvas, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+		if(h)	
+			canvas->SplitVertically(design1,canvas2,0);
+		else	
+			canvas->SplitHorizontally(design1,canvas2,0);
 		fbox->Add(canvas,5,wxEXPAND);
 		SetSizer(fbox);	
 		
