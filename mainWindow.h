@@ -24,6 +24,10 @@
 #include "bitmaps/loadObject.xpm"
 #include "bitmaps/saveWorld.xpm"
 #include "bitmaps/saveObject.xpm"
+#include "bitmaps/loadWorldXML.xpm"
+#include "bitmaps/loadObjectXML.xpm"
+#include "bitmaps/saveWorldXML.xpm"
+#include "bitmaps/saveObjectXML.xpm"
 
 #include <wx/wx.h>
 #include <wx/menu.h>
@@ -76,6 +80,19 @@ public:
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
+	
+	///////*****************************
+	void OnLoadWorldXML(wxCommandEvent& event);
+	//void OnLoadMesh(wxCommandEvent& event);
+	void OnLoadObjectXML(wxCommandEvent& event);
+	void OnSaveWorldXML(wxCommandEvent& event);
+	void OnSaveObjectXML(wxCommandEvent& event);
+
+	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
+	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
+	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
+	//***********************************
+	
 	void OnReplaceMenuBar();
 	void CreateMenuBar();
 	void InitToolBar(wxToolBar* tool);
