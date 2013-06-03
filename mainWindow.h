@@ -81,7 +81,6 @@ public:
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
 	
-	///////*****************************
 	void OnLoadWorldXML(wxCommandEvent& event);
 	//void OnLoadMesh(wxCommandEvent& event);
 	void OnLoadObjectXML(wxCommandEvent& event);
@@ -91,7 +90,6 @@ public:
 	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
-	//***********************************
 	
 	void OnReplaceMenuBar();
 	void CreateMenuBar();

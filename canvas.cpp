@@ -20,6 +20,7 @@ Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const 
 	scene.SetViewPoint(20,0,10);
 }
 
+
 void Canvas::AddObject(GLObject * obj)
 {
 	if(dimension) scene.addObject(obj);
