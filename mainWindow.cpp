@@ -44,13 +44,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_LOADOBJ, MainWindow::OnLoadObject)
 	EVT_MENU(ID_SAVEOBJ, MainWindow::OnSaveObject)
 	EVT_MENU(ID_SAVEWORLD, MainWindow::OnSaveWorld)
-	///**************************************************
 	EVT_MENU(ID_LOADWORLDXML, MainWindow::OnLoadWorldXML)
 	EVT_MENU(ID_LOADOBJXML, MainWindow::OnLoadObjectXML)
 	EVT_MENU(ID_SAVEOBJXML, MainWindow::OnSaveObjectXML)
 	EVT_MENU(ID_SAVEWORLDXML, MainWindow::OnSaveWorldXML)
-
-	//*****************************************************
 	EVT_MENU(ID_DELETE, MainWindow::OnDeleteWorld)
 	EVT_MENU(ID_DRAWBOX,MainWindow::ShowSelection)
 	EVT_MENU(ID_COMPRS,MainWindow::ShowReferenceComposed)
@@ -90,11 +87,9 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
 	EVT_UPDATE_UI(ID_SAVEWORLD,MainWindow::UpdateUISaveWorld)
-///////////************************************
 	EVT_UPDATE_UI(ID_LOADOBJXML, MainWindow::UpdateUILoadObjectXML)
 	EVT_UPDATE_UI(ID_SAVEOBJXML,MainWindow::UpdateUISaveObjectXML)
 	EVT_UPDATE_UI(ID_SAVEWORLDXML,MainWindow::UpdateUISaveWorldXML)
-////////////////***************************************
 	EVT_SASH_DRAGGED(ID_DRAG, MainWindow::OnSashDrag)
 
 END_EVENT_TABLE()
@@ -164,11 +159,11 @@ void MainWindow::CreateMenuBar()
 	item2->SetBitmap(loadWorld_xpm);
 	menuFile->Append(item2);
 
-	///*******************************
+
 	wxMenuItem *itemXML0 = new wxMenuItem(menuFile,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a file XML of world"));
 	itemXML0->SetBitmap(loadworldxml_xpm);
 	menuFile->Append(itemXML0);
-	//***********************************
+
 	menuFile->AppendSeparator();
 	menuFile->AppendCheckItem(ID_VIS_TREE, wxT("Unvisible tree"));
 	menuFile->AppendSeparator();
@@ -214,7 +209,7 @@ void MainWindow::CreateMenuBar()
 	c_item3->SetBitmap(loadObject_xpm);
 	menuFile2->Append(c_item3);
 	//menuFile2->AppendSeparator();
-///**************************************************
+
 	wxMenuItem *c_itemXML1 = new wxMenuItem(menuFile2,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a file XML of world"));
 	c_itemXML1->SetBitmap(loadworldxml_xpm);
 	menuFile2->Append(c_itemXML1);
@@ -222,7 +217,7 @@ void MainWindow::CreateMenuBar()
 	c_itemXML2->SetBitmap(loadobjectxml_xpm);
 	menuFile2->Append(c_itemXML2);
 	menuFile2->AppendSeparator();
-////*******************************************************
+
 
 	menuFile2->Append(ID_LOADMESH, wxT("Import .stl"), wxT("Import .stl file"));
 	menuFile2->AppendSeparator();
@@ -234,14 +229,14 @@ void MainWindow::CreateMenuBar()
 	wxMenuItem *c_item5 = new wxMenuItem(menuFile2,ID_SAVEOBJ, wxT("Save Object"), wxT("Save object select"));
 	c_item5->SetBitmap(saveObject_xpm);
 	menuFile2->Append(c_item5);
-///**********************************************************************
+
 	wxMenuItem *c_itemXML3 = new wxMenuItem(menuFile2,ID_SAVEWORLDXML, wxT("Save World XML"),wxT("Save world select"));
 	c_itemXML3->SetBitmap(saveworldxml_xpm);
 	menuFile2->Append(c_itemXML3);
 	wxMenuItem *c_itemXML4 = new wxMenuItem(menuFile2,ID_SAVEOBJXML, wxT("Save Object XML"), wxT("Save object select"));
 	c_itemXML4->SetBitmap(saveobjectxml_xpm);
 	menuFile2->Append(c_itemXML4);
-///*********************************************************
+
 
 	menuFile2->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
 	menuFile2->AppendSeparator();
@@ -908,14 +903,6 @@ void MainWindow::OnSaveObject(wxCommandEvent& WXUNUSED(event))
 	else wxLogMessage(wxT("Please select a Object."));
 }
 
-///***********************************************************************************/////////////////
-/////**************************************************************************************////////////
-
-////////////////////////   CARGA Y SALVADO DE ARCHIVOS XML ////////////////////////////////////////////
-
-/////**************************************************************************************////////////
-///***********************************************************************************/////////////////
-
 void MainWindow::OnLoadWorldXML(wxCommandEvent& WXUNUSED(event))
 {
 	wxFileDialog openFile(this, wxT("Load world file XML"), wxEmptyString, wxEmptyString,
@@ -1046,9 +1033,6 @@ void MainWindow::OnSaveObjectXML(wxCommandEvent& WXUNUSED(event))
 }
 
 
-/////**************************************************************************************////////////////////
-/////**************************************************************************************////////////////////
-
 void MainWindow::OnDeleteWorld(wxCommandEvent& WXUNUSED(event))
 {	
 	wxTreeItemId itemId = tree->GetSelection();
@@ -1088,8 +1072,6 @@ void MainWindow::UpdateUISaveWorld(wxUpdateUIEvent& event)
 	event.Enable(listWorlds.size()!=0);
 }
 
-
-//*********************************************************
 void MainWindow::UpdateUILoadObjectXML(wxUpdateUIEvent& event)
 {
 	event.Enable(listWorlds.size()!=0);
@@ -1102,8 +1084,6 @@ void MainWindow::UpdateUISaveWorldXML(wxUpdateUIEvent& event)
 {
 	event.Enable(listWorlds.size()!=0);
 }
-
-///*********************************************************
 
 
 void MainWindow::ShowBox(bool box)
