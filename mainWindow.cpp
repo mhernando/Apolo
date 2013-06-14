@@ -73,6 +73,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_CONVER, MainWindow::OnConverter)
 	EVT_MENU(ID_MOVE, MainWindow::OnWheeledBasePanelCtrl)
 	EVT_MENU(ID_ROBOT, MainWindow::OnRobotSimPanelCtrl)
+	EVT_MENU(ID_ROBOTGOTO, MainWindow::OnRobotSimGoTo)
 	EVT_MENU(ID_SIMPLEJOINT, MainWindow::OnSimpleJointMove)
 	EVT_MENU(ID_SPLITHF,MainWindow::HandleChildViews)
 	EVT_MENU(ID_SPLITHS, MainWindow::HandleChildViews)
@@ -666,6 +667,24 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 		}
 		
 	}
+}
+void MainWindow::OnRobotSimGoTo(wxCommandEvent& WXUNUSED(event))
+{
+	//wxTreeItemId itemId = tree->GetSelection();
+	//NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	//if(itemData->pointer.robotsim)
+	//{
+	//	if(managewindow->CheckWindowsExist(itemData))
+	//	{
+	//		RobotSimPanel* robotSimCtrl;
+	//		robotSimCtrl = new RobotSimPanel(this,wxID_ANY,wxT("Go to a target"),itemData);
+	//		robotSimCtrl->getTitle()->SetLabel(wxString(itemData->getNameTree()));
+	//		robotSimCtrl->setManageWindow(managewindow);
+	//		robotSimCtrl->Show(true);	
+	//		wxLogStatus(wxT("Robot Sim Panel"));
+	//	}
+	//	
+	//}
 }
 void MainWindow::OnSimpleJointMove( wxCommandEvent& WXUNUSED(event))
 {
