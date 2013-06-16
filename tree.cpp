@@ -137,6 +137,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		wxMenu menuUniverse(wxT("Menu of Universe"));
 		menuUniverse.Append(ID_NEW, wxT("New world"));
 		menuUniverse.Append(ID_LOADWORLD, wxT("Load world"));
+		menuUniverse.Append(ID_LOADWORLDXML, wxT("Load world XML"));
 		PopupMenu(&menuUniverse,pt);
 	}
 	else if(itemId.IsOk() && itemData->menus.menu_world)
@@ -149,8 +150,10 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuWorld.Append(ID_NAME, wxT("Change name"));
 		menuWorld.AppendSeparator();
 		menuWorld.Append(ID_LOADOBJ, wxT("Load object"));
+		menuWorld.Append(ID_LOADOBJXML, wxT("Load object XML"));
 		menuWorld.Append(ID_LOADMESH, wxT("Import .stl"));
 		menuWorld.Append(ID_SAVEWORLD, wxT("Save world"), wxT("Save this world"));
+		menuWorld.Append(ID_SAVEWORLDXML, wxT("Save world XML"), wxT("Save this world in XML file"));
 		if(!itemData->getSimu()->IsObjectConnected())
 			menuWorld.Append(ID_DELETE,wxT("Delete world"));
 		menuWorld.AppendSeparator();
@@ -246,6 +249,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
+		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJXML, wxT("Save object XML"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0)menuTree.AppendSeparator();
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
@@ -261,6 +265,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_wheeledbased)menuTree.AppendSeparator();
 		if(itemData->menus.menu_wheeledbased) menuTree.Append(ID_MOVE, wxT("Move control"));
 		if(itemData->menus.menu_robotsim) menuTree.AppendSeparator();
+		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOTGOTO, wxT("Go to target"));//simulate robot goes to a target
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
 		if(itemData->menus.menu_simplejoint)menuTree.Append(ID_SIMPLEJOINT, wxT("Move joint"));//Move one only joint
 		if(itemData->menus.menu_laser) menuTree.AppendSeparator();

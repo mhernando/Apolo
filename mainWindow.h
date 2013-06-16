@@ -62,6 +62,7 @@ public:
 	void OnChangeLocationCtrl(wxCommandEvent& event);
 	void OnWheeledBasePanelCtrl(wxCommandEvent& event);
 	void OnRobotSimPanelCtrl(wxCommandEvent& event);
+	void OnRobotSimGoTo(wxCommandEvent& event);
 	void OnDrawBox(wxCommandEvent& event);
 	void OnDrawReference(wxCommandEvent& event);
 	void OnColor(wxCommandEvent& event);
