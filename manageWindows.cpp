@@ -34,6 +34,26 @@ void ManageWindows::WindowRobotSimIsClosed (RobotSimPanel* rb)
 
 }
 
+void ManageWindows::addWindowRobotSimGoTo(RobotSimGoTo* robot)
+{
+	robotsimgoto.push_back(robot);
+
+}
+void ManageWindows::WindowRobotSimGoToIsClosed (RobotSimGoTo* rb)
+{
+
+	for (int i=0; i<(int)robotsimgoto.size();i++)
+	{
+		if (robotsimgoto[i]==rb)
+		{
+			RefreshVectorPages(robotsimgoto[i]->getItemNode());
+			robotsimgoto.erase(robotsimgoto.begin()+i);
+			return;
+		}
+	}
+
+}
+
 //Gestor de las ventanas de control del wheeledbase
 void ManageWindows::addWindowWheeledBase(WheeledBasePanel* wh)
 {
@@ -59,7 +79,6 @@ void ManageWindows::WindowWheeledBaseIsClosed (WheeledBasePanel* wh)
 // Gestor general para evitar la duplicacion de ventanas, además de su correspondiente eliminacion
 bool ManageWindows::CheckWindowsExist (NodeTree* node)
 {
-
 	if (vectorwindows.empty())
 	{
 		vectorwindows.push_back(node);
@@ -73,10 +92,8 @@ bool ManageWindows::CheckWindowsExist (NodeTree* node)
 				return false;
 	}
 		
-
 	vectorwindows.push_back(node);
 	return true;
-
 }
 
 void ManageWindows::RefreshVectorPages (NodeTree* node)
@@ -89,8 +106,6 @@ void ManageWindows::RefreshVectorPages (NodeTree* node)
 			vectorwindows.erase(vectorwindows.begin()+i);
 			return;
 		}
-	
-
 }
 
 
