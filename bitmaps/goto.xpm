@@ -1,5 +1,5 @@
 /* XPM */ 
-static const unsigned char * goto_xpm[] = {
+static const char * goto_xpm[] = {
 "16 16 6 1",
 " 	c None",
 "!	c #FF794B",

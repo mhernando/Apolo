@@ -17,6 +17,7 @@
 #include "objectSelection.h"
 #include "apoloPort.h"
 #include "manageWindows.h"
+#include "robotSimGoTo.h"
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -45,6 +46,7 @@ using namespace std;
 
 class ApoloPort;
 class ManageWindows;
+class RobotSimGoTo;
 class MainWindow : public wxMDIParentFrame
 {
 public:
