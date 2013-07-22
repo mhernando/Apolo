@@ -32,6 +32,7 @@ private:
 	ManageWindows* managewindow;
 	wxTextCtrl* coorX,* coorY,* coorZ;
 	Transformation3D target;
+	wxStaticText* trajectSelected;
 
 
 	DECLARE_EVENT_TABLE();

@@ -269,7 +269,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		{
 			menuTree.Append(ID_ROBOTGOTO, wxT("Go to target"));//simulate robot goes to a target
 			menuTree.Enable(ID_ROBOTGOTO,false);
-			if (itemData->getSimu()->getChild()->getPlaysimu())//We have to play Simulate
+			if (itemData->getSimu()->getChild()->getPlaysimu() && !itemData->pointer.robotsim->checkActuatorsIsMoving())//We have to play Simulate
 				menuTree.Enable(ID_ROBOTGOTO,true);
 		}
 		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
