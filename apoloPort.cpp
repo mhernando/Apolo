@@ -30,9 +30,9 @@ PositionableEntity *ApoloPort::getElement(char *nworld,char *name,int *worldinde
 	}
 	else
 	{
+		if(name==0)return 0;
 		for(int i=0; i<world->size();i++){
-			const char *waux=(*world)[i]->getName().c_str();
-			if(strcmp(waux,nworld)==0)
+			if((*world)[i]->getName().compare(nworld)==0)
 			{
 				*worldindex=i;
 				return ((*world)[i]->getWorld()->getObjectByName(name));
