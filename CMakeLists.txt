@@ -16,12 +16,10 @@ IF(WIN32)
 ELSE(WIN32)
 	SET(RESOURCES "")
 ENDIF(WIN32)
+	
+	file(GLOB ALL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-	ADD_EXECUTABLE(APOLO canvas.cpp childView.cpp genericSliderProperties.cpp mainWindow.cpp genericSlider.cpp apolo.cpp 
-	wheeledBasePanel.cpp nodeTree.cpp changeLocationCtrl.cpp robotSimPanel.cpp simulatedWorld.cpp tree.cpp converter.cpp 
-	initialProperties.cpp positionableWidget.cpp designWidget.cpp objectSelection.cpp designProperties.cpp faceWindow.cpp pointsList.cpp faceDesign.cpp
-	faceWidget.cpp robotConnection.cpp connectionLog.cpp connectionParameters.cpp apoloPort.cpp apoloMessage.cpp changeVertex.cpp prismWindow.cpp 
-	manageWindows.cpp faceControlButtons.cpp robotSimGoTo.cpp ${RESOURCES})
+	ADD_EXECUTABLE(APOLO ${ALL_SRC} ${RESOURCES})
 
 
 	IF(WIN32)

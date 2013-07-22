@@ -8,47 +8,72 @@
 #include "pointsList.h"
 #include "canvas.h"
 #include "mrcore.h"
-#include "faceDesign.h"
 #include <math.h>
 #include <conio.h>
+#include "globalView.h"
+#include "designMine.h"
+#include <vector>
 
 DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
 
+
+class globalView;
 class PointsList;
+class DesignMine;
+
 class FaceWidget : public wxPanel
 {
 public:
 	FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,const wxSize& size,bool horizontal=true, bool pre=false);
 	void CreatePanel();
 	void RefreshCanvas();
-	void GetPoint(wxCommandEvent& event);
-	void ChangePoint(wxCommandEvent& event); //Función que se encargará de establecer el nuevo punto
+	void GetPoint(wxCommandEvent& event);  //Añade el nuevo punto desde el diseño2d
+	void ChangePoint(wxCommandEvent& event); //Función que se encargará de establecer el nuevo punto desde el diseño 2D
+	void ChangePolygonPosition(wxCommandEvent& event); //Se mueve el polígono entero
+	void DeletePoint(wxCommandEvent& event); //Función para el borrado de puntos desde el diseño2D
 	void SetVertex(bool addvertex=true,bool changevertex=false,bool deletevertex=false,bool movepoint=false,int deleteRow=0);
 	void CheckPointToMove(wxCommandEvent& event);  //Función que se encarga de comprobar si el punto seleccionado hay que moverlo
 	void OnChangeSplitter(wxSplitterEvent &event);
-	void SetAlign(bool al){align=al;}
-	bool GetAlign(){return align;}
-	Canvas *GetCanvas3D(){return canvas2;}
 	void AssociatePointTable(PointsList *point);
-	void ChangeView(bool world);
 	void CreateFace();
+	void AlignFunction();  //Añadida para gestionar todas las alineaciones
 	Face* GetFace() {return face;}
-	Canvas *canvas2;
-	FaceDesign* design1;
+	globalView* GetView(){return Vis2d;};
+	SimulatedWorld *GetWorld(){return world;}  //Añadida por mí 
+	void ChangeColourCell(wxCommandEvent& event);
+
+	///////Añadido de la GlobalView
+	void DrawFace(GLObject* obj);
+	Canvas* GetCanvas3d(){return canvas3d;};
+	//////////////////////////////
+
 
 	
 private:
 	bool tableAssociated;
-	bool align,h;
+	bool h;
 	bool worldView;
 	bool noPreliminar3D;
 	double x,y;
+	globalView *Vis2d;
 	Face *face,*faceCopy;
 	PointsList *points;
 	SimulatedWorld *world;
-	//Poner las canvas aquí después de la corrección
 	wxSplitterWindow* canvas;
+	wxWindow* window;
 	int resp; //Variable en la que vamos a almacenar la fila del punto a cambiar
+
+
+	//Movidas de la globalView
+	////////////
+	Canvas *canvas3d;
+	NodeTree *node;
+	SimulatedWorld *simu;
+	Face *facedia;
+	/////////////
+
+
+
 	DECLARE_EVENT_TABLE();
 
 };

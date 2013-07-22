@@ -1,14 +1,14 @@
 #include "faceWidget.h"
 
+
 DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
 
 
 BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
-EVT_COMMAND(wxID_ANY,wxEVT_ALIGN_DONE,FaceWidget::GetPoint)
-EVT_COMMAND(wxID_ANY,wxEVT_CHECK_POINT_SELECTED,FaceWidget::CheckPointToMove)
-EVT_COMMAND(wxID_ANY,wxEVT_SET_NEW_POINT,FaceWidget::ChangePoint)
-
-
+EVT_COMMAND(wxID_ANY,wxEVT_NEWVERTEX_ADDED,FaceWidget::GetPoint)
+EVT_COMMAND(wxID_ANY,wxEVT_CHANGE_POINT,FaceWidget::ChangePoint)
+EVT_COMMAND(wxID_ANY,wxEVT_DELETE_POINT,FaceWidget::DeletePoint)
+//EVT_COMMAND(wxID_ANY,wxEVT_MOVE_POLYGON,FaceWidget::ChangePolygonPosition)
 END_EVENT_TABLE()
 
 
@@ -20,7 +20,6 @@ FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,
 	noPreliminar3D=pre;
 	h=horizontal;
 	world=simu;
-	align=true;
 	tableAssociated=false;
 	worldView=false;
 	CreatePanel();
@@ -28,22 +27,16 @@ FaceWidget::FaceWidget(wxWindow *parent,SimulatedWorld *simu,const wxPoint& pos,
 }
 
 
-
 void FaceWidget::CreatePanel()
 {
 		wxBoxSizer *fbox=new wxBoxSizer(wxHORIZONTAL);
-		canvas=new wxSplitterWindow(this, ID_DRAG, wxDefaultPosition, wxDefaultSize,wxSP_LIVE_UPDATE || wxSP_3D);
-		canvas->SetMinimumPaneSize (80);
-		design1=new FaceDesign(canvas, wxID_ANY, wxDefaultPosition, wxSize(300,300));
-		canvas2=new Canvas(canvas, wxID_ANY, wxDefaultPosition, wxSize(300,300));
-		if(h)	
-			canvas->SplitVertically(design1,canvas2,0);
-		else	
-			canvas->SplitHorizontally(design1,canvas2,0);
-		fbox->Add(canvas,5,wxEXPAND);
+		canvas3d=new Canvas(this,wxID_ANY,wxDefaultPosition,wxSize(790,500));
+		fbox->Add(canvas3d,5,wxEXPAND);
 		SetSizer(fbox);	
-		
+		Vis2d=new globalView(this,wxID_ANY,wxT("Design2D"));
+	
 }
+
 
 
 void FaceWidget::CreateFace()
@@ -52,164 +45,44 @@ void FaceWidget::CreateFace()
 	delete faceCopy;
 	face=new Face();
 	faceCopy=new Face((*face));
-	design1->ClearObjects();
-	design1->AddObject(faceCopy);
-	ChangeView(worldView);
-	RefreshCanvas();
 	if(tableAssociated)	points->RefreshGrid();
-
+	canvas3d->DrawGrid();
+	
 }
 
+
 void FaceWidget::AssociatePointTable(PointsList *point)
-{
+{	
 	points=point;
 	tableAssociated=true;
 	points->AssociateFace(this);
-
-
-	//window->Connect(wxEVT_POINT_ADDED,wxCommandEventHandler(AddVertex);
 }
-
-
-
-
-void FaceWidget::ChangeView(bool wView)
-{
-	worldView=wView;
-	wxColourDatabase selCol;
-	canvas2->ClearObjects();
-	
-	if(worldView)
-	{
-		canvas2->UpdateWorld(world->getWorld());
-		canvas2->ChangeBackGroundColour(selCol.Find(wxT("DARK GREY")));
-		canvas2->DrawGrid(false);
-	}
-	else
-	{
-		canvas2->ChangeBackGroundColour(*wxBLACK);
-		canvas2->DrawGrid();
-	}
-	if(noPreliminar3D==false) canvas2->AddObject(face);
-	canvas2->Refresh();
-
-}
-
 
 
 
 void FaceWidget::GetPoint(wxCommandEvent& event)
 {
-	//Si la alineación está activada
-	if(design1->GetAlign()==true)
-	{
-		if(tableAssociated)
-		{
-		
-		//Ajuste X a la rejilla del design
-			x=design1->getXCalibrated();
-			int x1=(int)x;
-			
-			if (x1>0)
-			{
-				if ((x1%2)!=0) x=x+1;
-			}
-
-			if (x1<0)
-			{
-				if ((x1%2)!=0) x=x-1;
-			}
-			x=(int)x;
-
-			
-			//Ajuste Y a la rejilla del design 
-			y=design1->getYCalibrated();
-			int y1=(int)y;
-			
-			if (y1>0)
-			{
-				if ((y1%2)!=0) y=y+1;
-			}
-
-			if (y1<0)
-			{
-				if ((y1%2)!=0) y=y-1;
-			}
-			y=(int)y;
-
-
-			points->SetPoints(x,y);
-		}
-		else SetVertex();
-	}
-	
-
-	if(design1->GetAlign()==false)
-	{
-		if(tableAssociated)
-		{
-			points->SetPoints(design1->getXCalibrated(),design1->getYCalibrated());
-		}
-		else
-			SetVertex();
-	}
+	points->SetPoints(Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
 }
-
-
-
-
 
 
 void FaceWidget::ChangePoint(wxCommandEvent& event)   //Cambiará el punto arrastrado por otro en la nueva posición
 {
-	if(tableAssociated)
-	{
-		//Si la alineación está activada
-		if(design1->GetAlign()==true)
-		{
-			//Ajuste X a la rejilla del design
-			x=design1->getXCalibrated();
-			int x1=(int)x;
-			
-			if (x1>0)
-			{
-				if ((x1%2)!=0) x=x+1;
-			}
-
-			if (x1<0)
-			{
-				if ((x1%2)!=0) x=x-1;
-			}
-			x=(int)x;
-
-			
-			//Ajuste Y a la rejilla del design 
-			y=design1->getYCalibrated();
-			int y1=(int)y;
-			
-			if (y1>0)
-			{
-				if ((y1%2)!=0) y=y+1;
-			}
-
-			if (y1<0)
-			{
-				if ((y1%2)!=0) y=y-1;
-			}
-			y=(int)y;
-		
-			if (resp>-1) points->MovedPoint(resp,x,y);
-		}
-		else
-		{
-			if (resp>-1) points->MovedPoint(resp,design1->getXCalibrated(),design1->getYCalibrated());
-		}
-
-		resp=-1; 
-		design1->FinishedChange();
-	}
+	int resp=Vis2d->GetScreen2D()->GetMarkedPoint();
+	if (resp<0) return;
+	if (resp>=Vis2d->GetScreen2D()->NumPoints()) return;
+	points->MovedPoint(resp,Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
 }
 
+
+
+void FaceWidget::DeletePoint(wxCommandEvent& event)
+{
+	int resp=Vis2d->GetScreen2D()->GetMarkedPoint();
+	if (resp<0) return;
+	if (resp>Vis2d->GetScreen2D()->NumPoints()) return;
+	points->DeletePointMarked(resp);
+}
 
 
 
@@ -218,71 +91,106 @@ void FaceWidget::SetVertex(bool addvertex,bool changevertex,bool deletevertex,bo
 {
 	if (addvertex)
 	{
-		if(tableAssociated)
+		if (Vis2d->GetScreen2D()->GetTypeOfPoint()==false)
 		{
 			Vector2D vertex=points->getLastPointAdded();
 			face->addVertex(vertex.x,vertex.y);
 			faceCopy->addVertex(vertex.x,vertex.y);
+			Vis2d->GetScreen2D()->AddPoint(vertex.x,vertex.y);   //si añadimos un punto desde el panel no se añadirá de nuevo al vector de puntos
 		}
-		else 
+		else
 		{
-			face->addVertex(x,y);
-			faceCopy->addVertex(x,y);
+			face->addVertex(Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
+			faceCopy->addVertex(Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
+
 		}
 	}
 
 	if (changevertex)
+	{
+		if (Vis2d->GetScreen2D()->GetTypeOfPoint()==false)
 		{
 			Vector2D vertex=points->getChangePointAdded();
 			int dir=points->getAuxRow();
 			face->changeVertex(dir,vertex.x,vertex.y);
 			faceCopy->changeVertex(dir,vertex.x,vertex.y);
+			Vis2d->GetScreen2D()->ChangePoint(dir,vertex.x,vertex.y);
 		}
+		else
+		{
+			face->changeVertex(Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY(),Vis2d->GetScreen2D()->GetMarkedPoint());
+			faceCopy->changeVertex(Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY(),Vis2d->GetScreen2D()->GetMarkedPoint());
+		}
+	}
 	
 	if (deletevertex)
+	{
+		if (Vis2d->GetScreen2D()->GetTypeOfPoint()==false)
 		{
 			int ind=deleteRow;
 			face->deleteVertex (ind);
 			faceCopy->deleteVertex (ind);
+			Vis2d->GetScreen2D()->DeleteVertex(ind);
 		}
-	if (movepoint)
-	{
-
-			Vector2D vertex=points->getMovedPointAdded();
-			//int dir=points->getAuxRow();
-			face->changeVertex(resp,vertex.x,vertex.y);
-			faceCopy->changeVertex(resp,vertex.x,vertex.y);
-
+		else 
+		{
+			face->deleteVertex (Vis2d->GetScreen2D()->GetMarkedPoint());
+			faceCopy->deleteVertex(Vis2d->GetScreen2D()->GetMarkedPoint());
+		}
 	}
 
+	if (movepoint)
+	{
+		if (Vis2d->GetScreen2D()->GetTypeOfPoint()==false)
+		{
+			Vector2D vertex=points->getMovedPointAdded();
+			int dir=points->getAuxRow();
+			face->changeVertex(resp,vertex.x,vertex.y);
+			faceCopy->changeVertex(resp,vertex.x,vertex.y);
+			Vis2d->GetScreen2D()->ChangePoint(resp,vertex.x,vertex.y);
+		}
+		else
+		{
+			face->changeVertex(Vis2d->GetScreen2D()->GetMarkedPoint(),Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
+			faceCopy->changeVertex(Vis2d->GetScreen2D()->GetMarkedPoint(),Vis2d->GetScreen2D()->GetPointX(),Vis2d->GetScreen2D()->GetPointY());
+		}
 
+	}
+	
+	/*wxCommandEvent DeletePointEvent( wxEVT_POINT_ADDED,GetId() );
+	DeletePointEvent.SetEventObject( window);
+	GetEventHandler()->ProcessEvent(DeletePointEvent);
 	world->getChild()->UpdateWorld();
 	RefreshCanvas(); 
-	
-	wxCommandEvent pointAddedEvent( wxEVT_POINT_ADDED,GetId() );
-	pointAddedEvent.SetEventObject(GetParent());
-	GetEventHandler()->ProcessEvent(pointAddedEvent);
-
-
-
-
+	*/
 }
 
+
+
+/*
+void FaceWidget::ChangePolygonPosition(wxCommandEvent& event)
+{
+	int resp=Vis2d->GetScreen2D()->GetMarkedPoint();
+	if (resp<0) return;
+	if (resp>=Vis2d->GetScreen2D()->NumPoints()) return;
+	points->MovedPoint(resp,Vis2d->GetScreen2D()->GetVector()[resp].x,Vis2d->GetScreen2D()->GetVector()[resp].y);
+}
+
+*/
+
+
+void FaceWidget::ChangeColourCell(wxCommandEvent& event)
+{
+	points->MarkRow(Vis2d->GetScreen2D()->GetMarkedPoint());
+}
+
+
+void FaceWidget::DrawFace(GLObject* obj)
+{
+	canvas3d->AddObject(obj);
+}
 
 void FaceWidget::RefreshCanvas()
 {
-	design1->Refresh();
-	canvas2->Refresh();
+	canvas3d->Refresh();
 }
-
-
-
-
-void FaceWidget::CheckPointToMove(wxCommandEvent& event)
-{
-	resp=points->CheckPoint(design1->getXCalibrated(),design1->getYCalibrated());
-}
-
-
-
-
