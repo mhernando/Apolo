@@ -164,7 +164,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 
 	rbox->Add(name_text,0,wxCENTRE);
 	rbox->AddSpacer(5);
-	rbox->Add(name_box,1,wxCENTRE);
+	rbox->Add(name_box,0,wxCENTRE);
 	
 	
 	if (color_w==true)
@@ -175,15 +175,15 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 	rbox->AddSpacer(40);
 	rbox->Add(color_text,0,wxCENTRE);
 	rbox->AddSpacer(5);
-	rbox->Add(color_box,1,wxCENTRE);
+	rbox->Add(color_box,0,wxCENTRE);
 	}
 
 	
 	
 	
-	pers->Add(rbox,1,wxEXPAND);
+	pers->Add(rbox,0,wxEXPAND);
 	pE->Add(pers,0,wxEXPAND | wxALL,5);
-	vbox->Add(pE,1,wxEXPAND | wxALL,5);
+	vbox->Add(pE,0,wxEXPAND | wxALL,5);
 	vbox->SetSizeHints(this);
 	SetSizer(vbox);
 

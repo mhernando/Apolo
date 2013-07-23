@@ -11,6 +11,7 @@
 
 
 //DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
+class globalView;
 class FaceWidget;
 class ChangeVertex;
 class PointsList: public wxPanel
@@ -23,6 +24,7 @@ public:
 	void SetVertex(int r);
 	void OnChange(wxGridEvent& event);
 	void AssociateFace(FaceWidget *face);
+	void AssociateDesign2D(globalView *Design2D);
 	Vector2D getLastPointAdded(){return lastPoint;}
 	Vector2D getChangePointAdded(){return changePoint;}
 	Vector2D getDeletePointAdded(){return deletePoint;}
@@ -32,17 +34,23 @@ public:
 	void ChangePoint();
 	void OnMenuChangePoint(wxCommandEvent& event);
 	void DeletePoint ();
+	void DeletePointMarked(int r);
 	void OnMenuDeletePoint(wxCommandEvent& event);
 	void OnItemMenu(wxGridEvent& event);
 	void RefreshGrid();
 	int CheckPoint(double x,double y);
 	void MovedPoint(int rowtochange,double x,double y);
+	void InsertedPoint(int firts,int second,double x,double y);
+	void MovedPoints();
+	void MarkRow(int MarkedRow);
+	void SetDesignAssociated(bool aux){designAssociated=aux;};
 	wxGrid *grid;
 	
 
 private:
 	FaceWidget *faces;
-	bool facesAssociated;
+	globalView *Screen2D;
+	bool facesAssociated,designAssociated;
 	wxString name;
 	wxWindow *parent;
 	ChangeVertex *changeVertex;
