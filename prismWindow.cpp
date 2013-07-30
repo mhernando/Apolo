@@ -20,7 +20,7 @@ void PrismWindow::CreatePanel()
 {
 		wxStaticBoxSizer *canvas=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Visualization"));
 		base=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxDefaultSize,true,true);
-		//base->GetCanvas3d()->AddObject(node->pointer.prismaticpart);
+		base->GetCanvas3d()->AddObject(node->pointer.prismaticpart);
 		cView=new wxButton(this,ID_SHOWTHREED,wxT("Create/Modify Prism"),wxDefaultPosition,wxSize(90,55));
 		canvas->Add(base,5,wxEXPAND);
 		canvas->Add(cView,0,wxALIGN_CENTRE|wxEXPAND);
