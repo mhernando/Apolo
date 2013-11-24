@@ -1,6 +1,8 @@
 #include "mainWindow.h"
 
 
+
+
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
 	EVT_MENU(ID_LNSERVER, MainWindow::OnConnection)
@@ -44,6 +46,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_LOADOBJ, MainWindow::OnLoadObject)
 	EVT_MENU(ID_SAVEOBJ, MainWindow::OnSaveObject)
 	EVT_MENU(ID_SAVEWORLD, MainWindow::OnSaveWorld)
+	EVT_MENU(ID_LOADWORLDXML, MainWindow::OnLoadWorldXML)
+	EVT_MENU(ID_LOADOBJXML, MainWindow::OnLoadObjectXML)
+	EVT_MENU(ID_SAVEOBJXML, MainWindow::OnSaveObjectXML)
+	EVT_MENU(ID_SAVEWORLDXML, MainWindow::OnSaveWorldXML)
 	EVT_MENU(ID_DELETE, MainWindow::OnDeleteWorld)
 	EVT_MENU(ID_DRAWBOX,MainWindow::ShowSelection)
 	EVT_MENU(ID_COMPRS,MainWindow::ShowReferenceComposed)
@@ -58,6 +64,9 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(DIS_SLI,MainWindow::PropertiesDisplay)
 	EVT_MENU(DIS_CONT,MainWindow::PropertiesDisplay)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
+	EVT_MENU(ID_CHANGEFORM, MainWindow::OnChangeForm)
+	EVT_BUTTON(ID_ADDOWNFACE, MainWindow::OnChangeForm)
+	EVT_BUTTON(ID_CANCELDESIGN, MainWindow::OnChangeForm)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_DIS, MainWindow::OnDesign)
@@ -69,6 +78,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_CONVER, MainWindow::OnConverter)
 	EVT_MENU(ID_MOVE, MainWindow::OnWheeledBasePanelCtrl)
 	EVT_MENU(ID_ROBOT, MainWindow::OnRobotSimPanelCtrl)
+	EVT_MENU(ID_ROBOTGOTO, MainWindow::OnRobotSimGoTo)
 	EVT_MENU(ID_SIMPLEJOINT, MainWindow::OnSimpleJointMove)
 	EVT_MENU(ID_SPLITHF,MainWindow::HandleChildViews)
 	EVT_MENU(ID_SPLITHS, MainWindow::HandleChildViews)
@@ -79,11 +89,23 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_PLAY, MainWindow::HandleChildViews)
 	EVT_MENU(ID_STOP2,MainWindow::HandleChildViews)
 	EVT_MENU(ID_CANVASCOLOR,MainWindow::HandleChildViews)
+	EVT_MENU(ID_LINKTO,MainWindow::OnLinkTo)
+	EVT_MENU(ID_UNLINK,MainWindow::OnLinkTo)
+	EVT_MENU(ID_FINISHLINK,MainWindow::OnLinkTo)
+	EVT_MENU(ID_RESTORECOLOUR,MainWindow::OnLinkTo)
 	EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, MainWindow::OnCloseNotebook)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
 	EVT_UPDATE_UI(ID_SAVEWORLD,MainWindow::UpdateUISaveWorld)
+	EVT_UPDATE_UI(ID_LOADOBJXML, MainWindow::UpdateUILoadObjectXML)
+	EVT_UPDATE_UI(ID_SAVEOBJXML,MainWindow::UpdateUISaveObjectXML)
+	EVT_UPDATE_UI(ID_SAVEWORLDXML,MainWindow::UpdateUISaveWorldXML)
 	EVT_SASH_DRAGGED(ID_DRAG, MainWindow::OnSashDrag)
+	EVT_BUTTON(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
+	EVT_BUTTON(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
+
+	EVT_MENU(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
+	EVT_MENU(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
 
 END_EVENT_TABLE()
 
@@ -99,7 +121,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	slider=true;
 	popmenu=true;
 	design_slider=true;
+	state=0;
 	managewindow=new ManageWindows();
+
 	
 
 #if wxUSE_STATUSBAR
@@ -151,6 +175,12 @@ void MainWindow::CreateMenuBar()
 	wxMenuItem *item2 = new wxMenuItem(menuFile,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
 	item2->SetBitmap(loadWorld_xpm);
 	menuFile->Append(item2);
+
+
+	wxMenuItem *itemXML0 = new wxMenuItem(menuFile,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a file XML of world"));
+	itemXML0->SetBitmap(loadworldxml_xpm);
+	menuFile->Append(itemXML0);
+
 	menuFile->AppendSeparator();
 	menuFile->AppendCheckItem(ID_VIS_TREE, wxT("Unvisible tree"));
 	menuFile->AppendSeparator();
@@ -195,7 +225,17 @@ void MainWindow::CreateMenuBar()
 	wxMenuItem *c_item3 = new wxMenuItem(menuFile2,ID_LOADOBJ, wxT("Load Object"), wxT("Add object to current World select"));
 	c_item3->SetBitmap(loadObject_xpm);
 	menuFile2->Append(c_item3);
+	//menuFile2->AppendSeparator();
+
+	wxMenuItem *c_itemXML1 = new wxMenuItem(menuFile2,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a file XML of world"));
+	c_itemXML1->SetBitmap(loadworldxml_xpm);
+	menuFile2->Append(c_itemXML1);
+	wxMenuItem *c_itemXML2 = new wxMenuItem(menuFile2,ID_LOADOBJXML, wxT("Load Object XML"), wxT("Add object to current World select"));
+	c_itemXML2->SetBitmap(loadobjectxml_xpm);
+	menuFile2->Append(c_itemXML2);
 	menuFile2->AppendSeparator();
+
+
 	menuFile2->Append(ID_LOADMESH, wxT("Import .stl"), wxT("Import .stl file"));
 	menuFile2->AppendSeparator();
 	menuFile2->Append(ID_CONVER, wxT("Converter .stl"), wxT("Converter .stl file"));
@@ -206,6 +246,15 @@ void MainWindow::CreateMenuBar()
 	wxMenuItem *c_item5 = new wxMenuItem(menuFile2,ID_SAVEOBJ, wxT("Save Object"), wxT("Save object select"));
 	c_item5->SetBitmap(saveObject_xpm);
 	menuFile2->Append(c_item5);
+
+	wxMenuItem *c_itemXML3 = new wxMenuItem(menuFile2,ID_SAVEWORLDXML, wxT("Save World XML"),wxT("Save world select"));
+	c_itemXML3->SetBitmap(saveworldxml_xpm);
+	menuFile2->Append(c_itemXML3);
+	wxMenuItem *c_itemXML4 = new wxMenuItem(menuFile2,ID_SAVEOBJXML, wxT("Save Object XML"), wxT("Save object select"));
+	c_itemXML4->SetBitmap(saveobjectxml_xpm);
+	menuFile2->Append(c_itemXML4);
+
+
 	menuFile2->Append(ID_DELETE, wxT("Delete world"),wxT("Delete world select"));
 	menuFile2->AppendSeparator();
 	menuFile2->AppendCheckItem(ID_VIS_TREE,wxT("Unvisible Tree"));
@@ -300,7 +349,7 @@ void MainWindow::OnClose(wxCloseEvent& event)
 void MainWindow::InitToolBar(wxToolBar *tool)
 {
 	toolbar=tool;
-	wxBitmap bitmaps[7];
+	wxBitmap bitmaps[11];
 	bitmaps[0] = wxBitmap (new_xpm);
 	bitmaps[1] = wxBitmap (loadWorld_xpm);
 	bitmaps[2] = wxBitmap (loadObject_xpm);
@@ -309,11 +358,23 @@ void MainWindow::InitToolBar(wxToolBar *tool)
 	bitmaps[5] = wxBitmap (box_xpm);
 	bitmaps[6] = wxBitmap (positionable_xpm);
 
+	bitmaps[7] = wxBitmap (loadworldxml_xpm);
+	bitmaps[8] = wxBitmap (loadobjectxml_xpm);
+	bitmaps[9] = wxBitmap (saveworldxml_xpm);
+	bitmaps[10] = wxBitmap (saveobjectxml_xpm);
+
+
 	toolbar->AddTool(ID_NEW, bitmaps[0], wxT("New World"));
 	toolbar->AddTool(ID_LOADWORLD, bitmaps[1], wxT("Load World"));
 	toolbar->AddTool(ID_SAVEWORLD, bitmaps[3], wxT("Save World")); 
 	toolbar->AddTool(ID_LOADOBJ, bitmaps[2], wxT("Load Object"));
 	toolbar->AddTool(ID_SAVEOBJ, bitmaps[4], wxT("Save Object"));
+
+	toolbar->AddTool(ID_LOADWORLDXML, bitmaps[7], wxT("Load World XML"));
+	toolbar->AddTool(ID_SAVEWORLDXML, bitmaps[9], wxT("Save World XML")); 
+	toolbar->AddTool(ID_LOADOBJXML, bitmaps[8], wxT("Load Object XML"));
+	toolbar->AddTool(ID_SAVEOBJXML, bitmaps[10], wxT("Save Object XML"));
+
 	toolbar->AddSeparator();
 	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxT("Show Item Selected"));
 	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
@@ -337,7 +398,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramírez de Antón Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 
@@ -458,9 +519,17 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
         if ( wxMessageBox(msg, _T("Please confirm"),wxICON_QUESTION | wxYES_NO) != wxYES ) return;
         else
 		{	
-			int rb=0,smp=0,wh=0;
+			int rb=0,smp=0,wh=0,rbgoto=0;
 			vector <RobotSimPanel*> robot=managewindow->getVectorRobotSimPanel();
 			vector <WheeledBasePanel*> wheeled=managewindow->getVectorWheeledBasePanel();
+			vector <RobotSimGoTo*> robotsimgoto=managewindow->getVectorRobotSimGoTo();
+
+			vector<int> sizes;
+			sizes.push_back((int)robot.size());
+			sizes.push_back((int)wheeled.size());
+			sizes.push_back((int)robotsimgoto.size());
+			
+
 
 			wxTreeItemId itemid=tree->GetWorld(tree->GetSelection());
 
@@ -468,37 +537,44 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 			NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
 
 			for(unsigned int i=0;i<listWorlds.size();i++)
-				if(listWorlds[i]->getTreeItem()==itemid)
-				{
-					int size=0;
-
-					if (robot.size()>wheeled.size())//Comprobamos cuál es el de mayor tamaño para que no haya problemas con los vectores
-						size=robot.size();
-					else
-						size=wheeled.size(); //Si tuviésemos mas ventanas es fácil de implementar
-
-						for (int j=size-1;j>=0;j--) //Vamos de atrás a adelante para no dejarnos nada por eliminar
-						{	
-							
-							rb=smp=wh=0; //Actualizamos los indicadores de tipo cada vuelta en el bucle
+				if(listWorlds[i]->getTreeItem()==itemid)//algoritmo de fácil implementación
+				{			
+					int size=0;		
 						
-							if ((robot.empty()==false) && (j<robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
-								if (robot[j]->getItemNode ()== itemData)
-									rb=1;				//ponemos a 1 si es de tipo robotsimpanel
-								else if (robot[j]->getItemParentData()==itemData)
-									smp=1;				//si es de tìpo simplejoint
+					for (int index=0;index<sizes.size();index++) //Cogemos el de mayor tamaño para que no haya problemas con los vectores	
+					{
+						if (size<sizes[index])size=sizes[index];
+					}
 
-							if ((wheeled.empty()==false) && (j<wheeled.size()))
-								if (wheeled[j]->getItemNode ()==itemData)
-									wh=1;
-									
-							if (rb || smp) //Si los menus son de tipo simplejoint o robotsim
-								robot[j]->Delete(); //Ya localizados los menús pertenecientes al padre los eliminamos todos
+					for (int j=size-1;j>=0;j--) //Vamos de atrás a adelante para no dejarnos nada por eliminar
+					{	
+						
+						rbgoto=rb=smp=wh=0; //Actualizamos los indicadores de tipo cada vuelta en el bucle
+					
+						if ((robot.empty()==false) && (j<robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
+							if (robot[j]->getItemNode ()== itemData)
+								rb=1;				//ponemos a 1 si es de tipo robotsimpanel
+							else if (robot[j]->getItemParentData()==itemData)
+								smp=1;				//si es de tìpo simplejoint
+						
+						if ((robotsimgoto.empty()==false) && (j<robotsimgoto.size()))
+							if (robotsimgoto[j]->getItemNode ()==itemData)
+								rbgoto=1;
 
-							else if(wh) //Si los menus son de tipo WheeledBasePanel
-								wheeled[j]->Delete();
-							
-						}
+						if ((wheeled.empty()==false) && (j<wheeled.size()))
+							if (wheeled[j]->getItemNode ()==itemData)
+								wh=1;
+								
+						if (rb || smp) //Si los menus son de tipo simplejoint o robotsim
+							robot[j]->Delete(); //Ya localizados los menús pertenecientes al padre los eliminamos todos
+
+						else if(wh) //Si los menus son de tipo WheeledBasePanel
+							wheeled[j]->Delete();
+						
+						else if (rbgoto)//Si los menus son de tipo RobotSimGoTo
+							robotsimgoto[j]->Delete();
+						
+					}
 					
 					listWorlds[i]->DeleteObject(tree->GetSelection()); // Borramos el icono del árbol del mundo y el objeto en sí
 				}
@@ -566,6 +642,45 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 
 	delete conver;
 }
+
+
+
+void MainWindow::OnChangeForm(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	if(itemData->pointer.prismaticpart)
+	{
+		if (id==ID_CHANGEFORM)
+		{
+			view=new globalView(this,wxID_ANY,wxT("Edit"));
+			view->Show(true);
+			view->MakeModal(true);
+			if(itemData->pointer.prismaticpart) view->LoadFace(&itemData->pointer.prismaticpart->getPolygonalBase());
+		}
+
+		if (id==ID_CANCELDESIGN)
+		{
+			view->Show(false);
+			view->MakeModal(false);
+		}
+		if (id==ID_ADDOWNFACE)
+		{
+			itemData->pointer.prismaticpart->setPolygonalBase(*(view->GetFace()));
+			view->Show(false);
+			view->MakeModal(false);
+			id=NULL;
+		}
+		
+	}
+	event.Skip();
+}
+
+
+
+
+
 void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 {
 	int id = event.GetId();
@@ -619,6 +734,24 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 			robotSimCtrl->setManageWindow(managewindow);
 			robotSimCtrl->Show(true);	
 			wxLogStatus(wxT("Robot Sim Panel"));
+		}
+		
+	}
+}
+void MainWindow::OnRobotSimGoTo(wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	if(itemData->pointer.robotsim)
+	{
+		if(managewindow->CheckWindowsExist(itemData))
+		{
+			RobotSimGoTo* robotSimGoTarget;
+			robotSimGoTarget = new RobotSimGoTo(this,wxID_ANY,wxT("GO TO TARGET"),itemData);
+			robotSimGoTarget->getTitle()->SetLabel(itemData->getNameTree());
+			robotSimGoTarget->setManageWindow(managewindow);
+			robotSimGoTarget->Show(true);	
+			wxLogStatus(wxT("Robot Sim Go To Target"));
 		}
 		
 	}
@@ -859,6 +992,135 @@ void MainWindow::OnSaveObject(wxCommandEvent& WXUNUSED(event))
 	else wxLogMessage(wxT("Please select a Object."));
 }
 
+void MainWindow::OnLoadWorldXML(wxCommandEvent& WXUNUSED(event))
+{
+	wxFileDialog openFile(this, wxT("Load world file XML"), wxEmptyString, wxEmptyString,
+			wxT("XML files (*.xml)|*.xml"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+	
+	if(openFile.ShowModal() == wxID_OK)
+	{
+		wxString file = openFile.GetPath();
+		char filec[500];
+		strcpy(filec, (const char*)file.mb_str(wxConvUTF8));
+
+		XMLfile xml_file(filec);
+		Object *test1 = xml_file.load(filec);
+		World *test2 = dynamic_cast<World *>(test1);				
+		//xml_file.save();
+
+	
+		if(test2)
+		{
+			simuWorld = new SimulatedWorld(test2);
+			listWorlds.push_back(simuWorld);
+		}
+		else 
+		{
+			delete test1;
+		}
+		
+	}
+	wxFileInputStream input(openFile.GetPath());
+	if(!input.IsOk())
+	{
+		wxLogError(wxT("Cannot open file %s"), openFile.GetPath().c_str());
+		return;
+	}
+	tree->Expand(tree->GetRootItem());
+	tree->Expand(tree->GetLastChild(tree->GetRootItem()));
+	Search(tree->GetLastChild(tree->GetRootItem()),toolbar->GetToolState(ID_COMPRS));
+	OnReplaceMenuBar();
+}
+
+void MainWindow::OnLoadObjectXML(wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	for(unsigned int i=0; i<listWorlds.size(); i++)
+	{
+		if(listWorlds[i]->getTreeItem()==itemId)
+		{
+			wxFileDialog openFile(this,wxT("Load object file XML"), wxEmptyString, wxEmptyString,
+            wxT("XML files (*.xml)|*.xml"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+			if(openFile.ShowModal() == wxID_OK)
+			{
+				wxString fileName = openFile.GetPath();
+				char c_file[100];
+				strcpy(c_file,(const char*)fileName.mb_str(wxConvUTF8));
+				
+				XMLfile xml_file(c_file);
+				Object *obj = xml_file.load(c_file);
+				PositionableEntity* p_obj = dynamic_cast<PositionableEntity *>(obj);
+
+				if(obj)
+				{
+					(*listWorlds[i]->getWorld())+=p_obj;
+					listWorlds[i]->getChild()->UpdateWorld();
+					tree->AddNode(p_obj, listWorlds[i]->getTreeItem(),listWorlds[i]);
+				}
+			
+			}
+			wxFileInputStream input(openFile.GetPath());
+			if(!input.IsOk())
+			{
+				wxLogError(wxT("Cannot open file %s"),openFile.GetPath().c_str());
+				return;
+			}
+		}
+		else wxLogMessage(wxT("Please, select a World."));
+	}
+}
+void MainWindow::OnSaveWorldXML(wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	
+	for(unsigned int i= 0; i<listWorlds.size(); i++)
+	{
+		if(listWorlds[i]->getTreeItem()==itemId)
+		{
+			wxFileDialog saveFile(this,wxT("Save World file XML "),wxEmptyString,wxEmptyString,
+				wxT("XML files (*.xml)|*.xml"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+			if(saveFile.ShowModal() == wxID_OK)
+			{
+				wxString file = saveFile.GetPath();
+				char filec[100];
+				strcpy(filec, (const char*) file.mb_str(wxConvUTF8));
+				
+				XMLfile xml_file(filec);
+				xml_file.write(listWorlds[i]->getWorld());
+				xml_file.save();
+
+				wxLogMessage(wxT("Successfully save in %s"), saveFile.GetPath().c_str());
+			}
+		}
+		else wxLogMessage(wxT("Please, select a World."));
+	}
+}
+void MainWindow::OnSaveObjectXML(wxCommandEvent& WXUNUSED(event))
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree* itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
+	if(itemData->menus.menu_positionable && m_root!=itemId)
+	{
+		wxFileDialog saveFile(this,wxT("Save Object file XML"), wxEmptyString, wxEmptyString,
+        wxT("XML files (*.xml)|*.xml"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+		if(saveFile.ShowModal() == wxID_OK)
+		{
+			wxString fileName = saveFile.GetPath();
+			char c_file[100];
+			strcpy(c_file,(const char*)fileName.mb_str(wxConvUTF8));
+
+			XMLfile xml_file(c_file);			
+			itemData->pointer.positionableentity->setRelativeT3D(0);
+			xml_file.write(itemData->pointer.positionableentity);
+			xml_file.save();
+
+			wxLogMessage(wxT("Successfully save in %s"), saveFile.GetPath().c_str());
+		}
+	}
+	else wxLogMessage(wxT("Please select a Object."));
+}
+
 
 void MainWindow::OnDeleteWorld(wxCommandEvent& WXUNUSED(event))
 {	
@@ -895,6 +1157,19 @@ void MainWindow::UpdateUISaveObject(wxUpdateUIEvent& event)
 	event.Enable(listWorlds.size()!=0);
 }
 void MainWindow::UpdateUISaveWorld(wxUpdateUIEvent& event)
+{
+	event.Enable(listWorlds.size()!=0);
+}
+
+void MainWindow::UpdateUILoadObjectXML(wxUpdateUIEvent& event)
+{
+	event.Enable(listWorlds.size()!=0);
+}
+void MainWindow::UpdateUISaveObjectXML(wxUpdateUIEvent& event)
+{
+	event.Enable(listWorlds.size()!=0);
+}
+void MainWindow::UpdateUISaveWorldXML(wxUpdateUIEvent& event)
 {
 	event.Enable(listWorlds.size()!=0);
 }
@@ -1102,14 +1377,161 @@ void MainWindow::OnLaserStyle(wxCommandEvent& event)
 	
 }
 		
+
+
+void MainWindow::OnLinkTo(wxCommandEvent& event)
+{
+	bool aux=false;
+	wxColour auxColour;
+	int id=event.GetId();
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
+	wxColour ColoursOp[8];
+	//definimos la gama de colores que se emplearán en el linkado
+	ColoursOp[0]=*wxGREEN;
+	ColoursOp[1]=*wxRED;
+	ColoursOp[2]=*wxBLUE; 
+	ColoursOp[3]=*wxLIGHT_GREY;
+	ColoursOp[4]=*wxCYAN;
+	ColoursOp[5]=wxColour(255,255,0);
+	ColoursOp[6]=wxColour(255,20,147);
+	ColoursOp[7]=wxColour(210,105,30);
+
+	if(itemData->pointer.positionableentity)
+	{
+		if (id==ID_LINKTO)
+		{
+			if(tree->IsBold(tree->GetSelection())) colour=tree->GetItemTextColour(tree->GetSelection());
+			else
+			{
+				if(Colours.size()>0)
+				{
+					for(int i=0;i<Colours.size();i++)  //Se recorre el vector en busca de un color que se haya dejado de utilizar
+					{
+						if(count[i]==0) 
+						{
+							colour=Colours[i];
+							index=i;
+							aux=true;
+						}
+					}
+				}
+
+				//Si no hay ninguno libre o no se ha linkado todavía se elige un color nuevo
+				if (aux==false)
+				{
+					count.push_back(1);
+					index=count.size()-1;
+					Colours.push_back(ColoursOp[index]);
+					colour=Colours[index];
+				}
+			}
+			state=1;
+			wxSetCursor(wxCURSOR_POINT_LEFT);
+			tree->SetItemBold(tree->GetSelection());
+			tree->SetItemTextColour(tree->GetSelection(),colour);
+			simuWorld->InsertPositionableEntity(itemData->pointer.positionableentity);
+			id=NULL;
+			return;
+		}
+
+
+		if (id==ID_FINISHLINK)
+		{
+			state=0;
+			id=NULL;
+			return;
+		}
+
+
+		if (id==ID_UNLINK)
+		{
+			for(int i=0;i<simuWorld->GetLinked().size();i++)
+			{				
+					if((itemData->pointer.positionableentity)==(simuWorld->GetLinked()[i]))
+						simuWorld->EraseLinked(i);
+			}
+			itemData->pointer.positionableentity->LinkTo(NULL); //Deslinkar
+			auxColour=tree->GetItemBackgroundColour(tree->GetSelection()); //Coger el color de linkado que tiene ese elemento
+			for (int i=0;i<Colours.size();i++) //Recorrer el vector de colores usados para restar una unidad a su uso
+			{
+				if (Colours[i]==auxColour) 
+				{
+					count[i]=count[i]-1;
+					if(count[i]==1)
+					{
+						wxString msg;
+						msg.Printf(wxT("Please Restore Owner Text Color"));
+						wxMessageBox(msg,wxT("Colour unusued"));
+					}
+				}
+			}
+		tree->SetItemBackgroundColour(tree->GetSelection(),*wxWHITE);
+		state=0;
+		}
+
+		if(id==ID_RESTORECOLOUR)
+		{
+			for (int i=0;i<Colours.size();i++) //Recorrer el vector de colores usados para restar una unidad a su uso
+			{
+				if (Colours[i]==tree->GetItemTextColour(tree->GetSelection()))
+				{
+					count[i]=0;
+				}
+			}
+			tree->SetItemTextColour(tree->GetSelection(),*wxBLACK);
+			tree->SetItemBold(tree->GetSelection(),false);
+		}
+	}
+}
+
+
+void MainWindow::IncreaseValueCont(int index)   //Función para contablilizar el uso de los colores
+{
+	count[index]=count[index]+1;
+}
+
+
+bool MainWindow::RestoreColor(wxColour colour)
+{
+	for (int i=0;i<Colours.size();i++)
+	{
+		if (Colours[i]==colour) 
+		{
+			if(count[i]==1) return true;
+			else return false;
+		}
+			
+	}
+}
+
+
+
+void MainWindow::CopyPasteDesign(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	if (id==ID_COPYDESIGN)  //Para copiar el diseño que estemos realizando si abrimos la edición desde la mainwindow
+	{
+		simuWorld->CleanClipboard();
+		if (view->GetScreen2D()->GetVector().size()==0) return;
 	
+		for(int i=0;i<view->GetScreen2D()->GetVector().size();i++)
+		{
+			simuWorld->SetCopiedDesign(view->GetScreen2D()->GetVector());
+		}
+	}
 
+	if (id==ID_PASTEDESIGN)
+	{
+		if(simuWorld->GetCopiedDesign().size()==0) return;
+		view->GetScreen2D()->clearAuxPoints();
+		for(int i=0;i<simuWorld->GetCopiedDesign().size();i++)
+		{
+			view->GetScreen2D()->SetPaste(true);
+			view->GetScreen2D()->SetAuxPoints(simuWorld->GetCopiedDesign()[i].x,simuWorld->GetCopiedDesign()[i].y);
+			view->GetScreen2D()->DrawScene2D();
+		}
+	}
 
-
-
-
-
-
-
-
-
+}

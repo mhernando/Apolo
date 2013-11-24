@@ -1,7 +1,7 @@
 #include "pointsList.h"
 
 
-//DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
+
 
 BEGIN_EVENT_TABLE(PointsList, wxPanel)
 	
@@ -23,7 +23,7 @@ PointsList::PointsList(wxWindow *window,const wxString label ,const wxPoint& pos
 									   
 {
 	facesAssociated=false;
-
+	designAssociated=true;
 	parent=window;
 	col=0;
 	row=0;
@@ -31,7 +31,6 @@ PointsList::PointsList(wxWindow *window,const wxString label ,const wxPoint& pos
 	name=label;
 	CreatePanel();
 	
-
 }
 
 
@@ -42,9 +41,15 @@ void PointsList::CreatePanel()
 	 wxStaticBoxSizer *cbox=new wxStaticBoxSizer(wxVERTICAL,this,name);
 
 	grid=new wxGrid( this, -1, wxDefaultPosition,wxDefaultSize);
+	grid->SetDefaultColSize(54,true);
+	grid->SetDefaultCellBackgroundColour(*wxWHITE);
 	grid->CreateGrid(1,2);
+	grid->SetLabelBackgroundColour(*wxCYAN);
 	grid->SetColLabelValue(0,wxT("X"));
 	grid->SetColLabelValue(1,wxT("Y"));
+	grid->SetColLabelSize(wxGRID_AUTOSIZE);
+	grid->SetRowLabelSize(wxGRID_AUTOSIZE);
+
 	
 	if(name==wxEmptyString)
 	{
@@ -77,11 +82,8 @@ void PointsList::SetPoints(double x,double y)
 
 void PointsList::OnChange(wxGridEvent& event)
 {
-
 	auxrow=event.GetRow();
 	SetVertex(auxrow);//if we click in a row of the panel
-
-
 }
 
 
@@ -111,16 +113,16 @@ void PointsList::SetVertex(int r)
 			
 			row++;
 
-			if(facesAssociated) faces->SetVertex();
+			//if(facesAssociated) faces->SetVertex();
+			if(designAssociated) Screen2D->ManagePoints();
 			GetParent()->SendSizeEvent();
 			}
 		
-
-
 		}
 	
 }
-	
+
+
 	void PointsList::OnMenuChangePoint(wxCommandEvent& event)
 {	
 	
@@ -128,7 +130,6 @@ void PointsList::SetVertex(int r)
 
 		if(id == ID_CHANGEVERTEX)
 		{
-		//ChangeVertex* changeVertex;
 			changeVertex = new ChangeVertex(this, ID_CHANGEVERTEX, wxT("Change vertex"),grid->GetCellValue(auxrow,0),
 			grid->GetCellValue(auxrow,1));
 		
@@ -149,8 +150,6 @@ void PointsList::OnMenuDeletePoint(wxCommandEvent& WXUNUSED(event))
 		if ( wxMessageBox(msg, wxT("Please confirm"), wxICON_QUESTION | wxYES_NO) != wxYES )
 			return;
 		DeletePoint();
-		
-
 }
 
 
@@ -158,8 +157,6 @@ void PointsList::ChangePoint()
 
 {
 	//int r=auxrow;
-	
-
 		if(grid->GetCellValue(auxrow,0)!=wxEmptyString && grid->GetCellValue(auxrow,1)!=wxEmptyString) 
 		{
 				
@@ -175,14 +172,13 @@ void PointsList::ChangePoint()
 					grid->SetCellValue(auxrow,col,value<<changePoint.y);
 					value.Clear();
 					col=0;
-					if(facesAssociated) faces->SetVertex(false,true);
-													
+					//if(facesAssociated) faces->SetVertex(false,true);
+					if(designAssociated) Screen2D->ManagePoints(false,true,false);								
 					GetParent()->SendSizeEvent();
-					
-			
 			}
 		}
 }
+
 
 void PointsList::MovedPoint(int rowtochange,double x,double y)
 
@@ -201,11 +197,40 @@ void PointsList::MovedPoint(int rowtochange,double x,double y)
 					grid->SetCellValue(rowtochange,col,value<<y);
 					value.Clear();
 					col=0;
-					if(facesAssociated) faces->SetVertex(false,false,false,true);							
+					if(designAssociated) Screen2D->ManagePoints(false,true,false);
 					GetParent()->SendSizeEvent();
 			}
 		}
 }
+
+
+
+
+void PointsList::MovedPoints()
+{
+	for(int i=0;i<Screen2D->GetScreen2D()->NumPoints();i++)
+	{
+		if(grid->GetCellValue(i,0)!=wxEmptyString && grid->GetCellValue(i,1)!=wxEmptyString) 
+		{
+			if(col==0) 	
+			{									
+					wxString value;
+					movedPoint.x=Screen2D->GetScreen2D()->GetVector()[i].x;
+					movedPoint.y=Screen2D->GetScreen2D()->GetVector()[i].y;
+					grid->SetCellValue(i,col,value);
+					grid->SetCellValue(i,col,value<<Screen2D->GetScreen2D()->GetVector()[i].x);
+					value.Clear();
+					grid->SetCellValue(i,++col,value);
+					grid->SetCellValue(i,col,value<<Screen2D->GetScreen2D()->GetVector()[i].y);
+					value.Clear();
+					col=0;
+					GetParent()->SendSizeEvent();
+			}
+		}
+	}
+
+}
+
 
 
 void PointsList::DeletePoint ()
@@ -214,17 +239,83 @@ void PointsList::DeletePoint ()
 
 		if(grid->GetCellValue(r,0)!=wxEmptyString && grid->GetCellValue(r,1)!=wxEmptyString) 
 		{
-
-	
 			grid->DeleteRows(r,1);
 			row--;
-			if(facesAssociated) faces->SetVertex(false,false,true,false,r);
+			if(designAssociated) Screen2D->ManagePoints(false,false,true,r);
 			GetParent()->SendSizeEvent();
-			
+		}
+}
 
+
+void PointsList::DeletePointMarked (int r)
+{
+		if(grid->GetCellValue(r,0)!=wxEmptyString && grid->GetCellValue(r,1)!=wxEmptyString) 
+		{
+			grid->DeleteRows(r,1);
+			row--;
+			if(designAssociated) Screen2D->ManagePoints(false,false,true,r);
+			GetParent()->SendSizeEvent();
+		}
+}
+
+
+
+void PointsList::InsertedPoint(int first,int second,double x,double y)
+{
+	if(first==second) return;  //Los dos índices introducidos son iguales
+
+	if (first<second)  //El primer punto seleccionado tiene un índice inferior al segundo
+	{
+		if((second==grid->GetNumberRows()-1)&&(first==0))   //Si insertamos un punto entre el primero y el último
+		{
+			designAssociated=false;
+			SetPoints(Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].x,
+				Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].y);
+			designAssociated=true;
+			return;
 		}
 
+		//Si el punto a insertar no se encuentra entre el primero y el último
+		designAssociated=false;
+		SetPoints(Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].x,
+			Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].y);
+		for(int i=Screen2D->GetScreen2D()->NumPoints()-2;i>second;i--)
+		{
+			MovedPoint(i,Screen2D->GetScreen2D()->GetVector()[i].x,Screen2D->GetScreen2D()->GetVector()[i].y);
+		}
+		MovedPoint(second,x,y);
+		designAssociated=true;
+	}
+
+
+	if (second<first)  //El segundo punto seleccionado tiene un índice inferior al primero
+	{
+		if((first==grid->GetNumberRows()-1)&&(second==0)) 
+		{
+			designAssociated=false;
+			SetPoints(Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].x,
+				Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].y);
+			designAssociated=true;
+			return;
+		}
+		//Si el punto a insertar no se encuentra entre el primero y el último
+		designAssociated=false;
+		SetPoints(Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].x,
+		Screen2D->GetScreen2D()->GetVector()[Screen2D->GetScreen2D()->NumPoints()-1].y);
+		for(int i=Screen2D->GetScreen2D()->NumPoints()-2;i>first;i--)
+		{
+			MovedPoint(i,Screen2D->GetScreen2D()->GetVector()[i].x,Screen2D->GetScreen2D()->GetVector()[i].y);
+		}
+		MovedPoint(first,x,y);
+		designAssociated=true;
+	}
 }
+
+
+
+
+
+
 void PointsList::OnItemMenu(wxGridEvent& event)
 {
 		auxrow=event.GetRow();
@@ -233,19 +324,22 @@ void PointsList::OnItemMenu(wxGridEvent& event)
 		menuGrid.Append(ID_CHANGEVERTEX, wxT("Change Vertex"));
 		menuGrid.Append(ID_DELETEVERTEX, wxT("Delete Vertex"));
 		PopupMenu(&menuGrid, event.GetPosition());
-
 }
-
-
-
-
-
 	
+
 void PointsList::AssociateFace(FaceWidget *face)
 {
 	faces=face;
 	facesAssociated=true;
 }
+
+void PointsList::AssociateDesign2D(globalView *Design2D)
+{
+	Screen2D=Design2D;
+	designAssociated=true;
+}
+
+
 
 void PointsList::RefreshGrid()
 {
@@ -254,7 +348,6 @@ void PointsList::RefreshGrid()
 	grid->GetParent()->SendSizeEvent();
 	row=0;
 	col=0;
-
 }
 
 
@@ -279,4 +372,50 @@ int PointsList::CheckPoint(double x,double y)
 		if ((abs(difx)<0.25)&&(abs(dify)<0.25)) respuesta=i;
 	}
 	return respuesta;
+}
+
+
+
+void PointsList::MarkRow(int r)
+{
+	if(r>grid->GetNumberRows())return;
+	if (r<0) return;
+	for(int i=0;i<=grid->GetNumberRows();i++)
+	{
+		if (i==r)
+		{
+			grid->EnableEditing(true); 
+			grid->SetCellBackgroundColour(r,0,*wxYELLOW);
+			grid->SetCellBackgroundColour(r,1,*wxYELLOW);
+			grid->EnableEditing(false); 
+		}
+		else 
+		{
+			grid->EnableEditing(true); 
+			grid->SetCellBackgroundColour(r,0,*wxGREEN);
+			grid->SetCellBackgroundColour(r,1,*wxGREEN);
+			grid->EnableEditing(false); 		
+		}
+	}
+}
+
+
+
+void PointsList::DeletePoints()
+{
+	if(grid->GetNumberRows()>0)
+	{
+		for(int i=grid->GetNumberRows()-1;i>=0;i--)
+		{
+			grid->DeleteRows(i,1);
+			row--;
+		}
+			facesAssociated=false;
+			designAssociated=true;
+			col=0;
+			row=0;
+			auxrow=0;
+			CreatePanel();
+	}
+
 }

@@ -147,10 +147,28 @@ void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 	
 }
 
+
+void SimulatedWorld::SetCopiedDesign(vector<Vector2D> Copy)
+{
+	if (Copy.size()>0) 
+	{
+		for(int i=0;i<Copy.size();i++)
+		{
+			CopiedDesign.push_back(Vector2D(Copy[i].x,Copy[i].y));
+		}
+	}
+}
+
+
 SimulatedWorld::~SimulatedWorld()
 {
 	tree->Delete(mainNode);
 	childView->Destroy();	
 	delete m_world;
-
 }
+
+
+
+
+
+

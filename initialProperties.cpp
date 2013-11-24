@@ -14,7 +14,7 @@ BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
 END_EVENT_TABLE()
 
 InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxString& title,wxWindowID id)
-:wxDialog(parent,id, title, wxPoint(0,0), wxSize(300,500),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX ) 
+:wxDialog(parent,id, title, wxPoint(0,0), wxSize(600,800),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxMAXIMIZE_BOX ) 
 {
 	mainWin=(MainWindow*)parent;
 	b_sel=true;
@@ -26,10 +26,9 @@ InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxSt
 	
 }
 
+
 void InitialProperties::CreatePanel()
 {
-
-
 	wxBoxSizer *vbox=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *tbox=new wxBoxSizer(wxHORIZONTAL);
 	tbox->Add(vbox,1,wxEXPAND);
@@ -48,7 +47,7 @@ void InitialProperties::CreatePanel()
 	if(wID==ID_ADDFACESET)
 	{
 		node->pointer.facesetpart=dynamic_cast<FaceSetPart *>(node->pointer.positionableentity);
-		face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+		face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxSize(1040,700));
 		vbox->Add(face,0,wxEXPAND);	
 	}
 			
@@ -72,12 +71,9 @@ void InitialProperties::CreatePanel()
 
 		if(wID==ID_ADDIRRPRI)
 		{
-
 			priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 			tbox->Add(priW,0,wxEXPAND);	
-		
 		}
-		
 	}
 
 	
@@ -97,9 +93,9 @@ void InitialProperties::CreatePanel()
 	vbox->SetMinSize(vbox->GetMinSize());
 	SetSizer(tbox);
 	tbox->SetSizeHints(this);
-	
-	
 }
+
+
 
 void InitialProperties::OnButton(wxCommandEvent& event)
 {

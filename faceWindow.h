@@ -11,7 +11,9 @@
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 #include <wx/splitter.h>
-#include "faceControlButtons.h"
+
+
+
 
 class FaceWidget;
 class PointsList;
@@ -27,17 +29,18 @@ public:
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
-	void FaceAlign(wxCommandEvent& event);
+	void CopyDesign(wxCommandEvent& event);
+	void PasteDesign(wxCommandEvent& event);
 	
 private:
 	
 	bool worldView;
 	double red,green,blue;
-	wxRadioBox *align;
 	FaceWidget *canvas;
 	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
-	wxButton *cView;
+	wxButton *cView,*Accept;
 	NodeTree *node;
+	FaceSetPart *face;
 	MainWindow* mainWin;
 
 

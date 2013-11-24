@@ -5,11 +5,12 @@
 #include "pointsList.h"
 #include <wx/wx.h>
 #include "childView.h"
-#include "faceControlButtons.h"
+#include "globalView.h"
 
 
 class ChildView;
 class FaceControlButtons;
+
 class PrismWindow : public wxPanel
 {
 public:
@@ -19,18 +20,19 @@ public:
 	void DrawBase(wxCommandEvent& event);
 	void RefreshCanvas();
 	void DesignAlign(wxCommandEvent& event);
+	void ColorChanged(wxCommandEvent& event);
+	void CopyDesign(wxCommandEvent& event);
+	void PasteDesign(wxCommandEvent& event);
 	~PrismWindow(void);
 
 
 private:
 	double xi,yi,xf,yf;
 	bool worldView;
-	FaceWidget* base;   
+	FaceWidget* base;
 	wxButton *cView;
 	NodeTree *node;
-	FaceControlButtons* controlButtons;
 	PointsList *points; 
-	wxRadioBox* radioButton1;
 	DECLARE_EVENT_TABLE();
 
 };
