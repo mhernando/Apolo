@@ -26,15 +26,17 @@ public:
 	void OnClose(wxCloseEvent& event);
 	void Delete();
 	void OnButton(wxCommandEvent& event);
+	void checkSelections();
 
 private:
 	bool noDelete;
+	bool coordAbsolute, cartesian;
 	wxStaticText* title;
 	NodeTree* itemnode;
 	ManageWindows* managewindow;
 	wxTextCtrl* coorX,* coorY,* coorZ;
-	Transformation3D target;
 	wxStaticText* trajectSelected;
+	wxRadioBox* move, *refsys, *typemov, *typetraj;
 
 	vector <GenericSlider *> listJoints;
 	GenericSlider* joint;

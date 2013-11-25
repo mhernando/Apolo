@@ -4,8 +4,6 @@
 BEGIN_EVENT_TABLE(RobotSimGoTo, wxFrame)
 	EVT_BUTTON(ID_ACCEPT, RobotSimGoTo::OnButton)
 	EVT_BUTTON(ID_CANCEL, RobotSimGoTo::OnButton)
-	//EVT_BUTTON(ID_TVP, RobotSimGoTo::OnButton)
-	//EVT_BUTTON(ID_CPT, RobotSimGoTo::OnButton)
 	EVT_CLOSE(RobotSimGoTo::OnClose)
 END_EVENT_TABLE()
 
@@ -108,9 +106,8 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 
 //Articular values
 
-	wxStaticBoxSizer *_joints=new wxStaticBoxSizer(wxVERTICAL,panel);
+	wxBoxSizer *_joints=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *all_joints=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("ARTICULAR"));
-	int aux_counter = 0;
 
 	int numJoints = itemnode->pointer.robotsim->getNumJoints();
 
@@ -123,19 +120,16 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 		listJoints.push_back(joint);
 		_joints->Add(joint,0,wxEXPAND|wxALL,5);
 		_joints->AddSpacer(5);
-		aux_counter++;
-		if (aux_counter==3)
-		{
-			aux_counter=0;
-			all_joints->Add(_joints,0,wxEXPAND|wxALL);
-			_joints=new wxStaticBoxSizer(wxVERTICAL,panel);	
-		}
-		else if (i==numJoints)
-			all_joints->Add(_joints,0,wxEXPAND|wxALL);
-	//}
 
-	//for(int i=0;i<numJoints;i++)
-	//{
+		if (i==(numJoints-1))
+			all_joints->Add(_joints,0,wxEXPAND|wxALL);
+		else if ((i%3)==0 && i!=0)
+		{
+//			aux_counter=0;
+			all_joints->Add(_joints,0,wxEXPAND|wxALL);
+			_joints=new wxBoxSizer(wxVERTICAL);	
+		}
+
 		double max,min,val;
 		itemnode->pointer.robotsim->getJointLimits(i,max,min);
 		listJoints[i]->setProperties(min,max,true);
@@ -151,10 +145,10 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	wxBoxSizer *childLeftbox=new wxBoxSizer(wxVERTICAL);//container
 
 	wxArrayString strings0;
-	strings0.Add(wxT("Linear Path"));
 	strings0.Add(wxT("Default"));
+	strings0.Add(wxT("Linear Path"));
 
-	wxRadioBox* typetraj = new wxRadioBox(panel, ID_CHOOSETYPETRAJECTORY, wxT("TYPE TRAJECTORY"), wxDefaultPosition, wxDefaultSize, strings0, 1, wxRA_SPECIFY_COLS);
+	typetraj = new wxRadioBox(panel, ID_CHOOSETYPETRAJECTORY, wxT("TYPE TRAJECTORY"), wxDefaultPosition, wxDefaultSize, strings0, 1, wxRA_SPECIFY_COLS);
 
 	childLeftbox->Add(typetraj,0,wxEXPAND|wxALL);
 	childLeftbox->AddSpacer(15);
@@ -166,7 +160,7 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	strings1.Add(wxT("Trapezoidal Velocity Profile"));
 	strings1.Add(wxT("Spline"));
 
-	wxRadioBox* typemov = new wxRadioBox(panel, ID_CHOOSETYPEMOVEMENT, wxT("TYPE MOVEMENT"), wxDefaultPosition, wxDefaultSize, strings1, 1, wxRA_SPECIFY_COLS);
+	typemov = new wxRadioBox(panel, ID_CHOOSETYPEMOVEMENT, wxT("TYPE MOVEMENT"), wxDefaultPosition, wxDefaultSize, strings1, 1, wxRA_SPECIFY_COLS);
 
 	childLeftbox->Add(typemov,0,wxEXPAND|wxALL);
 	childLeftbox->AddSpacer(15);
@@ -175,10 +169,10 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 //	wxBoxSizer *refmove=new wxBoxSizer(wxVERTICAL);//container
 
 	wxArrayString strings2;
-	strings2.Add(wxT("World (Relative)"));
-	strings2.Add(wxT("Robot (Absolute)"));
+	strings2.Add(wxT("Robot (Relative)"));
+	strings2.Add(wxT("World (Absolute)"));
 
-	wxRadioBox* refsys = new wxRadioBox(panel, ID_CHOOSESYSREFERENCE, wxT("REFERENCE SYSTEM"), wxDefaultPosition, wxDefaultSize, strings2, 1, wxRA_SPECIFY_COLS);
+	refsys = new wxRadioBox(panel, ID_CHOOSESYSREFERENCE, wxT("REFERENCE SYSTEM"), wxDefaultPosition, wxDefaultSize, strings2, 1, wxRA_SPECIFY_COLS);
 
 	childLeftbox->Add(refsys,0,wxEXPAND|wxALL);
 	childLeftbox->AddSpacer(15);
@@ -189,7 +183,7 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	strings3.Add(wxT("Cartesian"));
 	strings3.Add(wxT("Articular"));
 
-	wxRadioBox* move = new wxRadioBox(panel, ID_CHOOSETOMOVE, wxT("MOVE"), wxDefaultPosition, wxDefaultSize, strings3, 1, wxRA_SPECIFY_COLS);
+	move = new wxRadioBox(panel, ID_CHOOSETOMOVE, wxT("MOVE"), wxDefaultPosition, wxDefaultSize, strings3, 1, wxRA_SPECIFY_COLS);
 
 	childLeftbox->Add(move,0,wxEXPAND|wxALL);
 	childLeftbox->AddSpacer(15);
@@ -228,41 +222,57 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	
 }
 
+
+void RobotSimGoTo::checkSelections()
+{
+	wxString selection = "";
+
+	selection = move->GetString(move->GetSelection());
+	if (selection=="Cartesian")
+		cartesian = true;
+	else //if (selection=="Articular")
+		cartesian = false;
+
+	selection = refsys->GetString(refsys->GetSelection());
+	if (selection=="World (Absolute)")
+		coordAbsolute = true;
+	else //if (selection=="Robot (Relative)")
+		coordAbsolute = false;
+
+	selection = typemov->GetString(typemov->GetSelection());
+	if (selection=="Cubic Polinomial Trajectory")
+		itemnode->pointer.robotsim->setTrajectoryType(CPT);
+
+	else if (selection=="Trapezoidal Velocity Profile") 
+		itemnode->pointer.robotsim->setTrajectoryType(TVP);
+
+	else //if (selection=="Spline") 
+		itemnode->pointer.robotsim->setTrajectoryType(SPLINE);
+
+	selection = typetraj->GetString(typetraj->GetSelection());
+	if (selection=="Linear Path")
+		itemnode->pointer.robotsim->setPathType(LINEAR);
+
+	else //if (selection=="Default") 
+		itemnode->pointer.robotsim->setPathType(DEFAULT);
+
+}
+
 void RobotSimGoTo::OnButton(wxCommandEvent& event)
 {
 	int id = event.GetId();
 
-
 	if(id == ID_ACCEPT)
 	{
+		checkSelections(); //Checking the selections in radio boxes
 		OnValueChanges();
 		if (!noDelete)
 			Delete();
 		noDelete=false;
 	}
 	
-	if(id == ID_CANCEL)
-	{
+	else if(id == ID_CANCEL)
 		Delete();
-
-	}
-	//if(id == ID_TVP)
-	//{
-	//	trajectSelected->SetLabel("Trapezoidal Velocity Profile selected");
-	//	itemnode->pointer.robotsim->setTrajectoryType(TVP);
-	//}
-	//
-	//if(id == ID_CPT)
-	//{
-	//	trajectSelected->SetLabel("Cubic Polinomial Trajectory selected");
-	//	itemnode->pointer.robotsim->setTrajectoryType(CPT);
-
-	//}
-	/*if(id == ID_SPLINE)
-	{
-		trajectSelected->SetLabel("Spline Trajectory selected");
-		itemnode->pointer.robotsim->setTypeTrajectory(SPLINE);
-	}*/
 
 	event.Skip();
 }
@@ -272,8 +282,20 @@ void RobotSimGoTo::OnValueChanges()
 
 	double x=0.0,y=0.0,z=0.0;
 	wxString value;
+	
+	if (!cartesian)
+	{
+		vector<double> target;
+		for(int i=0;i<(int)listJoints.size();i++)
+		{
+			double value = listJoints[i]->getValue();
+			target.push_back(value);
+		}
 
-	if (coorX->GetValue()!=wxEmptyString && coorY->GetValue()!=wxEmptyString && coorZ->GetValue()!=wxEmptyString)
+		itemnode->pointer.robotsim->moveTo(target);
+	}
+
+	else if (cartesian && coorX->GetValue()!=wxEmptyString && coorY->GetValue()!=wxEmptyString && coorZ->GetValue()!=wxEmptyString)
 	{	
 		value=coorX->GetValue();
 		value.ToDouble(&x);
@@ -284,27 +306,12 @@ void RobotSimGoTo::OnValueChanges()
 		value=coorZ->GetValue();
 		value.ToDouble(&z);
 		value.Clear();
-		Transformation3D t(x,y,z);
-		target=t;
+		Transformation3D target(x,y,z);
 		
-		//vector<double> target;
-
-		//target.push_back(2.00);
-		//target.push_back(1.25);
-		//target.push_back(-0.68);
-		//target.push_back(2.43);
-		//target.push_back(1.67);
-		//target.push_back(-2.98);
-
-		//target.push_back(0.79);//pto (1,1,1) inverseKinematics
-		//target.push_back(1.03);
-		//target.push_back(0.53);
-		//target.push_back(3.14);
-		//target.push_back(2.07);
-		//target.push_back(2.36);
-		
-
-		itemnode->pointer.robotsim->goToAbs(target);
+		if (coordAbsolute)
+			itemnode->pointer.robotsim->goToAbs(target);
+		else 
+			itemnode->pointer.robotsim->goTo(target);
 	}
 	else
 	{
@@ -313,28 +320,22 @@ void RobotSimGoTo::OnValueChanges()
 		wxMessageBox(msg, wxT("Please confirm"));
 		noDelete=true;
 	}
-
 }
 
 void RobotSimGoTo::setManageWindow (ManageWindows* mg)
 {
 	managewindow=mg;
 	mg->addWindowRobotSimGoTo(this);
-
 }
 
 void RobotSimGoTo::Delete()
 {
-
 	managewindow->WindowRobotSimGoToIsClosed(this);
 	Destroy();	
-
 }
 
 void RobotSimGoTo::OnClose(wxCloseEvent& event)
 {
-
 	managewindow->WindowRobotSimGoToIsClosed(this);
 	Destroy();	
-
 }
