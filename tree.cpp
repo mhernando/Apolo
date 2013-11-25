@@ -272,7 +272,13 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 			if (itemData->getSimu()->getChild()->getPlaysimu() && !itemData->pointer.robotsim->checkActuatorsIsMoving())//We have to play Simulate
 				menuTree.Enable(ID_ROBOTGOTO,true);
 		}
-		if(itemData->menus.menu_robotsim) menuTree.Append(ID_ROBOT, wxT("Move joints"));
+		if(itemData->menus.menu_robotsim) 
+		{
+			menuTree.Append(ID_ROBOT, wxT("Move joints"));
+			menuTree.Enable(ID_ROBOT,true);
+			if (itemData->getSimu()->getChild()->getPlaysimu())//We have to play Simulate
+				menuTree.Enable(ID_ROBOT,false);
+		}
 		if(itemData->menus.menu_simplejoint)menuTree.Append(ID_SIMPLEJOINT, wxT("Move joint"));//Move one only joint
 		if(itemData->menus.menu_laser) menuTree.AppendSeparator();
 		if(itemData->menus.menu_laser) menuTree.AppendSubMenu(menuLaser,wxT("Laser Styles"));

@@ -9,8 +9,10 @@
 #include "tree.h"
 #include <vector>
 #include <wx/wx.h>
+#include "genericSlider.h"
 
 class ManageWindows;
+
 class RobotSimGoTo : public wxFrame
 {
 public:
@@ -34,6 +36,8 @@ private:
 	Transformation3D target;
 	wxStaticText* trajectSelected;
 
+	vector <GenericSlider *> listJoints;
+	GenericSlider* joint;
 
 	DECLARE_EVENT_TABLE();
 };
