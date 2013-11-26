@@ -19,6 +19,9 @@
 #include "manageWindows.h"
 #include "robotSimGoTo.h"
 
+#include "globalView.h"
+
+
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
 #include "bitmaps/loadWorld.xpm"
@@ -42,6 +45,7 @@
 #include <wx/laywin.h>
 
 
+
 using namespace std;
 
 class ApoloPort;
@@ -61,6 +65,11 @@ public:
 	void OnVisibleTree(wxCommandEvent& event);
 	void OnNameItemTree(wxCommandEvent& event);
 	void OnConverter(wxCommandEvent& event);
+	void OnChangeForm(wxCommandEvent& event);
+	void OnLinkTo(wxCommandEvent& event);
+	void LinkObjects(wxMouseEvent& event);
+	void SetState(int num){state=num;};
+	int GetState(){return state;}
 	void OnChangeLocationCtrl(wxCommandEvent& event);
 	void OnWheeledBasePanelCtrl(wxCommandEvent& event);
 	void OnRobotSimPanelCtrl(wxCommandEvent& event);
@@ -83,7 +92,7 @@ public:
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
-	
+
 	void OnLoadWorldXML(wxCommandEvent& event);
 	//void OnLoadMesh(wxCommandEvent& event);
 	void OnLoadObjectXML(wxCommandEvent& event);
@@ -93,7 +102,7 @@ public:
 	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
-	
+
 	void OnReplaceMenuBar();
 	void CreateMenuBar();
 	void InitToolBar(wxToolBar* tool);
@@ -105,7 +114,6 @@ public:
 	void ShowReference(bool refer);
 	void DeleteObject(wxCommandEvent& WXUNUSED(event));
 	bool getToogleReference(){return rToogle;}
-
 	bool checkPanelExist(NodeTree* node);
 	bool getTreeVisible(){return treeVisible;}
 	bool getBoxVisible(){return drawBox;}
@@ -119,9 +127,16 @@ public:
 	bool getSliderValue(){return slider;}
 	bool getPopMenuValue(){return popmenu;}
 	bool getDesignValue(){return design_slider;}
+	bool getState(){return state;}
 	wxMenu* getMenuAbout(){return menuAbout;}
 	wxMenu* getMenuSettings(){return menuSettings;}
 	vector <SimulatedWorld *> listWorlds;
+	wxColour getColour(){return colour;};
+	void CopyPasteDesign(wxCommandEvent& event);
+	void IncreaseValueCont(int index);
+	int getIndex(){return index;};
+	bool RestoreColor(wxColour colour);
+
 	
 private:
 
@@ -130,10 +145,12 @@ private:
 	bool drawBox;
 	bool rToogle;
 	bool slider,popmenu,design_slider;
+	bool objectlinked;
 	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
 	Tree* tree;
+	globalView* view;
 	wxTreeItemId m_root;
 	wxToolBar* toolbar;
 	wxAuiNotebook* note;
@@ -145,6 +162,12 @@ private:
 	int w, h;
 	wxMenu *ipro,*osel,*dwid;
 	ManageWindows*	managewindow;
+	wxColour colour;
+	vector<wxColour> Colours; ////////Vector de colores para los linkados///
+	vector<int> count; ////Contador para ver la utilizacion del color
+	int index;   //Índice del color empleado
+	int state;  //Variable estado para controlar el linkado
+
 	DECLARE_EVENT_TABLE();
 
 };

@@ -31,7 +31,9 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	
 //title
 	title = new wxStaticText(panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+
 	//title->SetFont(wxFont(14,wxFONTFAMILY_ROMAN));
+
 	wxBoxSizer *titlebox = new wxBoxSizer(wxHORIZONTAL);
 	titlebox->AddSpacer(15);
 	titlebox->Add(title,0,wxEXPAND|wxALL);
@@ -201,14 +203,16 @@ void RobotSimGoTo::OnValueChanges()
 		Transformation3D t(x,y,z);
 		target=t;
 		
-		//vector<double> target;
 
-		//target.push_back(2.00);
-		//target.push_back(1.25);
-		//target.push_back(-0.68);
-		//target.push_back(2.43);
-		//target.push_back(1.67);
-		//target.push_back(-2.98);
+		vector<double> target;
+
+		target.push_back(2.00);
+		target.push_back(1.25);
+		target.push_back(-0.68);
+		target.push_back(2.43);
+		target.push_back(1.67);
+		target.push_back(-2.98);
+
 
 		//target.push_back(0.79);//pto (1,1,1) inverseKinematics
 		//target.push_back(1.03);

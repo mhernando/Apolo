@@ -1,5 +1,6 @@
 /* XPM */
-static  const char * move_xpm[] = {
+
+static char * move_xpm[] = {
 "25 25 12 1",
 " 	c None",
 ".	c #F0F0F0",

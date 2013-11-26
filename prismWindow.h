@@ -20,6 +20,9 @@ public:
 	void DrawBase(wxCommandEvent& event);
 	void RefreshCanvas();
 	void DesignAlign(wxCommandEvent& event);
+	void ColorChanged(wxCommandEvent& event);
+	void CopyDesign(wxCommandEvent& event);
+	void PasteDesign(wxCommandEvent& event);
 	~PrismWindow(void);
 
 

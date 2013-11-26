@@ -10,7 +10,7 @@
 
 
 
-//DECLARE_EVENT_TYPE(wxEVT_POINT_ADDED, -1)
+
 class globalView;
 class FaceWidget;
 class ChangeVertex;
@@ -34,6 +34,9 @@ public:
 	void ChangePoint();
 	void OnMenuChangePoint(wxCommandEvent& event);
 	void DeletePoint ();
+
+	void DeletePoints();
+
 	void DeletePointMarked(int r);
 	void OnMenuDeletePoint(wxCommandEvent& event);
 	void OnItemMenu(wxGridEvent& event);

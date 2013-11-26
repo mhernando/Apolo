@@ -6,6 +6,8 @@ BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
 	EVT_TREE_SEL_CHANGED(ID_TREE,Tree::ShowSelection)
 	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
+	EVT_RIGHT_DOWN(Tree::ControlLink)
+	EVT_MOTION(Tree::ControlMouse)
 END_EVENT_TABLE()
 
 Tree::Tree(wxWindow * parent, const wxWindowID id)
@@ -124,6 +126,8 @@ NodeTree* Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWo
 
 void Tree::OnItemMenu(wxTreeEvent& event)
 {
+	if(m_mainWin->getState()==0)
+	{
 	wxTreeItemId itemId = GetSelection();
 	itemId = event.GetItem();
 	SelectItem(itemId);
@@ -245,6 +249,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		menuLaser->Append(ID_LASMOD2, wxT("Contour"));
 		menuLaser->Append(ID_LASMOD3, wxT("Detection"));
 		///////
+		
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
@@ -252,6 +257,10 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJXML, wxT("Save object XML"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0)menuTree.AppendSeparator();
+		if((itemData->menus.menu_positionable)) menuTree.Append(ID_LINKTO, wxT("LinkTo"));
+		if((itemData->menus.menu_positionable)&&(itemData->pointer.positionableentity->getLinkedTo()!=0)) menuTree.Append(ID_UNLINK, wxT("UnLink"));
+		if((itemData->menus.menu_positionable)&&(IsBold(itemId))&&(m_mainWin->RestoreColor(GetItemTextColour(itemId)))) menuTree.Append(ID_RESTORECOLOUR,wxT("Restore Color"));
+		if(itemData->pointer.prismaticpart) menuTree.Append(ID_CHANGEFORM, wxT("Edit"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_POSIT, wxT("Change position"));
 		if(itemData->menus.menu_positionable) menuTree.Append(ID_ORI, wxT("Change orientation"));
 		if(itemData->menus.menu_design) menuTree.Append(ID_DIS, wxT("Change design properties"));
@@ -283,16 +292,19 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_connection && itemData->typeConnection==1) menuTree.Append(ID_STSERVER, wxT("Stop Sending Data"));
 		if(itemData->menus.menu_connection && itemData->typeConnection==0) menuTree.Append(ID_LNCLIENT, wxT("Launch Client"));
 		if(itemData->menus.menu_connection && itemData->typeConnection==2) menuTree.Append(ID_STCLIENT, wxT("Stop Receiving Data"));
-
-
 		PopupMenu(&menuTree,pt);
+		
 	}
+	
 	event.Skip();
+	}
 }
+
 
 void Tree::OnShowCanvas(wxMouseEvent& event)
 {
-	
+	if (m_mainWin->GetState()==0)
+	{
 	wxTreeItemId itemId;
 
 	if( GetSelection()==root)
@@ -324,8 +336,45 @@ void Tree::OnShowCanvas(wxMouseEvent& event)
 	else  wxLogStatus(wxT("No item under mouse"));
 
 	event.StopPropagation();
-
+	}
+	
+	
+	//////////// 
+	if (m_mainWin->GetState()==1)
+	{
+		wxSetCursor(wxCURSOR_POINT_LEFT);
+		wxTreeItemId itemId;
+		if( GetSelection()==root)
+		return;
+		else
+		itemId=GetSelection();
+		bool aux=false;
+		NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+		if(itemId.IsOk())
+		{
+			//Para evitar el autolinkado del elemento que hemos seleccionado 
+			if(itemData->pointer.positionableentity!=m_mainWin->GetSimulated()->GetParentEntity())
+			{
+				//Se comprueba que el objeto no está ya linkado
+				for(int i=0;i<m_mainWin->GetSimulated()->GetLinked().size();i++)
+				{
+					if(itemData->pointer.positionableentity==m_mainWin->GetSimulated()->GetLinked()[i]) aux=true;
+				}
+				if(aux==false)
+				{
+					m_mainWin->GetSimulated()->InsertLinkedEntity(itemData->pointer.positionableentity);
+					itemData->pointer.positionableentity->LinkTo(m_mainWin->GetSimulated()->GetParentEntity());
+ 					m_mainWin->IncreaseValueCont(m_mainWin->getIndex());
+					SetItemBackgroundColour(itemId,m_mainWin->getColour());
+				}
+				else wxSetCursor(wxCURSOR_NO_ENTRY);
+			}
+			else wxSetCursor(wxCURSOR_NO_ENTRY);
+		}
+	}
 }
+
+
 
 Tree::m_item Tree::SimplyItems(int id,wxString name, wxIcon icon)
 {
@@ -374,18 +423,35 @@ void Tree::ShowSelection(wxTreeEvent& event)
 			itemData->getSimu()->getChild()->Show();
 	itemData->getSimu()->getChild()->Activate();
 	itemData->getSimu()->getChild()->SetIsActivated(true);
-			
-	
-
-	
-
 }
 
 
-
-
-		
+void Tree::ControlLink(wxMouseEvent& event)
+{
+	wxPoint pt = event.GetPosition();
+	wxMenu menuLinking;
+	if (m_mainWin->getState()==1)
+	{
+		menuLinking.Append(ID_FINISHLINK, wxT("Finish Link"));
+	}
+	PopupMenu(&menuLinking,pt);
+}
 	
 	
-	
+void Tree::ControlMouse(wxMouseEvent& event)
+{
+	if(m_mainWin->getState()==1)
+	{
+		wxSetCursor(wxCURSOR_POINT_LEFT);
+	}
+	else wxSetCursor(wxCURSOR_ARROW);
 
+}
+	
+/*
+void Tree::EraseObject(int ind)
+{
+	Linked.erase(Linked.begin()+ind);
+
+}
+*/

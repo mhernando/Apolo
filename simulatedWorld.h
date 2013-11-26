@@ -29,12 +29,24 @@ public:
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
 	ChildView* getChild(){return childView;}
-
-
-
 	
+	void SetCopiedDesign(vector<Vector2D> Copy);
+	vector<Vector2D> GetCopiedDesign(){return CopiedDesign;}
+	void CleanClipboard(){CopiedDesign.clear();};
+
+	vector<PositionableEntity*> GetLinked(){return Linked;}
+	vector<PositionableEntity*> GetLinkers(){return Linker;}
+	void EraseLinked(int ind){Linked.erase(Linked.begin()+ ind);};
+	PositionableEntity* GetParentEntity(){return Linker[Linker.size()-1];}
+	void InsertPositionableEntity (PositionableEntity* obj){Linker.push_back(obj);};
+	void InsertLinkedEntity (PositionableEntity* obj){Linked.push_back(obj);};
+
 	static MainWindow *mainWin;
 	static Tree *tree;
+
+	
+
+
 	
 private:
 
@@ -43,7 +55,10 @@ private:
 	string name;
 	ChildView* childView;
 	World* m_world;
-
+	vector<Vector2D> CopiedDesign;
+	vector<PositionableEntity*> Linker;  //Se almacenan los objetos a los que se linkan los demás
+	vector<PositionableEntity*> Linked; //Se almacenan los objetos que han sido ya linkados
 	
+
 };
 #endif //__APOLO__SIMULATED_WORLD__H
