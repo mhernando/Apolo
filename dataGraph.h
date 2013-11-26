@@ -1,7 +1,10 @@
 #ifndef __APOLO__DATA_GRAPH__H
 #define __APOLO__DATA_GRAPH__H
 
+
+#include "NodeTree.h"
 #include "mathplot.h"
+#include <wx/wx.h>
 
 
 enum TypeData
@@ -11,10 +14,10 @@ enum TypeData
 	ACCELERATION,
 };
 
-class DataGraph
+class DataGraph: public wxFrame
 {
 public:
-	DataGraph();
+	DataGraph(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData, NodeTree *parentData);
 	~DataGraph();
 
 

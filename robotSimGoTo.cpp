@@ -9,7 +9,7 @@ END_EVENT_TABLE()
 
 RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData,
 							 NodeTree *parentData)
-: wxFrame(parent, id, title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
+: wxFrame(parent, id, title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE) 
 {
 
 	itemnode=itemData;
@@ -40,48 +40,65 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	Vector3D pos,orient;
 	pos=itemData->pointer.robotsim->getRelativePosition();
 	itemData->pointer.robotsim->getRelativeOrientation(orient.x,orient.y,orient.z);
-	Transformation3D tcpLocat;
-	tcpLocat=itemnode->pointer.robotsim->getTcpLocation();
-
-	stringstream str,str1;
-	str<<"Position: {x="<<pos.x<<", y="<<pos.y<<", z="<<pos.z<<'}';
+	Transformation3D tcpLocatRelative, tcpLocatAbsolute;
+	tcpLocatRelative=itemnode->pointer.robotsim->getTcpLocation();
+	tcpLocatAbsolute=itemnode->pointer.robotsim->getTcpAbsLocation();
+	
+	//robot
+	stringstream str,str1,str2;
+	str<<"Position (absolute): {x="<<pos.x<<", y="<<pos.y<<", z="<<pos.z<<'}';
 	str1<<"Orientation: {roll="<<orient.x<<", pitch="<<orient.y<<", yaw="<<orient.z<<'}';
 
 	wxStaticBoxSizer *infor=new wxStaticBoxSizer (wxVERTICAL,panel,wxT("Robot"));
 	wxStaticText* positionRobot=new wxStaticText(panel,wxID_ANY, wxString(str.str()),wxDefaultPosition,wxDefaultSize);
 	wxStaticText* orientationRobot=new wxStaticText(panel,wxID_ANY, wxString(str1.str()),wxDefaultPosition,wxDefaultSize);
-	infor->AddSpacer(15);
+	infor->AddSpacer(10);
 	infor->Add(positionRobot,0,wxEXPAND|wxALL);
-	infor->AddSpacer(15);
+	infor->AddSpacer(10);
 	infor->Add(orientationRobot,0,wxEXPAND|wxALL);
 
 	inforAll->Add(infor,0,wxEXPAND|wxALL);
 	
-	//tcp orientation
+	//tcp
 	str.str(string());
 	str1.str(string());
 	Vector3D tcpOrient;
-	tcpLocat.orientation.getRPY(tcpOrient.x,tcpOrient.y,tcpOrient.z);
-	str<<"Position: {x="<<tcpLocat.position.x<<", y="<<tcpLocat.position.y<<", z="<<tcpLocat.position.z<<'}';
-	str1<<"Orientation: {roll="<<tcpOrient.x<<", pitch="<<tcpOrient.y<<", yaw="<<tcpOrient.z<<'}';
+	tcpLocatRelative.orientation.getRPY(tcpOrient.x,tcpOrient.y,tcpOrient.z);
+	str<<"Position (absolute): {x="<<tcpLocatAbsolute.position.x<<", y="<<tcpLocatAbsolute.position.y<<", z="<<tcpLocatAbsolute.position.z<<'}';
+	str1<<"Position (relative): {x="<<tcpLocatRelative.position.x<<", y="<<tcpLocatRelative.position.y<<", z="<<tcpLocatRelative.position.z<<'}';
+	str2<<"Orientation: {roll="<<tcpOrient.x<<", pitch="<<tcpOrient.y<<", yaw="<<tcpOrient.z<<'}';
 
 	wxStaticBoxSizer *inforTcp=new wxStaticBoxSizer (wxVERTICAL,panel,wxT("TCP"));
-	wxStaticText* positionTcp=new wxStaticText(panel,wxID_ANY, wxString(str.str()),wxDefaultPosition,wxDefaultSize);
-	wxStaticText* orientationTcp=new wxStaticText(panel,wxID_ANY, wxString(str1.str()),wxDefaultPosition,wxDefaultSize);
-	inforTcp->AddSpacer(15);
-	inforTcp->Add(positionTcp,0,wxEXPAND|wxALL);
-	inforTcp->AddSpacer(15);
+	wxStaticText* positionTcpAbs=new wxStaticText(panel,wxID_ANY, wxString(str.str()),wxDefaultPosition,wxDefaultSize);
+	wxStaticText* positionTcpRel=new wxStaticText(panel,wxID_ANY, wxString(str1.str()),wxDefaultPosition,wxDefaultSize);
+	wxStaticText* orientationTcp=new wxStaticText(panel,wxID_ANY, wxString(str2.str()),wxDefaultPosition,wxDefaultSize);
+	inforTcp->AddSpacer(10);
+	inforTcp->Add(positionTcpAbs,0,wxEXPAND|wxALL);
+	inforTcp->AddSpacer(10);
+	inforTcp->Add(positionTcpRel,0,wxEXPAND|wxALL);
+	inforTcp->AddSpacer(10);
 	inforTcp->Add(orientationTcp,0,wxEXPAND|wxALL);
 	
 	inforAll->Add(inforTcp,0,wxEXPAND|wxALL);
 
+//target box 
 
-//points XYZ to fill
-	wxBoxSizer *childRightbox=new wxBoxSizer(wxHORIZONTAL);//container
-	wxStaticBoxSizer *targetAll=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("TARGET"));
+	wxStaticBoxSizer *childRightbox=new wxStaticBoxSizer(wxVERTICAL,panel,wxT("TARGET"));//container
+
+	//RadioBox choose parts robot to move
+	wxArrayString strings3;
+	strings3.Add(wxT("Cartesian"));
+	strings3.Add(wxT("Articular"));
+
+	move = new wxRadioBox(panel, ID_CHOOSETOMOVE, wxT("MOVE"), wxDefaultPosition, wxDefaultSize, strings3, 1, wxRA_SPECIFY_ROWS);
+
+	childRightbox->Add(move,0,wxEXPAND|wxALL);
+	childRightbox->AddSpacer(10);
+
+	//points XYZ to fill
+	wxBoxSizer *targets=new wxBoxSizer(wxHORIZONTAL);//container
 
 	wxStaticBoxSizer *targ=new wxStaticBoxSizer(wxVERTICAL,panel,wxT("CARTESIAN"));
-
 	wxStaticBoxSizer *_X=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("X coordinate"));//Creacion de un nuevo wxStaticSizer
 	coorX = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_X->Add(coorX,0,wxEXPAND|wxALL);
@@ -101,11 +118,10 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	targ->AddSpacer(5);
 	targ->Add(_Z,0,wxEXPAND|wxALL);
 
-	targetAll->Add(targ,0,wxEXPAND|wxALL);
+	targets->Add(targ,0,wxEXPAND|wxALL);
 
 
-//Articular values
-
+	//Articular values
 	wxBoxSizer *_joints=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *all_joints=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("ARTICULAR"));
 
@@ -123,9 +139,8 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 
 		if (i==(numJoints-1))
 			all_joints->Add(_joints,0,wxEXPAND|wxALL);
-		else if ((i%3)==0 && i!=0)
+		else if (((i+1)%3)==0 && i!=0)
 		{
-//			aux_counter=0;
 			all_joints->Add(_joints,0,wxEXPAND|wxALL);
 			_joints=new wxBoxSizer(wxVERTICAL);	
 		}
@@ -137,8 +152,8 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 		listJoints[i]->setValue(val);
 	}
 
-	targetAll->Add(all_joints,0,wxEXPAND|wxALL);
-	childRightbox->Add(targetAll,0,wxEXPAND|wxALL);
+	targets->Add(all_joints,0,wxEXPAND|wxALL);
+	childRightbox->Add(targets,0,wxEXPAND|wxALL);
 
 
 //RadioBox type trajectory
@@ -166,7 +181,6 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	childLeftbox->AddSpacer(15);
 
 //RadioBox system reference 
-//	wxBoxSizer *refmove=new wxBoxSizer(wxVERTICAL);//container
 
 	wxArrayString strings2;
 	strings2.Add(wxT("Robot (Relative)"));
@@ -175,17 +189,6 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	refsys = new wxRadioBox(panel, ID_CHOOSESYSREFERENCE, wxT("REFERENCE SYSTEM"), wxDefaultPosition, wxDefaultSize, strings2, 1, wxRA_SPECIFY_COLS);
 
 	childLeftbox->Add(refsys,0,wxEXPAND|wxALL);
-	childLeftbox->AddSpacer(15);
-
-//RadioBox choose parts robot to move
-
-	wxArrayString strings3;
-	strings3.Add(wxT("Cartesian"));
-	strings3.Add(wxT("Articular"));
-
-	move = new wxRadioBox(panel, ID_CHOOSETOMOVE, wxT("MOVE"), wxDefaultPosition, wxDefaultSize, strings3, 1, wxRA_SPECIFY_COLS);
-
-	childLeftbox->Add(move,0,wxEXPAND|wxALL);
 	childLeftbox->AddSpacer(15);
 
 //buttons 
