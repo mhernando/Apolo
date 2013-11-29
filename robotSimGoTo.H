@@ -34,7 +34,7 @@ private:
 	wxStaticText* title;
 	NodeTree* itemnode;
 	ManageWindows* managewindow;
-	wxTextCtrl* coorX,* coorY,* coorZ;
+	wxTextCtrl* coorX,* coorY,* coorZ, *roll, *pitch, *yaw;
 	wxStaticText* trajectSelected;
 	wxRadioBox* move, *refsys, *typemov, *typetraj;
 

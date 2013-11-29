@@ -110,13 +110,34 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	wxStaticBoxSizer *_Z=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Z coordinate"));//Creacion de un nuevo wxStaticSizer
 	coorZ = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_Z->Add(coorZ,0,wxEXPAND|wxALL);
+
+	wxStaticBoxSizer *_roll=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Roll"));//Creacion de un nuevo wxStaticSizer
+	roll = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	_roll->Add(roll,0,wxEXPAND|wxALL);
+
+	wxStaticBoxSizer *_pitch=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Pitch"));//Creacion de un nuevo wxStaticSizer
+	pitch = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);	
+	_pitch->Add(pitch,0,wxEXPAND|wxALL);
+	
+	wxStaticBoxSizer *_yaw=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Yaw"));//Creacion de un nuevo wxStaticSizer
+	yaw = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	_yaw->Add(yaw,0,wxEXPAND|wxALL);
 	
 	targ->AddSpacer(5);
+	//position
 	targ->Add(_X,0,wxEXPAND|wxALL);
 	targ->AddSpacer(5);
 	targ->Add(_Y,0,wxEXPAND|wxALL);
 	targ->AddSpacer(5);
 	targ->Add(_Z,0,wxEXPAND|wxALL);
+	targ->AddSpacer(5);
+
+	//orientation
+	targ->Add(_roll,0,wxEXPAND|wxALL);
+	targ->AddSpacer(5);
+	targ->Add(_pitch,0,wxEXPAND|wxALL);
+	targ->AddSpacer(5);
+	targ->Add(_yaw,0,wxEXPAND|wxALL);
 
 	targets->Add(targ,0,wxEXPAND|wxALL);
 
@@ -160,7 +181,7 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	wxBoxSizer *childLeftbox=new wxBoxSizer(wxVERTICAL);//container
 
 	wxArrayString strings0;
-	strings0.Add(wxT("Default"));
+	strings0.Add(wxT("Synchronous Joints"));
 	strings0.Add(wxT("Linear Path"));
 
 	typetraj = new wxRadioBox(panel, ID_CHOOSETYPETRAJECTORY, wxT("TYPE TRAJECTORY"), wxDefaultPosition, wxDefaultSize, strings0, 1, wxRA_SPECIFY_COLS);
@@ -244,20 +265,20 @@ void RobotSimGoTo::checkSelections()
 
 	selection = typemov->GetString(typemov->GetSelection());
 	if (selection=="Cubic Polinomial Trajectory")
-		itemnode->pointer.robotsim->setTrajectoryType(CPT);
+		itemnode->pointer.robotsim->setInterpolatorType(CPT);
 
 	else if (selection=="Trapezoidal Velocity Profile") 
-		itemnode->pointer.robotsim->setTrajectoryType(TVP);
+		itemnode->pointer.robotsim->setInterpolatorType(TVP);
 
 	else //if (selection=="Spline") 
-		itemnode->pointer.robotsim->setTrajectoryType(SPLINE);
+		itemnode->pointer.robotsim->setInterpolatorType(SPLINE);
 
 	selection = typetraj->GetString(typetraj->GetSelection());
 	if (selection=="Linear Path")
 		itemnode->pointer.robotsim->setPathType(LINEAR);
 
 	else //if (selection=="Default") 
-		itemnode->pointer.robotsim->setPathType(DEFAULT);
+		itemnode->pointer.robotsim->setPathType(SYNC_JOINT);
 
 }
 
@@ -312,9 +333,9 @@ void RobotSimGoTo::OnValueChanges()
 		Transformation3D target(x,y,z);
 		
 		if (coordAbsolute)
-			itemnode->pointer.robotsim->goToAbs(target);
+			itemnode->pointer.robotsim->computeTrajectoryToAbs(target);
 		else 
-			itemnode->pointer.robotsim->goTo(target);
+			itemnode->pointer.robotsim->computeTrajectoryTo(target);
 	}
 	else
 	{
