@@ -18,7 +18,7 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
 
-//declaration general wxBoxsizer	
+//general declaration wxBoxsizer	
 	
 	wxBoxSizer *parentbox=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *childbox=new wxBoxSizer(wxHORIZONTAL);
@@ -99,27 +99,27 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	wxBoxSizer *targets=new wxBoxSizer(wxHORIZONTAL);//container
 
 	wxStaticBoxSizer *targ=new wxStaticBoxSizer(wxVERTICAL,panel,wxT("CARTESIAN"));
-	wxStaticBoxSizer *_X=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("X coordinate"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_X=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("X coordinate"));//Create a new wxStaticSizer
 	coorX = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_X->Add(coorX,0,wxEXPAND|wxALL);
 
-	wxStaticBoxSizer *_Y=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Y coordinate"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_Y=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Y coordinate"));//Create a new wxStaticSizer
 	coorY = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);	
 	_Y->Add(coorY,0,wxEXPAND|wxALL);
 	
-	wxStaticBoxSizer *_Z=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Z coordinate"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_Z=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Z coordinate"));//Create a new wxStaticSizer
 	coorZ = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_Z->Add(coorZ,0,wxEXPAND|wxALL);
 
-	wxStaticBoxSizer *_roll=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Roll"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_roll=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Roll"));//Create a new wxStaticSizer
 	roll = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_roll->Add(roll,0,wxEXPAND|wxALL);
 
-	wxStaticBoxSizer *_pitch=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Pitch"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_pitch=new wxStaticBoxSizer(wxHORIZONTAL,panel,wxT("Pitch"));//Create a new wxStaticSizer
 	pitch = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);	
 	_pitch->Add(pitch,0,wxEXPAND|wxALL);
 	
-	wxStaticBoxSizer *_yaw=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Yaw"));//Creacion de un nuevo wxStaticSizer
+	wxStaticBoxSizer *_yaw=new wxStaticBoxSizer (wxHORIZONTAL,panel,wxT("Yaw"));//Create a new wxStaticSizer
 	yaw = new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	_yaw->Add(yaw,0,wxEXPAND|wxALL);
 	
