@@ -42,6 +42,10 @@ public:
 	void MovePoint(wxMouseEvent& event);
 	int NumPoints(){return points.size();};
 	vector<Vector2D> GetVector(){return points;};
+
+	vector<Vector2D> GetAuxVector(){return auxpoints;}; 
+	void SetAuxPoints(double x,double y){auxpoints.push_back(Vector2D(x,y));};
+
 	float GetLastPointX(){return xLast;};
 	float GetLastPointY(){return yLast;};
 	float GetPointX(){return x;}
@@ -68,6 +72,13 @@ public:
 	int GetCondition(){return estado;};
 	void eraseDesign();
 
+	bool Intersection(float Sx1,float Sx2,float Sy1,float Sy2,float Qa1,float Qa2,float Qb1,float Qb2);
+	void SetPaste(bool val){paste=val;};
+	void clearAuxPoints(){auxpoints.clear();}
+	bool GetGridState(){return Grid;};
+	void SetGridState(bool state){Grid=state;};
+	
+
 
 
 private:
@@ -84,7 +95,9 @@ private:
 	vector<Vector2D> points;
 	vector<Vector2D> auxpoints;
 	vector<bool> marcas;
-	bool Align,Grid,polygon,MousePoint;
+
+	bool Align,Grid,MousePoint,paste;
+
 	int estado;
 	DECLARE_EVENT_TABLE()
 };

@@ -149,7 +149,7 @@ void PositionableWidget::CreatePanel(bool sliders, bool color_w)
 		zs->setValue(position.z);
 		rs->setValue(orientation.x);
 		ps->setValue(orientation.y);
-		yws->setValue(orientation.z);
+		yws->setValue(orientation.z);	
 
 		sbox->Add(xs,0,wxEXPAND);
 		sbox->Add(ys,0,wxEXPAND);
@@ -222,14 +222,12 @@ void PositionableWidget::OnValuesChanged(wxCommandEvent& event)
 	t.position=position;
 	t.orientation.setRPY(deg2rad(orientation.x),deg2rad(orientation.y),deg2rad(orientation.z));
 	node->pointer.positionableentity->setRelativeT3D(t);
-	
 	node->getSimu()->getChild()->UpdateWorld();
 
 }
 
 void  PositionableWidget::ColorChanged(wxCommandEvent& event)
 {
-	
 		color=wxGetColourFromUser(this);
 		if(color.IsOk())
 		{
@@ -240,7 +238,6 @@ void  PositionableWidget::ColorChanged(wxCommandEvent& event)
 
 			node->pointer.solidentity->setColor(red/255,green/255,blue/255);
 			node->getSimu()->getChild()->UpdateWorld();
-		
 		}		
 }
 

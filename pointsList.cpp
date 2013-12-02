@@ -1,7 +1,8 @@
+
 #include "pointsList.h"
 
 
-//DEFINE_EVENT_TYPE(wxEVT_POINT_ADDED)
+
 
 BEGIN_EVENT_TABLE(PointsList, wxPanel)
 	
@@ -126,6 +127,7 @@ void PointsList::SetVertex(int r)
 	void PointsList::OnMenuChangePoint(wxCommandEvent& event)
 {	
 	
+
 		int id = event.GetId();
 
 		if(id == ID_CHANGEVERTEX)
@@ -149,6 +151,7 @@ void PointsList::OnMenuDeletePoint(wxCommandEvent& WXUNUSED(event))
 		msg.Printf(wxT("Are you sure delete Vertex ")+s+wxT(" (X=")+grid->GetCellValue(auxrow,0)+wxT(" , Y=")+grid->GetCellValue(auxrow,1)+wxT(")?"));
 		if ( wxMessageBox(msg, wxT("Please confirm"), wxICON_QUESTION | wxYES_NO) != wxYES )
 			return;
+
 		DeletePoint();
 }
 
@@ -197,7 +200,6 @@ void PointsList::MovedPoint(int rowtochange,double x,double y)
 					grid->SetCellValue(rowtochange,col,value<<y);
 					value.Clear();
 					col=0;
-					//if(facesAssociated) faces->SetVertex(false,false,false,true);
 					if(designAssociated) Screen2D->ManagePoints(false,true,false);
 					GetParent()->SendSizeEvent();
 			}
@@ -242,7 +244,6 @@ void PointsList::DeletePoint ()
 		{
 			grid->DeleteRows(r,1);
 			row--;
-			//if(facesAssociated) faces->SetVertex(false,false,true,false,r);
 			if(designAssociated) Screen2D->ManagePoints(false,false,true,r);
 			GetParent()->SendSizeEvent();
 		}
@@ -255,7 +256,6 @@ void PointsList::DeletePointMarked (int r)
 		{
 			grid->DeleteRows(r,1);
 			row--;
-			//if(facesAssociated) faces->SetVertex(false,false,true,false,r);
 			if(designAssociated) Screen2D->ManagePoints(false,false,true,r);
 			GetParent()->SendSizeEvent();
 		}
@@ -319,6 +319,7 @@ void PointsList::InsertedPoint(int first,int second,double x,double y)
 
 
 
+
 void PointsList::OnItemMenu(wxGridEvent& event)
 {
 		auxrow=event.GetRow();
@@ -326,6 +327,7 @@ void PointsList::OnItemMenu(wxGridEvent& event)
 		wxMenu menuGrid(wxT("Menu Vertex "+ s));
 		menuGrid.Append(ID_CHANGEVERTEX, wxT("Change Vertex"));
 		menuGrid.Append(ID_DELETEVERTEX, wxT("Delete Vertex"));
+
 		PopupMenu(&menuGrid, event.GetPosition());
 }
 	
@@ -403,4 +405,23 @@ void PointsList::MarkRow(int r)
 }
 
 
+
+void PointsList::DeletePoints()
+{
+	if(grid->GetNumberRows()>0)
+	{
+		for(int i=grid->GetNumberRows()-1;i>=0;i--)
+		{
+			grid->DeleteRows(i,1);
+			row--;
+		}
+			facesAssociated=false;
+			designAssociated=true;
+			col=0;
+			row=0;
+			auxrow=0;
+			CreatePanel();
+	}
+
+}
 

@@ -1,6 +1,8 @@
 #include "mainWindow.h"
 
 
+
+
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_NEW, MainWindow::OnNewWorld)
 	EVT_MENU(ID_LNSERVER, MainWindow::OnConnection)
@@ -62,6 +64,9 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(DIS_SLI,MainWindow::PropertiesDisplay)
 	EVT_MENU(DIS_CONT,MainWindow::PropertiesDisplay)
 	EVT_MENU(ID_VIS_TREE,MainWindow::OnVisibleTree)
+	EVT_MENU(ID_CHANGEFORM, MainWindow::OnChangeForm)
+	EVT_BUTTON(ID_ADDOWNFACE, MainWindow::OnChangeForm)
+	EVT_BUTTON(ID_CANCELDESIGN, MainWindow::OnChangeForm)
 	EVT_MENU(ID_ORI, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_POSIT, MainWindow::OnChangeLocationCtrl)
 	EVT_MENU(ID_DIS, MainWindow::OnDesign)
@@ -84,6 +89,10 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_PLAY, MainWindow::HandleChildViews)
 	EVT_MENU(ID_STOP2,MainWindow::HandleChildViews)
 	EVT_MENU(ID_CANVASCOLOR,MainWindow::HandleChildViews)
+	EVT_MENU(ID_LINKTO,MainWindow::OnLinkTo)
+	EVT_MENU(ID_UNLINK,MainWindow::OnLinkTo)
+	EVT_MENU(ID_FINISHLINK,MainWindow::OnLinkTo)
+	EVT_MENU(ID_RESTORECOLOUR,MainWindow::OnLinkTo)
 	EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, MainWindow::OnCloseNotebook)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
@@ -92,6 +101,11 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_UPDATE_UI(ID_SAVEOBJXML,MainWindow::UpdateUISaveObjectXML)
 	EVT_UPDATE_UI(ID_SAVEWORLDXML,MainWindow::UpdateUISaveWorldXML)
 	EVT_SASH_DRAGGED(ID_DRAG, MainWindow::OnSashDrag)
+	EVT_BUTTON(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
+	EVT_BUTTON(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
+
+	EVT_MENU(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
+	EVT_MENU(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
 
 END_EVENT_TABLE()
 
@@ -107,7 +121,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	slider=true;
 	popmenu=true;
 	design_slider=true;
+	state=0;
 	managewindow=new ManageWindows();
+
 	
 
 #if wxUSE_STATUSBAR
@@ -382,7 +398,9 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramírez de Antón Montoro 2012-2013\nAlberto Fernádez Orozco 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.4 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramirez de Anton Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 
@@ -525,7 +543,7 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 				{			
 					int size=0;		
 						
-					for (int index=0;index<sizes.size();index++) //Cogemos el de mayor tamaño para que no haya problemas con los vectores	
+					for (int index=0;index<(int)sizes.size();index++) //Cogemos el de mayor tamaño para que no haya problemas con los vectores	
 					{
 						if (size<sizes[index])size=sizes[index];
 					}
@@ -535,7 +553,7 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 						
 						rbgoto=rb=smp=wh=0; //Actualizamos los indicadores de tipo cada vuelta en el bucle
 					
-						if ((robot.empty()==false) && (j<robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
+						if ((robot.empty()==false) && (j<(int)robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
 							if (robot[j]->getItemNode ()== itemData)
 								rb=1;				//ponemos a 1 si es de tipo robotsimpanel
 							else if (robot[j]->getItemParentData()==itemData)
@@ -626,6 +644,45 @@ void MainWindow::OnConverter(wxCommandEvent& event)
 
 	delete conver;
 }
+
+
+
+void MainWindow::OnChangeForm(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+	if(itemData->pointer.prismaticpart)
+	{
+		if (id==ID_CHANGEFORM)
+		{
+			view=new globalView(this,wxID_ANY,wxT("Edit"));
+			view->Show(true);
+			view->MakeModal(true);
+			if(itemData->pointer.prismaticpart) view->LoadFace(&itemData->pointer.prismaticpart->getPolygonalBase());
+		}
+
+		if (id==ID_CANCELDESIGN)
+		{
+			view->Show(false);
+			view->MakeModal(false);
+		}
+		if (id==ID_ADDOWNFACE)
+		{
+			itemData->pointer.prismaticpart->setPolygonalBase(*(view->GetFace()));
+			view->Show(false);
+			view->MakeModal(false);
+			id=NULL;
+		}
+		
+	}
+	event.Skip();
+}
+
+
+
+
+
 void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
 {
 	int id = event.GetId();
@@ -1322,14 +1379,161 @@ void MainWindow::OnLaserStyle(wxCommandEvent& event)
 	
 }
 		
+
+
+void MainWindow::OnLinkTo(wxCommandEvent& event)
+{
+	bool aux=false;
+	wxColour auxColour;
+	int id=event.GetId();
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
+	wxColour ColoursOp[8];
+	//definimos la gama de colores que se emplearán en el linkado
+	ColoursOp[0]=*wxGREEN;
+	ColoursOp[1]=*wxRED;
+	ColoursOp[2]=*wxBLUE; 
+	ColoursOp[3]=*wxLIGHT_GREY;
+	ColoursOp[4]=*wxCYAN;
+	ColoursOp[5]=wxColour(255,255,0);
+	ColoursOp[6]=wxColour(255,20,147);
+	ColoursOp[7]=wxColour(210,105,30);
+
+	if(itemData->pointer.positionableentity)
+	{
+		if (id==ID_LINKTO)
+		{
+			if(tree->IsBold(tree->GetSelection())) colour=tree->GetItemTextColour(tree->GetSelection());
+			else
+			{
+				if(Colours.size()>0)
+				{
+					for(int i=0;i<(int)Colours.size();i++)  //Se recorre el vector en busca de un color que se haya dejado de utilizar
+					{
+						if(count[i]==0) 
+						{
+							colour=Colours[i];
+							index=i;
+							aux=true;
+						}
+					}
+				}
+
+				//Si no hay ninguno libre o no se ha linkado todavía se elige un color nuevo
+				if (aux==false)
+				{
+					count.push_back(1);
+					index=count.size()-1;
+					Colours.push_back(ColoursOp[index]);
+					colour=Colours[index];
+				}
+			}
+			state=1;
+			wxSetCursor(wxCURSOR_POINT_LEFT);
+			tree->SetItemBold(tree->GetSelection());
+			tree->SetItemTextColour(tree->GetSelection(),colour);
+			simuWorld->InsertPositionableEntity(itemData->pointer.positionableentity);
+			id=NULL;
+			return;
+		}
+
+
+		if (id==ID_FINISHLINK)
+		{
+			state=0;
+			id=NULL;
+			return;
+		}
+
+
+		if (id==ID_UNLINK)
+		{
+			for(int i=0;i<(int)(simuWorld->GetLinked().size());i++)
+			{				
+					if((itemData->pointer.positionableentity)==(simuWorld->GetLinked()[i]))
+						simuWorld->EraseLinked(i);
+			}
+			itemData->pointer.positionableentity->LinkTo(NULL); //Deslinkar
+			auxColour=tree->GetItemBackgroundColour(tree->GetSelection()); //Coger el color de linkado que tiene ese elemento
+			for (int i=0;i<Colours.size();i++) //Recorrer el vector de colores usados para restar una unidad a su uso
+			{
+				if (Colours[i]==auxColour) 
+				{
+					count[i]=count[i]-1;
+					if(count[i]==1)
+					{
+						wxString msg;
+						msg.Printf(wxT("Please Restore Owner Text Color"));
+						wxMessageBox(msg,wxT("Colour unusued"));
+					}
+				}
+			}
+		tree->SetItemBackgroundColour(tree->GetSelection(),*wxWHITE);
+		state=0;
+		}
+
+		if(id==ID_RESTORECOLOUR)
+		{
+			for (int i=0;i<Colours.size();i++) //Recorrer el vector de colores usados para restar una unidad a su uso
+			{
+				if (Colours[i]==tree->GetItemTextColour(tree->GetSelection()))
+				{
+					count[i]=0;
+				}
+			}
+			tree->SetItemTextColour(tree->GetSelection(),*wxBLACK);
+			tree->SetItemBold(tree->GetSelection(),false);
+		}
+	}
+}
+
+
+void MainWindow::IncreaseValueCont(int index)   //Función para contablilizar el uso de los colores
+{
+	count[index]=count[index]+1;
+}
+
+
+bool MainWindow::RestoreColor(wxColour colour)
+{
+	for (int i=0;i<Colours.size();i++)
+	{
+		if (Colours[i]==colour) 
+		{
+			if(count[i]==1) return true;
+			else return false;
+		}
+			
+	}
+}
+
+
+
+void MainWindow::CopyPasteDesign(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	if (id==ID_COPYDESIGN)  //Para copiar el diseño que estemos realizando si abrimos la edición desde la mainwindow
+	{
+		simuWorld->CleanClipboard();
+		if (view->GetScreen2D()->GetVector().size()==0) return;
 	
+		for(int i=0;i<view->GetScreen2D()->GetVector().size();i++)
+		{
+			simuWorld->SetCopiedDesign(view->GetScreen2D()->GetVector());
+		}
+	}
 
+	if (id==ID_PASTEDESIGN)
+	{
+		if(simuWorld->GetCopiedDesign().size()==0) return;
+		view->GetScreen2D()->clearAuxPoints();
+		for(int i=0;i<simuWorld->GetCopiedDesign().size();i++)
+		{
+			view->GetScreen2D()->SetPaste(true);
+			view->GetScreen2D()->SetAuxPoints(simuWorld->GetCopiedDesign()[i].x,simuWorld->GetCopiedDesign()[i].y);
+			view->GetScreen2D()->DrawScene2D();
+		}
+	}
 
-
-
-
-
-
-
-
-
+}

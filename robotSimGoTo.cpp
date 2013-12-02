@@ -26,8 +26,9 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 //title
 	wxBoxSizer *titlebox = new wxBoxSizer(wxHORIZONTAL);//container
 	title = new wxStaticText(panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	title->SetFont(wxFont(14,wxFONTFAMILY_ROMAN));
+	//title->SetFont(wxFont(14,wxFONTFAMILY_ROMAN));
 
+	wxBoxSizer *titlebox = new wxBoxSizer(wxHORIZONTAL);
 	titlebox->AddSpacer(15);
 	titlebox->Add(title,0,wxEXPAND|wxALL);
 

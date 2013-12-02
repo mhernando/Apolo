@@ -29,6 +29,10 @@ public:
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
+
+	void CopyDesign(wxCommandEvent& event);
+	void PasteDesign(wxCommandEvent& event);
+
 	
 private:
 	
@@ -38,6 +42,7 @@ private:
 	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
 	wxButton *cView,*Accept;
 	NodeTree *node;
+	FaceSetPart *face;
 	MainWindow* mainWin;
 
 

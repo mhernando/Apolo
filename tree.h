@@ -80,9 +80,12 @@ public:
 	void OnShowCanvas(wxMouseEvent& event);
 	void ShowSelection(wxTreeEvent& event);
 	void SetShowSelection(bool show){sel=show;};
+	void ControlLink(wxMouseEvent& event);
+	void ControlMouse(wxMouseEvent& event);
 	MainWindow* m_mainWin;
 
 };
+
 
 class TreeItemData : public wxTreeItemData
 {

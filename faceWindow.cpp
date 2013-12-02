@@ -6,6 +6,10 @@ EVT_BUTTON(ID_OTHERFACE, FaceWindow::FaceButton)
 EVT_BUTTON(ID_SHOWTHREED, FaceWindow::FaceButton)
 EVT_BUTTON(ID_ADDOWNFACE, FaceWindow::FaceButton)
 EVT_BUTTON(ID_COLOR, FaceWindow::ColorChanged)	
+EVT_BUTTON(ID_COPYDESIGN, FaceWindow::CopyDesign)
+EVT_BUTTON(ID_PASTEDESIGN, FaceWindow::PasteDesign)
+EVT_MENU(ID_COPYDESIGN, FaceWindow::CopyDesign)
+EVT_MENU(ID_PASTEDESIGN, FaceWindow::PasteDesign)
 EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, FaceWindow::FaceOrientation)
 
 
@@ -34,10 +38,12 @@ void FaceWindow::CreatePanel()
 		
 		wxButton *af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
 		cView = new wxButton(this,ID_SHOWTHREED,wxT("Create/Modify Face"),wxDefaultPosition,wxDefaultSize);
-		canvas=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxSize(400,400));
 
+		canvas=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxSize(700,400));
+		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		
 		PositionableWidget *pw=new PositionableWidget(this,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
+
 
 		
 		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
@@ -98,15 +104,18 @@ void FaceWindow::CreatePanel()
 }
 
 
-void FaceWindow::FaceOrientation(wxCommandEvent& WXUNUSED(event))
+
+void FaceWindow::FaceOrientation(wxCommandEvent& event)
 {	
 	Transformation3D trans;
 	trans.position.x=x_pos->getValue();
 	trans.position.y=y_pos->getValue();
 	trans.position.z=plane_dis->getValue();
 	trans.orientation.setRPY(deg2rad(roll->getValue()),deg2rad(pitch->getValue()),0);
-	canvas->GetFace()->setBase(trans);
-	canvas->GetFace()->setColor(red,green,blue,transparency->getValue());
+	canvas->GetView()->GetFace()->setOrigin(trans.position);
+	canvas->GetView()->GetFace()->setBase(trans);
+	canvas->GetCanvas3d()->AddObject(canvas->GetView()->GetFace());         
+	canvas->GetCanvas3d()->Update();
 	canvas->RefreshCanvas();
 }
 
@@ -114,16 +123,20 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	if(id==ID_SHOWTHREED)
+
 	{
+		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		canvas->GetView()->Show(true);
 		canvas->GetView()->MakeModal(true);
 	}
 
 	if(id==ID_ADDOWNFACE)
 	{
-		node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
-		canvas->GetCanvas3d()->AddObject(node->pointer.facesetpart);
-		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
+		//node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace())); //PARA VER LA CARA QUE ESTAMOS DIBUJANDO
+		canvas->GetCanvas3d()->AddObject(canvas->GetView()->GetFace());         //PERO QUE AUN ESTÁ SIN AÑADIR AL FACESETPART
+		canvas->GetCanvas3d()->Update();
+		//canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
+		canvas->GetCanvas3d()->Refresh();
 		roll->setValue(0);
 		pitch->setValue(0);
 		plane_dis->setValue(0);	
@@ -131,9 +144,9 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 		canvas->GetView()->MakeModal(false);
 	}
 
-
 	if(id==ID_OTHERFACE)
 	{
+
 		node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
 		canvas->GetCanvas3d()->ClearObjects();
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
@@ -141,8 +154,8 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 		pitch->setValue(0);
 		plane_dis->setValue(0);
 		canvas->CreateFace();
+		canvas->CreateVis2D();
 	}
-
 
 }
 
@@ -164,7 +177,6 @@ void FaceWindow::AddFace()
 
 void  FaceWindow::ColorChanged(wxCommandEvent& event)
 {
-	
 		wxColor color=wxGetColourFromUser(this);
 		if(color.IsOk())
 		{
@@ -173,7 +185,30 @@ void  FaceWindow::ColorChanged(wxCommandEvent& event)
 			blue = color.Blue();
 			canvas->GetView()->GetFace()->setColor(red/255,green/255,blue/255,transparency->getValue());
 			canvas->RefreshCanvas();
-		
 		}		
 }
 
+
+void FaceWindow::CopyDesign(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	if(id==ID_COPYDESIGN)
+	{
+		node->getSimu()->CleanClipboard();
+		if(canvas->GetView()->GetScreen2D()->GetVector().size()>0)
+		{
+			vector<Vector2D> CopiedDesign=canvas->GetView()->GetScreen2D()->GetVector();
+			node->getSimu()->SetCopiedDesign(CopiedDesign);
+		}
+	}
+}
+
+
+void FaceWindow::PasteDesign(wxCommandEvent& event)
+{
+	int id=event.GetId();
+	if(id==ID_PASTEDESIGN)
+	{
+		canvas->GetView()->PasteDesign(node->getSimu()->GetCopiedDesign());
+	}
+}

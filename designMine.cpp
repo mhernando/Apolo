@@ -23,13 +23,14 @@ BEGIN_EVENT_TABLE(DesignMine, wxGLCanvas)
 	EVT_RIGHT_UP(DesignMine::MenuRightButton)
 	EVT_MIDDLE_DOWN(DesignMine::Menu)
 	EVT_MOTION(DesignMine::ManagePoints)
-	EVT_MENU(ID_SHOWGRID,DesignMine::ManageOptions)
-	EVT_MENU(ID_HIDEGRID,DesignMine::ManageOptions)
+
 	EVT_MENU(ID_LINES,DesignMine::ManageOptions)
-	EVT_MENU(ID_POLYGON,DesignMine::ManageOptions)
 	EVT_MENU(ID_SELECTPOINTS,DesignMine::ManageOptions)
 	EVT_MENU(ID_ERASEVERTEX,DesignMine::MenuPointOptions)
 	EVT_MENU(ID_HALFWAYPOINT,DesignMine::ManageOptions)
+
+
+
 END_EVENT_TABLE()
 
 DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size)
@@ -46,9 +47,11 @@ DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos
 	zoom=100;
 	MarkNum=-1;
 	Grid=true;
-	polygon=false;
+
 	estado=0;
 	MousePoint=false;
+	paste=false;
+
 	previousH=50;
 	previousV=50;
 	clicks=0;
@@ -166,6 +169,23 @@ void DesignMine::ScalePoint()
 void DesignMine::DrawPoints()
 {
 		SetCurrent();
+
+		if (paste==true)
+		{
+			if (auxpoints.size()>0)
+			{
+				for(int i=0;i<auxpoints.size();i++)
+				{
+					glPointSize(10.0);
+					glBegin ( GL_POINTS );
+					glColor3f ( 0.5, 1, 0.3);
+					glVertex2f (auxpoints[i].x,auxpoints[i].y); 
+					glEnd ( );
+				}
+			}
+		}
+
+
 		if (points.size()>0)
 		{
 			for (int i=0;i<marcas.size();i++)
@@ -199,31 +219,35 @@ void DesignMine::DrawLines()
 	glLineWidth (2);
 	if(points.size()>1)
 	{
-		if (polygon==false) 
+
+		glColor3f(0.0f, 0.0f, 1.0f);
+        glBegin( GL_LINE_LOOP );
+        for(int i=1;i<points.size();i++)
+        {
+			glVertex2f (points[i-1].x,points[i-1].y); 
+            glVertex2f (points[i].x,points[i].y);
+        }
+        glEnd ( );
+	}
+
+	if (paste==true)
+	{
+		if(auxpoints.size()>1)
 		{
-				glColor3f(0.0f, 0.0f, 1.0f);
-				glBegin( GL_LINE_LOOP );
-				for(int i=1;i<points.size();i++)
-				{
-						glVertex2f (points[i-1].x,points[i-1].y); 
-						glVertex2f (points[i].x,points[i].y);
-				}
-				glEnd ( );
-		}
-		if (polygon==true)
-		{	
-				glColor3f(0.0f, 0.0f, 1.0f);
-				glBegin(GL_POLYGON);
-				glColor3f(0.0f, 0.0f, 1.0f);
-				for(int i=1;i<points.size();i++)
-				{
-					glVertex2f (points[i-1].x,points[i-1].y); 
-					glVertex2f (points[i].x,points[i].y);
-				}
-				glEnd ( );
+			glLineWidth (1);
+			glColor3f(0.5f, 0.6f, 0.4f);
+			glBegin( GL_LINE_LOOP);
+			for(int i=1;i<auxpoints.size();i++)
+			{
+				glVertex2f (auxpoints[i-1].x,auxpoints[i-1].y); 
+				glVertex2f (auxpoints[i].x,auxpoints[i].y);
+			}
+			glEnd ( );
+
 		}
 	}
 }
+
 
 
 void DesignMine::DrawScene2D()
@@ -243,21 +267,14 @@ void DesignMine::DrawScene2D()
 void DesignMine::Menu(wxMouseEvent& event)
 {
 		wxPoint pt = event.GetPosition();
-		wxMenu menu,menu2;
-		wxMenu *submenuGrid=new wxMenu;
-		wxMenu *submenuFigure=new wxMenu;
-		wxMenu *submenuSelect=new wxMenu;
+
+		wxMenu menu;
 		menu.Append(wxID_ANY,wxT("Options"));
 		menu.AppendSeparator();
-		menu.AppendSubMenu(submenuGrid,wxT("Grid"));
-		submenuGrid->Append(ID_SHOWGRID,wxT("GridOn"));
-		submenuGrid->Append(ID_HIDEGRID,wxT("GridOFF"));
-		menu.AppendSubMenu(submenuFigure,wxT("Figure"));
-		submenuFigure->Append(ID_LINES,wxT("Outline"));
-		submenuFigure->Append(ID_HALFWAYPOINT,wxT("Half-WayPoint"));
-		submenuFigure->Append(ID_POLYGON,wxT("Polygon"));
-		menu.AppendSubMenu(submenuSelect,wxT("Select"));
-		submenuSelect->Append(ID_SELECTPOINTS,wxT("Select all points"));
+		menu.Append(ID_COPYDESIGN,wxT("Copy"));
+		menu.Append(ID_PASTEDESIGN,wxT("Paste"));
+		menu.Append(ID_SELECTPOINTS,wxT("Select all points"));
+
 		PopupMenu(&menu,pt);
 }
 
@@ -265,34 +282,15 @@ void DesignMine::Menu(wxMouseEvent& event)
 void DesignMine::ManageOptions(wxCommandEvent& event)
 {
 	int id=event.GetId();
-	if (id==ID_SHOWGRID) 
-	{
-		Grid=true;
-		DrawScene2D();
-	}	
-	if (id==ID_HIDEGRID) 
-	{
-		Grid=false;
-		DrawScene2D();
-	}
-	if (id==ID_LINES) 
-	{
-		polygon=false;
-		DrawScene2D();
-	}
-	if (id==ID_POLYGON) 
-	{
-		polygon=true;
-		DrawScene2D();
-	}
 
 	if (id==ID_SELECTPOINTS) 
 	{
 			estado=2;   //Seleccionamos todos los puntos 
 			DrawScene2D();
-			
 
 	}
+
+
 	if (id==ID_HALFWAYPOINT)
 	{
 			estado=4; //a la espera de la selección de los puntos
@@ -656,20 +654,42 @@ void DesignMine::New_Move_Point(wxMouseEvent& event)
 	}
 
 
-
 	if(event.LeftDown()&&(estado==0))  //Se añade un nuevo punto
 	{
 		MousePosition = event.GetPosition();
 		ScalePoint();
+
+		float x2,y2;
+		bool intersect=false;
 		if(Align==true) AlignFunction();
+		x2=x;
+		y2=y;
 		MousePoint=true;
-		wxCommandEvent DesignEvent( wxEVT_NEWVERTEX_ADDED,GetId() );
-		DesignEvent.SetEventObject( window);
-		GetEventHandler()->ProcessEvent(DesignEvent);
-		points.push_back(Vector2D(x,y));
-		marcas.push_back(true);
-		DrawScene2D();
-		MousePoint=false;
+		if (points.size()>2)
+		{
+			for(int i=1;i<points.size()-2;i++)
+			{
+				intersect=intersect||Intersection(points[points.size()-1].x,x2,points[points.size()-1].y,y2,
+					points[i-1].x,points[i].x,points[i-1].y,points[i].y);
+			}
+			for(int i=2;i<points.size();i++)
+			{
+				intersect=intersect||Intersection(points[0].x,x2,points[0].y,y2,
+					points[i-1].x,points[i].x,points[i-1].y,points[i].y);
+			}
+		}
+
+		if (intersect==false)
+		{
+			wxCommandEvent DesignEvent( wxEVT_NEWVERTEX_ADDED,GetId() );
+			DesignEvent.SetEventObject( window);
+			GetEventHandler()->ProcessEvent(DesignEvent);
+			points.push_back(Vector2D(x,y));
+			marcas.push_back(true);
+			DrawScene2D();
+			MousePoint=false;
+		}
+
 	}
 	SetFocus();
 	event.Skip();
@@ -682,6 +702,9 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 {	
 	float difx;
 	float dify;
+
+	bool aux=false;
+
 		MousePosition = event.GetPosition();
 		ScalePoint();
 		if (points.size()>0)
@@ -694,8 +717,11 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						{
 							difx=abs(x-points[i].x);
 							dify=abs(y-points[i].y);
-							if((abs(difx)<0.3/(zoom/20))&&(abs(dify)<0.3/(zoom/20)))
+
+							if((abs(difx)<0.3)&&(abs(dify)<0.3)&&(aux==false))
 							{
+								aux=true;
+
 								MarkNum=i;
 								marcas[i]=true;
 								
@@ -716,33 +742,25 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						wxSetCursor(wxCURSOR_POINT_LEFT);
 						for (int i=0;i<(int)points.size();i++)
 						{
-							float m,n,mx,my;
+
+							bool intersect=false;
 							if (marcas[i]==true)
 							{
-								MarkNum=1;
-								for(int i=1;i<points.size();i++)
-								{
-									if((i!=MarkNum)&&(i-1!=MarkNum))
-									{
-									mx=points[i].x-points[i-1].x;
-									my=points[i].y-points[i-1].y;
-									if(my==0) m=0;
-									if(mx==0) m=1;
-									if((my!=0)&&(mx!=0)) m=my/mx;
-									n=points[i].y-m*points[i].x;
-									if(points[i].y==m*points[i].x+n) estado=0;
-									}
-								}
 								MarkNum=i;
 								ChangePoint(MarkNum,x,y);
+								DrawScene2D();
+
 								MousePoint=true;
 								wxCommandEvent FreePointEvent( wxEVT_CHANGE_POINT,GetId() );
 								FreePointEvent.SetEventObject( window);
 								GetEventHandler()->ProcessEvent(FreePointEvent);
 								MousePoint=false;
 							}
+
+								
+							
 						}
-						DrawScene2D();
+
 						break;
 
 					case 2: 
@@ -804,8 +822,17 @@ void DesignMine::FreePoint(wxMouseEvent& event)
 	{
 		MousePosition=event.GetPosition();
 		ScalePoint();
-		estado=0;
+
+		if(Align==true) AlignFunction();
+		ChangePoint(MarkNum,x,y);
 		DrawScene2D();
+		MousePoint=true;
+		wxCommandEvent FreePointEvent( wxEVT_CHANGE_POINT,GetId() );
+		FreePointEvent.SetEventObject( window);
+		GetEventHandler()->ProcessEvent(FreePointEvent);
+		MousePoint=false;
+		estado=0;
+
 	}
 
 	if((event.LeftUp())&&(estado==5)) estado=6;
@@ -821,7 +848,7 @@ void DesignMine::MenuRightButton(wxMouseEvent& event)
 {
 	MousePosition=event.GetPosition();
 	ScalePoint();
-	float PREX,PREY;
+
 		if(points.size()>=1)
 		{
 			for (int i=0;i<points.size();i++)
@@ -874,11 +901,32 @@ void DesignMine::MenuPointOptions(wxCommandEvent& event)
 
 void DesignMine::eraseDesign()
 {
-	for (int i=0;i<points.size();i++)
+
+	for (int i=points.size()-1;i>=0;i--)
+
 	{
 		points.erase(points.begin()+i);
 		marcas.erase(marcas.begin()+i);
 	}
-	
+
+	DrawScene2D();
 }
 
+
+
+bool DesignMine::Intersection(float Sx1,float Sx2,float Sy1,float Sy2,float Qx1,float Qx2,float Qy1,float Qy2)
+{
+	bool intersection=false;
+	Vector2D Smax,Smin;
+	Vector2D Qmax,Qmin;
+	Smax.x=max(Sx1,Sx2);
+	Smax.y=max(Sy1,Sy2);
+	Smin.x=min(Sx1,Sx2);
+	Smin.y=min(Sy1,Sy2);
+	Qmax.x=max(Qx1,Qx2);
+	Qmax.y=max(Qy1,Qy2);
+	Qmin.x=min(Qx1,Qx2);
+	Qmin.y=min(Qy1,Qy2);
+	if (((Smax.x >= Qmin.x)&&(Qmax.x>=Smin.x)&&(Smax.y>=Qmin.y)&&(Qmax.y>=Smin.y))) intersection=true;
+	return intersection;
+}
