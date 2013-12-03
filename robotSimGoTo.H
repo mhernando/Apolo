@@ -27,6 +27,7 @@ public:
 	void Delete();
 	void OnButton(wxCommandEvent& event);
 	void checkSelections();
+	bool checkEmptyStringBoxes();
 
 private:
 	bool noDelete;

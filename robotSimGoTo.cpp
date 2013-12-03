@@ -27,8 +27,6 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 	wxBoxSizer *titlebox = new wxBoxSizer(wxHORIZONTAL);//container
 	title = new wxStaticText(panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	//title->SetFont(wxFont(14,wxFONTFAMILY_ROMAN));
-
-	wxBoxSizer *titlebox = new wxBoxSizer(wxHORIZONTAL);
 	titlebox->AddSpacer(15);
 	titlebox->Add(title,0,wxEXPAND|wxALL);
 
@@ -305,9 +303,6 @@ void RobotSimGoTo::OnButton(wxCommandEvent& event)
 void RobotSimGoTo::OnValueChanges()
 {
 
-	double x=0.0,y=0.0,z=0.0;
-	wxString value;
-	
 	if (!cartesian)
 	{
 		vector<double> target;
@@ -320,8 +315,12 @@ void RobotSimGoTo::OnValueChanges()
 		itemnode->pointer.robotsim->moveTo(target);
 	}
 
-	else if (cartesian && coorX->GetValue()!=wxEmptyString && coorY->GetValue()!=wxEmptyString && coorZ->GetValue()!=wxEmptyString)
+	else if (cartesian && !checkEmptyStringBoxes())
 	{	
+		double x=0.0, y=0.0, z=0.0, ro=0.0, pi=0.0, ya=0.0;
+		wxString value;
+
+		//position
 		value=coorX->GetValue();
 		value.ToDouble(&x);
 		value.Clear();
@@ -331,7 +330,19 @@ void RobotSimGoTo::OnValueChanges()
 		value=coorZ->GetValue();
 		value.ToDouble(&z);
 		value.Clear();
-		Transformation3D target(x,y,z);
+
+		//orientation
+		value=roll->GetValue();
+		value.ToDouble(&ro);
+		value.Clear();
+		value=pitch->GetValue();
+		value.ToDouble(&pi);
+		value.Clear();
+		value=yaw->GetValue();
+		value.ToDouble(&ya);
+		value.Clear();
+
+		Transformation3D target(x,y,z,ro,pi,ya);
 		
 		if (coordAbsolute)
 			itemnode->pointer.robotsim->computeTrajectoryToAbs(target);
@@ -341,10 +352,22 @@ void RobotSimGoTo::OnValueChanges()
 	else
 	{
 		wxString msg;
-		msg.Printf(wxT("You have to fill all the gaps -> TARGET = {X,Y,Z}"));
+		msg.Printf(wxT("You have to fill all the gaps -> TARGET = {X, Y, Z, Roll, Pitch, Yaw}"));
 		wxMessageBox(msg, wxT("Please confirm"));
 		noDelete=true;
 	}
+}
+
+bool RobotSimGoTo::checkEmptyStringBoxes()
+{
+	if (coorX->GetValue()==wxEmptyString ||
+		coorY->GetValue()==wxEmptyString ||
+		coorZ->GetValue()==wxEmptyString ||
+		roll->GetValue()==wxEmptyString ||
+		pitch->GetValue()==wxEmptyString ||
+		yaw->GetValue()==wxEmptyString)
+		return true;
+	return false;
 }
 
 void RobotSimGoTo::setManageWindow (ManageWindows* mg)
