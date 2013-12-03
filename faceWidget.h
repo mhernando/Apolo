@@ -29,6 +29,7 @@ public:
 	void RefreshCanvas();
 	void GetPoint(wxCommandEvent& event);  //Añade el nuevo punto desde el diseño2d
 	void ChangePoint(wxCommandEvent& event); //Función que se encargará de establecer el nuevo punto desde el diseño 2D
+
 	void DeletePoint(wxCommandEvent& event); //Función para el borrado de puntos desde el diseño2D
 	void SetVertex(bool addvertex=true,bool changevertex=false,bool deletevertex=false,bool movepoint=false,int deleteRow=0);
 	void CheckPointToMove(wxCommandEvent& event);  //Función que se encarga de comprobar si el punto seleccionado hay que moverlo
@@ -38,6 +39,7 @@ public:
 	void CreateVis2D();
 	void AlignFunction();  //Añadida para gestionar todas las alineaciones
 	Face* GetFace() {return face;}
+
 	globalView* GetView(){return Vis2d;};
 	SimulatedWorld *GetWorld(){return world;}  //Añadida por mí 
 	void ChangeColourCell(wxCommandEvent& event);
@@ -50,6 +52,7 @@ public:
 
 	
 private:
+
 	bool tableAssociated;
 	bool h;
 	bool worldView;
@@ -66,6 +69,7 @@ private:
 	NodeTree *node;
 	SimulatedWorld *simu;
 	Face *facedia;
+
 
 
 	DECLARE_EVENT_TABLE();

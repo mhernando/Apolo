@@ -29,8 +29,10 @@ public:
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
+
 	void CopyDesign(wxCommandEvent& event);
 	void PasteDesign(wxCommandEvent& event);
+
 	
 private:
 	

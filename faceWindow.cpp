@@ -38,10 +38,12 @@ void FaceWindow::CreatePanel()
 		
 		wxButton *af = new wxButton(this,ID_OTHERFACE,wxT("Add another face"),wxDefaultPosition,wxDefaultSize);
 		cView = new wxButton(this,ID_SHOWTHREED,wxT("Create/Modify Face"),wxDefaultPosition,wxDefaultSize);
+
 		canvas=new FaceWidget(this,node->getSimu(),wxDefaultPosition,wxSize(700,400));
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		
 		PositionableWidget *pw=new PositionableWidget(this,node,wxT("Face Set Orientation"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),false);
+
 
 		
 		wxBoxSizer *pbox=new wxBoxSizer(wxHORIZONTAL);
@@ -102,6 +104,7 @@ void FaceWindow::CreatePanel()
 }
 
 
+
 void FaceWindow::FaceOrientation(wxCommandEvent& event)
 {	
 	Transformation3D trans;
@@ -120,6 +123,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	if(id==ID_SHOWTHREED)
+
 	{
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		canvas->GetView()->Show(true);
@@ -142,6 +146,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 
 	if(id==ID_OTHERFACE)
 	{
+
 		node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
 		canvas->GetCanvas3d()->ClearObjects();
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
@@ -151,6 +156,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 		canvas->CreateFace();
 		canvas->CreateVis2D();
 	}
+
 }
 
 
@@ -164,8 +170,9 @@ void FaceWindow::AddFace()
 	pitch->setValue(0);
 	plane_dis->setValue(0);
 	canvas->CreateFace();
-
 }
+
+
 
 
 void  FaceWindow::ColorChanged(wxCommandEvent& event)

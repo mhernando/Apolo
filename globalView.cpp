@@ -6,6 +6,7 @@
 
 
 
+
 BEGIN_EVENT_TABLE(globalView, wxFrame)
 	EVT_PAINT(globalView::Paint)
 	EVT_SPIN_UP(ID_GRIDSIZE,globalView::ChangeGridSize)
@@ -23,6 +24,7 @@ BEGIN_EVENT_TABLE(globalView, wxFrame)
 	EVT_BUTTON(ID_HALFWAYPOINT,globalView::ManageButtons)
 	EVT_BUTTON(ID_SELECTPOINTS,globalView::ManageButtons)
 	EVT_BUTTON(ID_ERASEPOINTS,globalView::ManageButtons)
+
 	EVT_BUTTON(ID_SHOWGRID,globalView::ManageButtons)
 	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, globalView::OnChangeZoom)
 END_EVENT_TABLE()
@@ -99,6 +101,7 @@ void globalView::CreatePanel()
 	BOX->Add(Controlsbox,0,wxEXPAND);
 	BOX->Add(fbox,0,wxEXPAND);
 	BOX->Add(Horizontal,0,wxEXPAND|wxALIGN_RIGHT );
+
 	global->Add(BOX,0,wxEXPAND);
 	global->Add(points,10,wxEXPAND);
 	SetSizer(global);
@@ -112,12 +115,14 @@ void globalView::CreateFace()
 
 
 
+
 void globalView::OnChangeZoom(wxCommandEvent& event)
 {
 		int scalado=Zoom->getValue();
 		Screen2D->SetZoom(scalado);
 		Screen2D->ChangeZoom(scalado);
 		event.Skip();
+
 }
 
 
@@ -302,9 +307,11 @@ void globalView::ManageButtons(wxCommandEvent& event)
 	if (id==ID_ERASEPOINTS)
 	{
 		Screen2D->eraseDesign();
+
 		points->DeletePoints();
 		DeleteFace();
 	}
+
 
 
 	if (id==ID_SELECTPOINTS)
@@ -316,6 +323,7 @@ void globalView::ManageButtons(wxCommandEvent& event)
 	{
 		Screen2D->SetCondition(4);
 	}
+
 
 	if (id==ID_SHOWGRID) 
 	{
@@ -345,6 +353,7 @@ void globalView::LoadFace(Face* loaded)
 		points->SetPoints(loaded->getAbsoluteVertex(i).x,loaded->getAbsoluteVertex(i).y);
 	}
 
+
 }
 
 
@@ -352,6 +361,7 @@ void globalView::LoadFace(Face* loaded)
 void globalView::Paint(wxPaintEvent& event)
 {
 	wxPaintDC(this);
+
 }
 
 
@@ -372,5 +382,6 @@ void globalView::PasteDesign(vector<Vector2D> CopiedFace)
 		Screen2D->SetAuxPoints(CopiedFace[i].x,CopiedFace[i].y);
 	}
 	Screen2D->DrawScene2D();
+
 
 }

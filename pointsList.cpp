@@ -1,3 +1,4 @@
+
 #include "pointsList.h"
 
 
@@ -126,6 +127,7 @@ void PointsList::SetVertex(int r)
 	void PointsList::OnMenuChangePoint(wxCommandEvent& event)
 {	
 	
+
 		int id = event.GetId();
 
 		if(id == ID_CHANGEVERTEX)
@@ -149,6 +151,7 @@ void PointsList::OnMenuDeletePoint(wxCommandEvent& WXUNUSED(event))
 		msg.Printf(wxT("Are you sure delete Vertex ")+s+wxT(" (X=")+grid->GetCellValue(auxrow,0)+wxT(" , Y=")+grid->GetCellValue(auxrow,1)+wxT(")?"));
 		if ( wxMessageBox(msg, wxT("Please confirm"), wxICON_QUESTION | wxYES_NO) != wxYES )
 			return;
+
 		DeletePoint();
 }
 
@@ -316,6 +319,7 @@ void PointsList::InsertedPoint(int first,int second,double x,double y)
 
 
 
+
 void PointsList::OnItemMenu(wxGridEvent& event)
 {
 		auxrow=event.GetRow();
@@ -323,6 +327,7 @@ void PointsList::OnItemMenu(wxGridEvent& event)
 		wxMenu menuGrid(wxT("Menu Vertex "+ s));
 		menuGrid.Append(ID_CHANGEVERTEX, wxT("Change Vertex"));
 		menuGrid.Append(ID_DELETEVERTEX, wxT("Delete Vertex"));
+
 		PopupMenu(&menuGrid, event.GetPosition());
 }
 	
@@ -419,3 +424,4 @@ void PointsList::DeletePoints()
 	}
 
 }
+

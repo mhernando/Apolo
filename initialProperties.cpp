@@ -1,3 +1,4 @@
+
 #include "initialProperties.h"
 #include "tree.h"
 
@@ -70,6 +71,7 @@ void InitialProperties::CreatePanel()
 	//vbox->AddSpacer(40);
 
 		if(wID==ID_ADDIRRPRI)
+
 		{
 			priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 			tbox->Add(priW,0,wxEXPAND);	

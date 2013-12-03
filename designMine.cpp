@@ -23,10 +23,12 @@ BEGIN_EVENT_TABLE(DesignMine, wxGLCanvas)
 	EVT_RIGHT_UP(DesignMine::MenuRightButton)
 	EVT_MIDDLE_DOWN(DesignMine::Menu)
 	EVT_MOTION(DesignMine::ManagePoints)
+
 	EVT_MENU(ID_LINES,DesignMine::ManageOptions)
 	EVT_MENU(ID_SELECTPOINTS,DesignMine::ManageOptions)
 	EVT_MENU(ID_ERASEVERTEX,DesignMine::MenuPointOptions)
 	EVT_MENU(ID_HALFWAYPOINT,DesignMine::ManageOptions)
+
 
 
 END_EVENT_TABLE()
@@ -45,9 +47,11 @@ DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos
 	zoom=100;
 	MarkNum=-1;
 	Grid=true;
+
 	estado=0;
 	MousePoint=false;
 	paste=false;
+
 	previousH=50;
 	previousV=50;
 	clicks=0;
@@ -165,6 +169,7 @@ void DesignMine::ScalePoint()
 void DesignMine::DrawPoints()
 {
 		SetCurrent();
+
 		if (paste==true)
 		{
 			if (auxpoints.size()>0)
@@ -180,10 +185,12 @@ void DesignMine::DrawPoints()
 			}
 		}
 
+
 		if (points.size()>0)
 		{
 			for (int i=0;i<marcas.size();i++)
 			{
+
 				if(marcas[i]==true)
 				{
 					glPointSize(14.0);
@@ -212,6 +219,7 @@ void DesignMine::DrawLines()
 	glLineWidth (2);
 	if(points.size()>1)
 	{
+
 		glColor3f(0.0f, 0.0f, 1.0f);
         glBegin( GL_LINE_LOOP );
         for(int i=1;i<points.size();i++)
@@ -235,6 +243,7 @@ void DesignMine::DrawLines()
 				glVertex2f (auxpoints[i].x,auxpoints[i].y);
 			}
 			glEnd ( );
+
 		}
 	}
 }
@@ -258,12 +267,14 @@ void DesignMine::DrawScene2D()
 void DesignMine::Menu(wxMouseEvent& event)
 {
 		wxPoint pt = event.GetPosition();
+
 		wxMenu menu;
 		menu.Append(wxID_ANY,wxT("Options"));
 		menu.AppendSeparator();
 		menu.Append(ID_COPYDESIGN,wxT("Copy"));
 		menu.Append(ID_PASTEDESIGN,wxT("Paste"));
 		menu.Append(ID_SELECTPOINTS,wxT("Select all points"));
+
 		PopupMenu(&menu,pt);
 }
 
@@ -271,12 +282,14 @@ void DesignMine::Menu(wxMouseEvent& event)
 void DesignMine::ManageOptions(wxCommandEvent& event)
 {
 	int id=event.GetId();
-	
+
 	if (id==ID_SELECTPOINTS) 
 	{
 			estado=2;   //Seleccionamos todos los puntos 
 			DrawScene2D();
+
 	}
+
 
 	if (id==ID_HALFWAYPOINT)
 	{
@@ -640,10 +653,12 @@ void DesignMine::New_Move_Point(wxMouseEvent& event)
 		}
 	}
 
+
 	if(event.LeftDown()&&(estado==0))  //Se añade un nuevo punto
 	{
 		MousePosition = event.GetPosition();
 		ScalePoint();
+
 		float x2,y2;
 		bool intersect=false;
 		if(Align==true) AlignFunction();
@@ -674,6 +689,7 @@ void DesignMine::New_Move_Point(wxMouseEvent& event)
 			DrawScene2D();
 			MousePoint=false;
 		}
+
 	}
 	SetFocus();
 	event.Skip();
@@ -686,7 +702,9 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 {	
 	float difx;
 	float dify;
+
 	bool aux=false;
+
 		MousePosition = event.GetPosition();
 		ScalePoint();
 		if (points.size()>0)
@@ -699,9 +717,11 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						{
 							difx=abs(x-points[i].x);
 							dify=abs(y-points[i].y);
+
 							if((abs(difx)<0.3)&&(abs(dify)<0.3)&&(aux==false))
 							{
 								aux=true;
+
 								MarkNum=i;
 								marcas[i]=true;
 								
@@ -722,21 +742,25 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						wxSetCursor(wxCURSOR_POINT_LEFT);
 						for (int i=0;i<(int)points.size();i++)
 						{
+
 							bool intersect=false;
 							if (marcas[i]==true)
 							{
 								MarkNum=i;
 								ChangePoint(MarkNum,x,y);
 								DrawScene2D();
+
 								MousePoint=true;
 								wxCommandEvent FreePointEvent( wxEVT_CHANGE_POINT,GetId() );
 								FreePointEvent.SetEventObject( window);
 								GetEventHandler()->ProcessEvent(FreePointEvent);
 								MousePoint=false;
 							}
+
 								
 							
 						}
+
 						break;
 
 					case 2: 
@@ -798,6 +822,7 @@ void DesignMine::FreePoint(wxMouseEvent& event)
 	{
 		MousePosition=event.GetPosition();
 		ScalePoint();
+
 		if(Align==true) AlignFunction();
 		ChangePoint(MarkNum,x,y);
 		DrawScene2D();
@@ -807,6 +832,7 @@ void DesignMine::FreePoint(wxMouseEvent& event)
 		GetEventHandler()->ProcessEvent(FreePointEvent);
 		MousePoint=false;
 		estado=0;
+
 	}
 
 	if((event.LeftUp())&&(estado==5)) estado=6;
@@ -822,6 +848,7 @@ void DesignMine::MenuRightButton(wxMouseEvent& event)
 {
 	MousePosition=event.GetPosition();
 	ScalePoint();
+
 		if(points.size()>=1)
 		{
 			for (int i=0;i<points.size();i++)
@@ -874,11 +901,14 @@ void DesignMine::MenuPointOptions(wxCommandEvent& event)
 
 void DesignMine::eraseDesign()
 {
+
 	for (int i=points.size()-1;i>=0;i--)
+
 	{
 		points.erase(points.begin()+i);
 		marcas.erase(marcas.begin()+i);
 	}
+
 	DrawScene2D();
 }
 

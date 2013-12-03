@@ -8,6 +8,9 @@ BEGIN_EVENT_TABLE(FaceWidget, wxPanel)
 EVT_COMMAND(wxID_ANY,wxEVT_NEWVERTEX_ADDED,FaceWidget::GetPoint)
 EVT_COMMAND(wxID_ANY,wxEVT_CHANGE_POINT,FaceWidget::ChangePoint)
 EVT_COMMAND(wxID_ANY,wxEVT_DELETE_POINT,FaceWidget::DeletePoint)
+
+//EVT_COMMAND(wxID_ANY,wxEVT_MOVE_POLYGON,FaceWidget::ChangePolygonPosition)
+
 END_EVENT_TABLE()
 
 
@@ -33,6 +36,7 @@ void FaceWidget::CreatePanel()
 		fbox->Add(canvas3d,5,wxEXPAND);
 		SetSizer(fbox);	
 		Vis2d=new globalView(this,wxID_ANY,wxT("Design2D"));
+
 }
 
 
@@ -45,6 +49,7 @@ void FaceWidget::CreateFace()
 	faceCopy=new Face((*face));
 	if(tableAssociated)	points->RefreshGrid();
 	canvas3d->DrawGrid();
+
 }
 
 
@@ -153,6 +158,7 @@ void FaceWidget::SetVertex(bool addvertex,bool changevertex,bool deletevertex,bo
 		}
 
 	}
+
 	
 }
 
@@ -180,7 +186,9 @@ void FaceWidget::CreateVis2D()
 {
 	Vis2d->Destroy();
 	Vis2d=new globalView(this,wxID_ANY,wxT("Design2D"));
+
 }
+
 
 
 

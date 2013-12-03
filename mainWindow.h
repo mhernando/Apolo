@@ -18,7 +18,9 @@
 #include "apoloPort.h"
 #include "manageWindows.h"
 #include "robotSimGoTo.h"
+
 #include "globalView.h"
+
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -90,14 +92,17 @@ public:
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
+
 	void OnLoadWorldXML(wxCommandEvent& event);
 	//void OnLoadMesh(wxCommandEvent& event);
 	void OnLoadObjectXML(wxCommandEvent& event);
 	void OnSaveWorldXML(wxCommandEvent& event);
 	void OnSaveObjectXML(wxCommandEvent& event);
+
 	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
+
 	void OnReplaceMenuBar();
 	void CreateMenuBar();
 	void InitToolBar(wxToolBar* tool);

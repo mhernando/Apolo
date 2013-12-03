@@ -398,7 +398,9 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramírez de Antón Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramirez de Anton Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 
@@ -541,7 +543,7 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 				{			
 					int size=0;		
 						
-					for (int index=0;index<sizes.size();index++) //Cogemos el de mayor tamaño para que no haya problemas con los vectores	
+					for (int index=0;index<(int)sizes.size();index++) //Cogemos el de mayor tamaño para que no haya problemas con los vectores	
 					{
 						if (size<sizes[index])size=sizes[index];
 					}
@@ -551,7 +553,7 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 						
 						rbgoto=rb=smp=wh=0; //Actualizamos los indicadores de tipo cada vuelta en el bucle
 					
-						if ((robot.empty()==false) && (j<robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
+						if ((robot.empty()==false) && (j<(int)robot.size())) //Nos aseguramos de que no esté vacío el vector y el índice no sea mayor que su tamaño
 							if (robot[j]->getItemNode ()== itemData)
 								rb=1;				//ponemos a 1 si es de tipo robotsimpanel
 							else if (robot[j]->getItemParentData()==itemData)
@@ -1407,7 +1409,7 @@ void MainWindow::OnLinkTo(wxCommandEvent& event)
 			{
 				if(Colours.size()>0)
 				{
-					for(int i=0;i<Colours.size();i++)  //Se recorre el vector en busca de un color que se haya dejado de utilizar
+					for(int i=0;i<(int)Colours.size();i++)  //Se recorre el vector en busca de un color que se haya dejado de utilizar
 					{
 						if(count[i]==0) 
 						{
@@ -1447,7 +1449,7 @@ void MainWindow::OnLinkTo(wxCommandEvent& event)
 
 		if (id==ID_UNLINK)
 		{
-			for(int i=0;i<simuWorld->GetLinked().size();i++)
+			for(int i=0;i<(int)(simuWorld->GetLinked().size());i++)
 			{				
 					if((itemData->pointer.positionableentity)==(simuWorld->GetLinked()[i]))
 						simuWorld->EraseLinked(i);

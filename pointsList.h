@@ -34,7 +34,9 @@ public:
 	void ChangePoint();
 	void OnMenuChangePoint(wxCommandEvent& event);
 	void DeletePoint ();
+
 	void DeletePoints();
+
 	void DeletePointMarked(int r);
 	void OnMenuDeletePoint(wxCommandEvent& event);
 	void OnItemMenu(wxGridEvent& event);
