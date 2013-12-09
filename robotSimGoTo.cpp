@@ -191,8 +191,8 @@ RobotSimGoTo::RobotSimGoTo(wxWindow *parent, wxWindowID id,const wxString& title
 //RadioBox type movement
 
 	wxArrayString strings1;
-	strings1.Add(wxT("Cubic Polinomial Trajectory"));
 	strings1.Add(wxT("Trapezoidal Velocity Profile"));
+	strings1.Add(wxT("Cubic Polinomial Trajectory"));
 	strings1.Add(wxT("Spline"));
 
 	typemov = new wxRadioBox(panel, ID_CHOOSETYPEMOVEMENT, wxT("TYPE MOVEMENT"), wxDefaultPosition, wxDefaultSize, strings1, 1, wxRA_SPECIFY_COLS);
