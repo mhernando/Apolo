@@ -5,8 +5,8 @@ IF(wxWidgets_FOUND)
 	INCLUDE(${wxWidgets_USE_FILE})
 
 	IF(WIN32)
-		INCLUDE_DIRECTORIES(C:/mrcore/include/mrcore) 
-		LINK_DIRECTORIES(C:/mrcore/lib)
+		INCLUDE_DIRECTORIES(C:/TEMP/mrcore/include/mrcore) 
+		LINK_DIRECTORIES(C:/TEMP/mrcore/lib)
 	ELSE(WIN32)
 		INCLUDE_DIRECTORIES(/usr/local/mrcore/include/mrcore)
 		LINK_DIRECTORIES(/usr/local/mrcore/lib)
@@ -17,8 +17,7 @@ ELSE(WIN32)
 	SET(RESOURCES "")
 ENDIF(WIN32)
 	
-#file(GLOB ALL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-file(GLOB ALL_SRC "${CMAKE_SOURCE_DIR}/*.cpp")
+	file(GLOB ALL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 	ADD_EXECUTABLE(APOLO ${ALL_SRC} ${RESOURCES})
 

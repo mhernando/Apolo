@@ -9,8 +9,10 @@
 #include "tree.h"
 #include <vector>
 #include <wx/wx.h>
+#include "genericSlider.h"
 
 class ManageWindows;
+
 class RobotSimGoTo : public wxFrame
 {
 public:
@@ -24,16 +26,21 @@ public:
 	void OnClose(wxCloseEvent& event);
 	void Delete();
 	void OnButton(wxCommandEvent& event);
+	void checkSelections();
+	bool checkEmptyStringBoxes();
 
 private:
 	bool noDelete;
+	bool coordAbsolute, cartesian;
 	wxStaticText* title;
 	NodeTree* itemnode;
 	ManageWindows* managewindow;
-	wxTextCtrl* coorX,* coorY,* coorZ;
-	Transformation3D target;
+	wxTextCtrl* coorX,* coorY,* coorZ, *roll, *pitch, *yaw;
 	wxStaticText* trajectSelected;
+	wxRadioBox* move, *refsys, *typemov, *typetraj;
 
+	vector <GenericSlider *> listJoints;
+	GenericSlider* joint;
 
 	DECLARE_EVENT_TABLE();
 };

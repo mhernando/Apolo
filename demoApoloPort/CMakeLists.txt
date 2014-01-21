@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 
-
 IF(WIN32)
 		INCLUDE_DIRECTORIES(C:/TEMP/mrcore/include/mrcore) 
-		LINK_DIRECTORIES(C:/mrcore/lib)
+		LINK_DIRECTORIES(C:/TEMP/mrcore/lib)
 	ELSE(WIN32)
 		INCLUDE_DIRECTORIES(/usr/local/mrcore/include/mrcore)
 		LINK_DIRECTORIES(/usr/local/mrcore/lib)
@@ -11,7 +10,6 @@ IF(WIN32)
 
 
 ADD_EXECUTABLE(DEMO_APOLO_PORT demoApoloPort.cpp) 
-
 
 
 	IF(WIN32)	
