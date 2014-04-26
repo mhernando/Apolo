@@ -21,6 +21,7 @@ SimulatedWorld::SimulatedWorld(World *world)
 	mainNode = tree->GenerateSubTree(this);
 	tree->UnselectAll();
 	tree->SelectItem(mainNode);
+	UpdateLinks();
 
 }
 
@@ -125,8 +126,8 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 	childView->UpdateWorld();
 	delete ini;
 
-	
 }
+
 
 void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 {
@@ -166,6 +167,184 @@ SimulatedWorld::~SimulatedWorld()
 	childView->Destroy();	
 	delete m_world;
 }
+
+
+
+//////////////////////////////////////////////////////////////////
+/////////////Nuevas funciones de linkado/////////////
+
+
+void SimulatedWorld::InsertLinkerEntity (PositionableEntity* obj,wxTreeItemId Item)
+{
+	if(LinkersPos.size()>0)
+	{
+		for(int i=0;i<LinkersPos.size();i++)
+		{
+			if(obj==LinkersPos[i]) 
+			{	
+				return;
+			}
+		}
+	}
+	LinkersPos.push_back(obj);
+	vector<PositionableEntity*> PosAux;
+	LinksPos.push_back(PosAux);
+	LinkersId.push_back(Item);
+	vector<wxTreeItemId> aux;
+	LinksId.push_back(aux);
+	return;
+}
+
+
+void SimulatedWorld::InsertLinkedEntity(PositionableEntity* obj,wxTreeItemId Item)
+{
+	PositionableEntity* pos=obj->getLinkedTo();
+	for(int i=0;i<LinkersPos.size();i++)
+	{
+		if (pos==LinkersPos[i])
+		{
+			LinksPos[i].push_back(obj);
+			LinksId[i].push_back(Item);
+		}
+	}
+}
+
+
+int SimulatedWorld::getLinkerPositionable(PositionableEntity* el)
+{
+	if(LinkersPos.size()>0)
+	{
+		for(int i=0;i<LinkersPos.size();i++)
+		{
+			if(el==LinkersPos[i]) return i;
+		}
+	}
+	return -1;
+}
+
+
+
+void SimulatedWorld::EraseLinked(PositionableEntity* pos,wxTreeItemId item)
+{
+	for(int i=0;i<LinksPos.size();i++)
+	{
+		for(int j=0;j<LinksPos[i].size();j++)
+		{
+			if(LinksPos[i][j]==pos);
+		}
+	}
+	for(int i=0;i<LinksId.size();i++)
+	{
+		for(int j=0;j<LinksId[i].size();j++)
+		{
+			if(LinksId[i][j]==item) ;
+		}
+	}
+}
+
+
+wxTreeItemId SimulatedWorld::getPositionableId(PositionableEntity* pos)
+{
+	int aux=-1;
+	if (LinkersPos.size()>0)
+	{
+		for(int i=0;i<LinkersPos.size();i++)
+		{
+			if(LinkersPos[i]==pos) return LinkersId[i];
+		}
+	}
+	//////El elemento no era un linker
+	
+	if(LinksPos.size()>0)
+	{
+		for(int i=0;i<LinksPos.size();i++)
+		{
+			for(int j=0;j<LinksPos[i].size();j++)
+			{
+				if(pos==LinksPos[i][j]) return LinksId[i][j];
+			}
+		}
+	}
+}
+
+
+
+bool SimulatedWorld::CheckItemLinked(PositionableEntity* pos)
+{
+	for(int i=0;i<LinksPos.size();i++)
+	{
+		for(int j=0;j<LinksPos[i].size();j++)
+		{
+			if(pos==LinksPos[i][j]) return true;
+		}
+	}
+	return false;
+}
+
+
+
+//Función encargada de obtener el id del nodo en el arbol correspondiente a ese entity 
+wxTreeItemId SimulatedWorld::getLoadedObjectId(PositionableEntity* pos)
+{
+	for(int i=0;i<m_world->getNumObjects();i++)
+	{
+		if(pos==(*m_world)[i]) return LoadedIds[i];
+	}
+}
+
+
+
+void SimulatedWorld::UpdateLinks()
+{
+	bool added;
+	for(int x=0;x<m_world->getNumObjects();x++)
+	{
+		added=false;
+		PositionableEntity* pos=(*m_world)[x];
+		if(pos->getLinkedTo()!=NULL)
+		{
+			if(LinkersPos.size()>0)
+			{
+				for(int i=0;i<LinkersPos.size();i++)
+				{
+					if(pos->getLinkedTo()==LinkersPos[i])
+					{
+						LinksPos[i].push_back(pos);	
+						LinksId[i].push_back(LoadedIds[x]);
+						added=true;
+					}
+				}
+				if (added==false)
+				{
+					LinkersPos.push_back(pos->getLinkedTo());
+					LinkersId.push_back(getLoadedObjectId(pos->getLinkedTo()));
+					vector<PositionableEntity*> PosAux;
+					LinksPos.push_back(PosAux);
+					LinksPos[LinksPos.size()-1].push_back(pos);
+					vector<wxTreeItemId> IdAux;
+					LinksId.push_back(IdAux);
+					LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
+				}
+			}
+			else
+			{
+				LinkersPos.push_back(pos->getLinkedTo());
+				LinkersId.push_back(getLoadedObjectId(pos->getLinkedTo()));
+				vector<PositionableEntity*> PosAux;
+				LinksPos.push_back(PosAux);
+				LinksPos[LinksPos.size()-1].push_back(pos);
+				vector<wxTreeItemId> idlinked;
+				LinksId.push_back(idlinked);
+				LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
+			}
+		}
+	}
+}
+
+
+
+
+
 
 
 

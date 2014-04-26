@@ -166,7 +166,6 @@ struct MRClient
 
 struct ContextualMenu
 {
-
 	bool menu_positionable;
 	bool menu_solid;
 	bool menu_composed;
@@ -178,6 +177,8 @@ struct ContextualMenu
 	bool menu_laser;
 	bool menu_design;
 	bool menu_simplejoint;
+	bool menu_facesetpart;
+	bool menu_prismaticpart;
 	
 };
 

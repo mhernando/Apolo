@@ -212,7 +212,6 @@ void globalView::InsertPoint(wxCommandEvent& event)
 		{
 			face->changeVertex(i,Screen2D->GetVector()[i].x,Screen2D->GetVector()[i].y);
 		}
-		//face->changeVertex(Screen2D->GetPoint2Mark(),Screen2D->GetVector()[Screen2D->GetPoint2Mark()].x,Screen2D->GetVector()[Screen2D->GetPoint2Mark()].y);
 	}
 
 
@@ -231,8 +230,7 @@ void globalView::InsertPoint(wxCommandEvent& event)
 		{
 			face->changeVertex(i,Screen2D->GetVector()[i].x,Screen2D->GetVector()[i].y);
 		}
-		//face->changeVertex(Screen2D->GetPoint1Mark(),Screen2D->GetVector()[Screen2D->GetPoint1Mark()].x,Screen2D->GetVector()[Screen2D->GetPoint1Mark()].y);
-
+		
 	}
 
 }
@@ -382,6 +380,4 @@ void globalView::PasteDesign(vector<Vector2D> CopiedFace)
 		Screen2D->SetAuxPoints(CopiedFace[i].x,CopiedFace[i].y);
 	}
 	Screen2D->DrawScene2D();
-
-
 }

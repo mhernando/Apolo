@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-FIND_PACKAGE(wxWidgets COMPONENTS base core gl net aui adv)
+FIND_PACKAGE(wxWidgets COMPONENTS base core gl net aui adv xml)
 IF(wxWidgets_FOUND)
 	INCLUDE(${wxWidgets_USE_FILE})
 
