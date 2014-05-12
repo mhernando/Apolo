@@ -5,10 +5,10 @@
 
 
 
-
+DEFINE_EVENT_TYPE(wxEVT_EDIT_CLOSED)
 
 BEGIN_EVENT_TABLE(globalView, wxFrame)
-	EVT_PAINT(globalView::Paint)
+	EVT_PAINT(globalView::OnPaint)
 	EVT_SPIN_UP(ID_GRIDSIZE,globalView::ChangeGridSize)
 	EVT_SPIN_DOWN(ID_GRIDSIZE,globalView::ChangeGridSize)
 	EVT_SPINCTRL(ID_GRIDSIZE,globalView::ChangeGridSize)
@@ -21,27 +21,117 @@ BEGIN_EVENT_TABLE(globalView, wxFrame)
 	EVT_COMMAND(wxID_ANY,wxEVT_DELETE_POINT,globalView::DeletePoint)
 	EVT_COMMAND(wxID_ANY,wxEVT_MOVE_POLYGON,globalView::ChangePolygonPosition)
 	EVT_COMMAND(wxID_ANY,wxEVT_INSERT_POINT,globalView::InsertPoint)
-	EVT_BUTTON(ID_HALFWAYPOINT,globalView::ManageButtons)
-	EVT_BUTTON(ID_SELECTPOINTS,globalView::ManageButtons)
-	EVT_BUTTON(ID_ERASEPOINTS,globalView::ManageButtons)
-
-	EVT_BUTTON(ID_SHOWGRID,globalView::ManageButtons)
-	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, globalView::OnChangeZoom)
+	EVT_MENU(ID_HALFWAYPOINT,globalView::ManageButtons)
+	EVT_MENU(ID_SELECTPOINTS,globalView::ManageButtons)
+	EVT_MENU(ID_ERASEPOINTS,globalView::ManageButtons)
+	EVT_MENU(ID_SHOWGRID,globalView::ManageButtons)
+	EVT_SLIDER(ID_ZOOMDESIGN,globalView::OnChangeZoom)
+	EVT_TEXT_ENTER(ID_ZOOMVALUE,globalView::OnChangeZoom)
+	EVT_CLOSE(globalView::OnClose)
 END_EVENT_TABLE()
 
 globalView::globalView(wxWindow *parent,wxWindowID id,const wxString& title)
-:wxFrame(parent, wxID_ANY,title,wxDefaultPosition, wxSize(800,800),wxSTAY_ON_TOP | wxCAPTION ) 
+:wxFrame(parent, wxID_ANY,title,wxDefaultPosition, wxSize(730,710),wxSTAY_ON_TOP | wxCAPTION | wxCLOSE_BOX ) 
 {
 	CreatePanel();
-	Panel=new wxPanel(this,wxID_ANY,wxDefaultPosition,wxSize(800,800));
-	Panel->SetBackgroundColour(*wxLIGHT_GREY);
+	Panel=new wxPanel(this,wxID_ANY,wxDefaultPosition,wxSize(730,710));
 	CreateFace();
 }
 
 
-
-
 void globalView::CreatePanel()
+{
+	wxColour colour(193,221,224);
+	wxBitmap bitmaps[2];
+	bitmaps[0] = wxBitmap (zoom_xpm);
+	bitmaps[1] = wxBitmap (align_xpm);
+
+	wxBoxSizer* global=new wxBoxSizer(wxHORIZONTAL);
+
+	wxBoxSizer* Zsizer=new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* Zcomp1Sizer=new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* Zcomp2Sizer=new wxBoxSizer(wxVERTICAL);
+
+	wxBoxSizer* AlignCompSizer=new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* AlignSizer=new wxBoxSizer(wxVERTICAL);
+
+	wxBoxSizer* GridSizer=new wxBoxSizer(wxVERTICAL);
+
+	wxBoxSizer *DesignPanel=new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *optionsBox=new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *BoxH=new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *BoxV=new wxBoxSizer(wxVERTICAL);
+	InitToolbar();
+	
+	wxStaticBitmap* zoomIcon=new wxStaticBitmap(this,wxID_ANY,bitmaps[0],wxDefaultPosition,wxSize(32,32));
+	wxStaticText* Zoom=new wxStaticText(this,wxID_ANY,wxT("Zoom"),wxDefaultPosition,wxSize(30,20));
+	slidZoom=new wxSlider();
+	slidZoom->Create(this,ID_ZOOMDESIGN,75,5,150,wxDefaultPosition,wxDefaultSize,wxSL_HORIZONTAL | wxSL_BOTTOM);
+	ZoomValue=new wxTextCtrl(this,ID_ZOOMVALUE,wxEmptyString,wxDefaultPosition,wxSize(35,15),wxTE_CENTER);
+	
+	wxStaticText* AlignText=new wxStaticText(this,wxID_ANY,wxT("Align"),wxDefaultPosition,wxSize(35,15));
+	wxStaticBitmap* alignIcon=new wxStaticBitmap(this,wxID_ANY,bitmaps[1],wxDefaultPosition,wxSize(32,32));
+	wxRadioButton* alignOn=new wxRadioButton(this,ID_ALIGNON,wxT("&ON"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
+	wxRadioButton* alignOFF=new wxRadioButton(this,ID_ALIGNOFF,wxT("&OFF"));
+	alignOn->SetValue(false);
+	alignOFF->SetValue(true);
+	
+	wxStaticText* GridSize=new wxStaticText(this,wxID_ANY,wxT("Grid Size"),wxDefaultPosition,wxSize(45,15));
+	radioGrid=new wxSpinCtrl(this,ID_GRIDSIZE,wxT("20"),wxDefaultPosition,wxSize(60,35),wxSP_ARROW_KEYS,1,50,20);
+	
+	points=new PointsList(this);
+	points->AssociateDesign2D(this);
+	Screen2D=new DesignMine(this,wxID_ANY,wxDefaultPosition,wxSize(550,550));
+	Vertical=new wxSlider(this,ID_VERTICALMOVE,50,0,100,wxDefaultPosition,wxSize(40,550),wxSL_VERTICAL|wxSL_RIGHT,wxDefaultValidator,wxT("VERTICAL POSITION"));
+	Vertical->SetTickFreq(1);
+	Horizontal=new wxSlider(this,ID_HORIZONTALMOVE,50,0,100,wxDefaultPosition,wxSize(550,40),wxSL_HORIZONTAL|wxSL_BOTTOM ,wxDefaultValidator,wxT("HORIZONTAL POSITION"));
+	Horizontal->SetTickFreq(1);
+	Cancel=new wxButton(this,ID_CANCELDESIGN,wxT("Cancel"),wxDefaultPosition,wxSize(60,30));
+	Finish=new wxButton(this,ID_ADDOWNFACE,wxT("Accept"),wxDefaultPosition,wxSize(60,30));
+	
+	
+	Zcomp2Sizer->Add(Zoom,0,wxEXPAND);
+	Zcomp2Sizer->Add(zoomIcon,0,wxEXPAND);
+	Zcomp1Sizer->Add(slidZoom,0,wxEXPAND);
+	Zcomp1Sizer->Add(ZoomValue,5,wxSHRINK);
+	Zsizer->Add(Zcomp2Sizer,0,wxEXPAND);
+	Zsizer->Add(Zcomp1Sizer,0,wxEXPAND);
+
+	AlignCompSizer->Add(alignIcon,0,wxEXPAND);
+	AlignCompSizer->Add(alignOn,0,wxEXPAND);
+	AlignCompSizer->Add(alignOFF,0,wxEXPAND);
+	AlignSizer->Add(AlignText,0,wxEXPAND);
+	AlignSizer->Add(AlignCompSizer,0,wxEXPAND);
+
+	GridSizer->Add(GridSize,0,wxEXPAND);
+	GridSizer->Add(radioGrid,0,wxEXPAND);
+	
+	optionsBox->Add(Zsizer,0,wxEXPAND);
+	optionsBox->AddSpacer(30);
+	optionsBox->Add(AlignSizer,0,wxEXPAND);
+	optionsBox->AddSpacer(30);
+	optionsBox->Add(GridSizer,0,wxEXPAND);
+	optionsBox->AddSpacer(30);
+	optionsBox->Add(Finish,0,wxEXPAND);
+	optionsBox->Add(Cancel,0,wxEXPAND);
+	
+	BoxH->Add(Vertical,0,wxEXPAND);
+	BoxH->Add(Screen2D,0,wxEXPAND);
+	BoxV->Add(BoxH,0,wxEXPAND);
+	BoxV->Add(Horizontal,0,wxEXPAND);
+
+	DesignPanel->Add(optionsBox,0,wxEXPAND);
+	DesignPanel->Add(Toolbar,5,wxEXPAND);
+	DesignPanel->Add(BoxV,0,wxEXPAND);
+	global->Add(DesignPanel,0,wxEXPAND);
+	global->Add(points,0,wxEXPAND);
+	SetSizer(global);
+	this->SetBackgroundColour(colour);
+		
+}
+
+
+void globalView::InitToolbar()
 {
 	wxBitmap bitmaps[6];
 	bitmaps[0] = wxBitmap (halfwaypoint_xpm);
@@ -50,61 +140,16 @@ void globalView::CreatePanel()
 	bitmaps[3]=	 wxBitmap(icon_copy_xpm);
 	bitmaps[4]=	 wxBitmap(PasteIcon_xpm);
 	bitmaps[5]=	 wxBitmap(grid_xpm);
-
-	wxBoxSizer *global=new wxStaticBoxSizer(wxHORIZONTAL,this);
-	wxBoxSizer *BOX=new wxStaticBoxSizer(wxVERTICAL,this);
-	wxBoxSizer *fbox=new wxStaticBoxSizer(wxHORIZONTAL,this);
-	wxBoxSizer *gbox=new wxStaticBoxSizer(wxVERTICAL,this);
-	wxBoxSizer *Controlsbox=new wxStaticBoxSizer(wxHORIZONTAL,this);
-	wxBoxSizer *ConfigurationsBox=new wxStaticBoxSizer(wxHORIZONTAL,this);
-	wxBoxSizer *Button=new wxStaticBoxSizer(wxVERTICAL,this,wxT("Load Design"));
-	Zoom=new GenericSlider(this,wxT("Zoom"),wxDefaultPosition,wxSize(80,65),false);
-	wxRadioButton* alignOn=new wxRadioButton(this,ID_ALIGNON,wxT("&ON"),wxDefaultPosition,wxDefaultSize,wxRB_GROUP);
-	wxRadioButton* alignOFF=new wxRadioButton(this,ID_ALIGNOFF,wxT("&OFF"));
-	radioGrid=new wxSpinCtrl(this,ID_GRIDSIZE,wxT("20"),wxDefaultPosition,wxDefaultSize,wxSP_ARROW_KEYS,1,50,20);
-	points=new PointsList(this);
-	points->AssociateDesign2D(this);
-	Finish=new wxButton(this,ID_ADDOWNFACE,wxT("Accept"),wxDefaultPosition,wxSize(60,30));
-	Cancel=new wxButton(this,ID_CANCELDESIGN,wxT("Cancel"),wxDefaultPosition,wxSize(60,30));
-	wxBitmapButton *HalfPoint=new wxBitmapButton(this,ID_HALFWAYPOINT,bitmaps[0],wxDefaultPosition,wxSize(30,30));
-	wxBitmapButton *MovePoints=new wxBitmapButton(this,ID_SELECTPOINTS,bitmaps[1],wxDefaultPosition,wxSize(30,30));
-	wxBitmapButton *erase=new wxBitmapButton(this,ID_ERASEPOINTS,bitmaps[2],wxDefaultPosition,wxSize(30,30));
-	wxBitmapButton *copyDesign=new wxBitmapButton(this,ID_COPYDESIGN,bitmaps[3],wxDefaultPosition,wxSize(30,30));
-	wxBitmapButton *pasteDesign=new wxBitmapButton(this,ID_PASTEDESIGN,bitmaps[4],wxDefaultPosition,wxSize(30,30));
-	wxBitmapButton *grid=new wxBitmapButton(this,ID_SHOWGRID,bitmaps[5],wxDefaultPosition,wxSize(30,30));
-	Screen2D=new DesignMine(this,wxID_ANY,wxDefaultPosition,wxSize(550,550));
-	Vertical=new wxSlider(this,ID_VERTICALMOVE,50,0,100,wxDefaultPosition,wxSize(40,550),wxSL_VERTICAL|wxSL_RIGHT,wxDefaultValidator,wxT("VERTICAL POSITION"));
-	Vertical->SetTickFreq(1);
-	Horizontal=new wxSlider(this,ID_HORIZONTALMOVE,50,0,100,wxDefaultPosition,wxSize(550,40),wxSL_HORIZONTAL|wxSL_BOTTOM ,wxDefaultValidator,wxT("HORIZONTAL POSITION"));
-	Horizontal->SetTickFreq(1);
-	Button->Add(Finish,0,wxEXPAND);
-	Button->Add(Cancel,0,wxEXPAND);
-	fbox->Add(Vertical,0,wxFIXED_MINSIZE);
-	fbox->Add(Screen2D,5,wxEXPAND);
-	Zoom->setCurrentMinMax(5,150);
-	Zoom->setValue(75);
-	alignOn->SetValue(false);
-	alignOFF->SetValue(true);
-	ConfigurationsBox->Add(alignOn,5,wxEXPAND);
-	ConfigurationsBox->Add(alignOFF,5,wxEXPAND);
-	ConfigurationsBox->Add(radioGrid,0,wxEXPAND);
-	gbox->Add(Zoom,0,wxEXPAND);
-	ConfigurationsBox->Add(HalfPoint,0,wxALIGN_CENTER);
-	ConfigurationsBox->Add(MovePoints,0,wxALIGN_CENTER);
-	ConfigurationsBox->Add(erase,0,wxALIGN_CENTER);
-	ConfigurationsBox->Add(copyDesign,0,wxALIGN_CENTER);
-	ConfigurationsBox->Add(pasteDesign,0,wxALIGN_CENTER);
-	ConfigurationsBox->Add(grid,0,wxALIGN_CENTER);
-	gbox->Add(ConfigurationsBox,0,wxEXPAND);
-	Controlsbox->Add(gbox,0,wxEXPAND);
-	Controlsbox->Add(Button,0,wxEXPAND);
-	BOX->Add(Controlsbox,0,wxEXPAND);
-	BOX->Add(fbox,0,wxEXPAND);
-	BOX->Add(Horizontal,0,wxEXPAND|wxALIGN_RIGHT );
-
-	global->Add(BOX,0,wxEXPAND);
-	global->Add(points,10,wxEXPAND);
-	SetSizer(global);
+	Toolbar=new wxToolBar();
+	Toolbar->Create(this,wxID_ANY,wxDefaultPosition,wxSize(210,25),wxBORDER_NONE|wxTB_HORIZONTAL);
+	Toolbar->AddTool(ID_HALFWAYPOINT,bitmaps[0], wxT("Insert point"));
+	Toolbar->AddTool(ID_SELECTPOINTS,bitmaps[1], wxT("Move Figure"));
+	Toolbar->AddTool(ID_ERASEPOINTS,bitmaps[2], wxT("Erase Figure"));
+	Toolbar->AddTool(ID_COPYDESIGN,bitmaps[3], wxT("Copy Figure"));
+	Toolbar->AddTool(ID_PASTEDESIGN,bitmaps[4], wxT("Paste Figure"));
+	Toolbar->AddTool(ID_SHOWGRID,bitmaps[5], wxT("Show/Hide grid"));
+	Toolbar->SetBackgroundColour(wxColour(161,176,187));
+	Toolbar->Realize();
 }
 
 void globalView::CreateFace()
@@ -113,16 +158,31 @@ void globalView::CreateFace()
 }
 
 
-
-
-
 void globalView::OnChangeZoom(wxCommandEvent& event)
 {
-		int scalado=Zoom->getValue();
+	int id=event.GetId();
+	if (id==ID_ZOOMDESIGN)
+	{
+		wxString zoomstr;
+		int scalado=slidZoom->GetValue();
+		zoomstr<<scalado;
 		Screen2D->SetZoom(scalado);
 		Screen2D->ChangeZoom(scalado);
-		event.Skip();
+		ZoomValue->Clear();
+		ZoomValue->AppendText(zoomstr);
+	}
 
+	if(id==ID_ZOOMVALUE)
+	{
+		wxString zoomstr=ZoomValue->GetValue();
+		int value=wxAtoi(zoomstr);
+		if((value>5)&&(value<150))
+		{
+			Screen2D->SetZoom(value);
+			Screen2D->ChangeZoom(value);	
+			slidZoom->SetValue(value);
+		}
+	}
 }
 
 
@@ -350,16 +410,13 @@ void globalView::LoadFace(Face* loaded)
 	{
 		points->SetPoints(loaded->getAbsoluteVertex(i).x,loaded->getAbsoluteVertex(i).y);
 	}
-
-
 }
 
 
 
-void globalView::Paint(wxPaintEvent& event)
+void globalView::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC(this);
-
+    wxPaintDC dc(this);
 }
 
 
@@ -380,4 +437,13 @@ void globalView::PasteDesign(vector<Vector2D> CopiedFace)
 		Screen2D->SetAuxPoints(CopiedFace[i].x,CopiedFace[i].y);
 	}
 	Screen2D->DrawScene2D();
+}
+
+
+void globalView::OnClose(wxCloseEvent& event)
+{
+	this->Show(false);
+	wxCommandEvent CloseEditEvent( wxEVT_EDIT_CLOSED,GetId() );
+	CloseEditEvent.SetEventObject(this);
+	GetEventHandler()->ProcessEvent(CloseEditEvent);
 }

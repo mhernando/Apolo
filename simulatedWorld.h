@@ -34,6 +34,7 @@ public:
 	vector<Vector2D> GetCopiedDesign(){return CopiedDesign;}
 	void CleanClipboard(){CopiedDesign.clear();};
 
+
 	void SetEntityToLink(PositionableEntity* pos){EntityToLink=pos;}
 	PositionableEntity* GetEntityToLink(){return EntityToLink;}
 	void SetIdToLink(wxTreeItemId id){IdToLink=id;}
@@ -44,7 +45,7 @@ public:
 	vector<vector<wxTreeItemId>> getLinksId(){return LinksId;}
 	wxTreeItemId getItemID(int n,int m){return LinksId[n][m];}
 	void InsertLinkerEntity (PositionableEntity* obj,wxTreeItemId Item);
-	void InsertLinkedEntity (PositionableEntity* obj,wxTreeItemId Item);
+	void InsertLinkedEntity (PositionableEntity* Linker,PositionableEntity* Linked,wxTreeItemId ItemLinked);
 	void EraseLinked(PositionableEntity* pos,wxTreeItemId item);
 	int getLinkerPositionable(PositionableEntity *en);
 	wxTreeItemId getPositionableId(PositionableEntity *pos);
@@ -52,6 +53,8 @@ public:
 	void UpdateLinks();
 	wxTreeItemId getLoadedObjectId(PositionableEntity* pos);
 	void InsertLoadedId(wxTreeItemId nod){LoadedIds.push_back(nod);}
+	PositionableEntity* getLinker(PositionableEntity* linked);
+
 
 	Tree* getTree(){return tree;}
 	static MainWindow *mainWin;

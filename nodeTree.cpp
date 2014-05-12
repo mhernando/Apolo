@@ -374,3 +374,5 @@ NodeTree::NodeTree(SimulatedWorld *simu)
 	name = simu->getName();
 	if(name.empty()) name = "World Special";
 }
+
+

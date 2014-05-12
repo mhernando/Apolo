@@ -129,6 +129,7 @@
 #define ID_SHOWGRID 4027
 #define ID_SUBMENUG 4028
 #define ID_FACENUM 4029
+#define ID_ZOOMVALUE 4031
 
 
 

@@ -93,8 +93,11 @@ public:
 	void RestoreItemImage(wxTreeItemId ID);
 	bool CheckLink(PositionableEntity* selected,PositionableEntity* n);
 	void ControlMouse(wxMouseEvent& event);
-	void setShowLinks(bool sh){showLinks=sh;};
+	void setShowLinks(bool sh);
 	bool getShowLinks(){return showLinks;};
+	void EraseMarks();
+	bool ValidateNodeToLink(TypeNode type);
+
 	
 	MainWindow* m_mainWin;
 

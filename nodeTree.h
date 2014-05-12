@@ -194,7 +194,7 @@ public:
 	void setName(wxString _name){name=_name;}
 	wxString getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
-
+	
 
 
 	int typeConnection; //0 Nothing //1 Server //2 Client

@@ -34,7 +34,14 @@
 #include "bitmaps/saveObjectXML.xpm"
 #include "bitmaps/xml.xpm"
 #include "bitmaps/Links.xpm"
-#include "bitmaps/treestructure.xpm"
+#include "bitmaps/treeStructure.xpm"
+#include "bitmaps/NewWorld.xpm"
+#include "bitmaps/mainLWorld.xpm"
+#include "bitmaps/mainLxml.xpm"
+#include "bitmaps/axis.xpm"
+
+
+
 
 #include <wx/wx.h>
 #include <wx/menu.h>
@@ -134,7 +141,9 @@ public:
 	wxMenu* getMenuSettings(){return menuSettings;}
 	vector <SimulatedWorld *> listWorlds;
 	void CopyPasteDesign(wxCommandEvent& event);
-
+	void CloseEditConsole(wxCommandEvent& event);
+	bool GetTreeStructureState(){ return treeStruc;}
+	bool GetShowLinksState(){return showLinks;}
 ////////
 	void showXMLEditor(wxCommandEvent& event);
 	void CloseXMLEditor(wxCommandEvent& event);
@@ -153,6 +162,7 @@ private:
 	bool slider,popmenu,design_slider;
 	bool objectlinked;
 	bool xmlEditorVisible;
+	bool editionVisible;
 	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
@@ -176,7 +186,7 @@ private:
 	wxColour colour;
 	int state;  //Variable estado para controlar el linkado
 	int worldSel;
-	bool treeStruc;
+	bool treeStruc,showLinks;
 
 	DECLARE_EVENT_TABLE();
 

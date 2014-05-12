@@ -9,7 +9,6 @@
 #include <wx/listbox.h>
 #include <wx/wx.h>
 #include "bitmaps/iconsearch.xpm"
-#include "bitmaps/xmlTreeIcon.xpm"
 #include "bitmaps/update.xpm"
 #include "bitmaps/selworldxml.xpm"
 #include "bitmaps/createworld.xpm"

@@ -4,6 +4,8 @@
 #include <wx/mstream.h>
 #include <wx/txtstrm.h>
 #include <wx/msgdlg.h>
+#include <wx/wfstream.h>
+
 
 
 
@@ -22,7 +24,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_ADDPUMA, MainWindow::AddObject)
 	EVT_MENU(ID_ADDASEA, MainWindow::AddObject)
 	EVT_MENU(ID_ADDNEO, MainWindow::AddObject)
-	EVT_MENU(ID_ADDCYL, MainWindow::AddObject)
+	EVT_MENU(ID_ADDCYL, MainWindow::AddObject) 
 	EVT_MENU(ID_ADDPRI, MainWindow::AddObject)
 	EVT_MENU(ID_ADDIRRPRI, MainWindow::AddObject)
 	EVT_MENU(ID_ADDFACESET, MainWindow::AddObject)
@@ -57,6 +59,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_SAVEWORLDXML, MainWindow::OnSaveWorldXML)
 	EVT_MENU(ID_SHOWEDITXML, MainWindow::showXMLEditor)
 	EVT_COMMAND(wxID_ANY,wxEVT_XMLPANEL_CLOSED,MainWindow::CloseXMLEditor)
+	EVT_COMMAND(wxID_ANY,wxEVT_EDIT_CLOSED,MainWindow::CloseEditConsole)
 	EVT_MENU(ID_DELETE, MainWindow::OnDeleteWorld)
 	EVT_MENU(ID_DRAWBOX,MainWindow::ShowSelection)
 	EVT_MENU(ID_COMPRS,MainWindow::ShowReferenceComposed)
@@ -130,6 +133,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	Centre();
 	treeVisible=true;
 	xmlEditorVisible=false;
+	editionVisible=false;
 	slider=true;
 	popmenu=true;
 	design_slider=true;
@@ -165,14 +169,20 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	s->SetSashVisible(wxSASH_RIGHT, true); 
 
 	treeToolbar=new wxToolBar();
-	treeToolbar->Create(aux,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxDOUBLE_BORDER,wxT("Views"));
+	treeToolbar->Create(aux,wxID_ANY,wxDefaultPosition,wxSize(100,30),wxDOUBLE_BORDER,wxT("Views"));
 	wxBitmap bitmaps[2];
 	bitmaps[0]=wxBitmap(Links_xpm);
-	bitmaps[1]=wxBitmap(treestructure_xpm);
+	bitmaps[1]=wxBitmap(treeStructure_xpm);
+	wxStaticText *text = new wxStaticText(treeToolbar, wxID_ANY, wxT("Tree view")); 
+	treeToolbar->AddSeparator();
+	treeToolbar->AddControl(text); 
+	treeToolbar->AddSeparator();
 	treeToolbar->AddCheckTool(ID_SHOWLINKS,wxT("Show Links"),bitmaps[0],wxNullBitmap);
 	treeToolbar->AddCheckTool(ID_TREESTRUCTURE,wxT("Tree structure"),bitmaps[1],wxNullBitmap);
 	treeToolbar->AddSeparator();
+	treeToolbar->SetBackgroundColour(wxColour(200,230,255));
 	treeToolbar->Realize();
+	
 	
 	//make a Aui Notebook
 	note = new wxAuiNotebook(s, wxID_ANY,wxDefaultPosition,wxDefaultSize, wxAUI_NB_TOP  | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
@@ -375,42 +385,28 @@ void MainWindow::InitToolBar(wxToolBar *tool)
 {
 	toolbar=tool;
 	wxBitmap bitmaps[14];
-	bitmaps[0] = wxBitmap (new_xpm);
-	bitmaps[1] = wxBitmap (loadWorld_xpm);
+	bitmaps[0] = wxBitmap (NewWorld_xpm);
+	bitmaps[1] = wxBitmap (mainLWorld_xpm);
 	bitmaps[2] = wxBitmap (loadObject_xpm);
 	bitmaps[3] = wxBitmap (saveWorld_xpm);
 	bitmaps[4] = wxBitmap (saveObject_xpm);
 	bitmaps[5] = wxBitmap (box_xpm);
-	bitmaps[6] = wxBitmap (positionable_xpm);
-
-
-	bitmaps[7] = wxBitmap (loadworldxml_xpm);
+	bitmaps[6] = wxBitmap (axis_xpm);
+	bitmaps[7] = wxBitmap (mainLxml_xpm);
 	bitmaps[8] = wxBitmap (loadobjectxml_xpm);
 	bitmaps[9] = wxBitmap (saveworldxml_xpm);
 	bitmaps[10] = wxBitmap (saveobjectxml_xpm);
 	bitmaps[11]= wxBitmap (xml_xpm);
 	bitmaps[12]=wxBitmap(Links_xpm);
-	bitmaps[13]=wxBitmap(treestructure_xpm);
-
-
+	bitmaps[13]=wxBitmap(treeStructure_xpm);
 	toolbar->AddTool(ID_NEW, bitmaps[0], wxT("New World"));
 	toolbar->AddTool(ID_LOADWORLD, bitmaps[1], wxT("Load World"));
-	//toolbar->AddTool(ID_SAVEWORLD, bitmaps[3], wxT("Save World")); 
-	//toolbar->AddTool(ID_LOADOBJ, bitmaps[2], wxT("Load Object"));
-	//toolbar->AddTool(ID_SAVEOBJ, bitmaps[4], wxT("Save Object"));
-
 	toolbar->AddTool(ID_LOADWORLDXML, bitmaps[7], wxT("Load World XML"));
 	toolbar->AddSeparator();
-	//toolbar->AddTool(ID_SAVEWORLDXML, bitmaps[9], wxT("Save World XML")); 
-	//toolbar->AddTool(ID_LOADOBJXML, bitmaps[8], wxT("Load Object XML"));
-	//toolbar->AddTool(ID_SAVEOBJXML, bitmaps[10], wxT("Save Object XML"));
 	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxT("Show Item Selected"));
 	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
 	toolbar->AddSeparator();
 	toolbar->AddTool(ID_SHOWEDITXML, wxT("View XML editor"), bitmaps[11],wxNullBitmap);
-
-	//toolbar->AddCheckTool(ID_SHOWLINKS,wxT("Show links"),bitmaps[12],wxNullBitmap,wxT("Show links between items"));
-	//toolbar->AddCheckTool(ID_TREESTRUCTURE,wxT("Tree structure"),bitmaps[13],wxNullBitmap,wxT("View tree structure"));
 	toolbar->Realize();
 }
 
@@ -692,6 +688,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		typ=1;
 		vsele=new FaceSelection(this,wxID_ANY,wxString("FaceSetPart"),itemData->pointer.facesetpart);
 		vsele->Show(true);
+		editionVisible=true;
 		vsele->MakeModal(true);
 		return;
 	}
@@ -701,6 +698,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		typ=2;
 		view=new globalView(this,wxID_ANY,wxT("Edit Prism"));
 		view->Show(true);
+		editionVisible=true;
 		view->MakeModal(true);
 		view->LoadFace(&itemData->pointer.prismaticpart->getPolygonalBase());
 		return;
@@ -713,6 +711,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		vsele->getFacePSelected()->setColor(1,1,1,0);
 		view=new globalView(this,wxID_ANY,wxT("Edit"));
 		view->Show(true);
+		editionVisible=true;
 		view->MakeModal(true);
 		view->LoadFace(vsele->getFacePSelected());
 	}
@@ -720,6 +719,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	if(id==ID_CANCELSELECTION)
 	{
 		vsele->Show(false);
+		editionVisible=false;
 		vsele->getFacePSelected()->setColor(1,1,1,0);
 		vsele->MakeModal(false);
 	}
@@ -727,6 +727,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	if (id==ID_CANCELDESIGN)
 	{
 		view->Show(false);
+		editionVisible=false;
 		view->MakeModal(false);
 	}
 
@@ -744,6 +745,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		}
 		view->Show(false);
 		view->MakeModal(false);
+		editionVisible=false;
 	}
 
 
@@ -752,14 +754,18 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		itemData->pointer.prismaticpart->setPolygonalBase(*(view->GetFace()));
 		view->Show(false);
 		view->MakeModal(false);
+		editionVisible=false;
 		id=NULL;
 	}
-
 	event.Skip();
 }
 
 
-
+void MainWindow::CloseEditConsole(wxCommandEvent &event)
+{
+	editionVisible=false;
+	view->MakeModal(false);
+}
 
 
 void MainWindow::OnChangeLocationCtrl(wxCommandEvent& event)
@@ -818,6 +824,7 @@ void MainWindow::OnRobotSimPanelCtrl(wxCommandEvent& WXUNUSED(event))
 		
 	}
 }
+
 void MainWindow::OnRobotSimGoTo(wxCommandEvent& WXUNUSED(event))
 {
 	wxTreeItemId itemId = tree->GetSelection();
@@ -1119,6 +1126,7 @@ void MainWindow::OnLoadWorldXML(wxCommandEvent& WXUNUSED(event))
 	Search(tree->GetLastChild(tree->GetRootItem()),toolbar->GetToolState(ID_COMPRS));
 	OnReplaceMenuBar();
 }
+
 
 void MainWindow::OnLoadObjectXML(wxCommandEvent& WXUNUSED(event))
 {
@@ -1467,37 +1475,48 @@ void MainWindow::OnLaserStyle(wxCommandEvent& event)
 
 void MainWindow::OnLinkTo(wxCommandEvent& event)
 {
-	int id=event.GetId();
-	wxTreeItemId itemId = tree->GetSelection();
-	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
-
-
-	if(itemData->pointer.positionableentity)
+	if(listWorlds.size()>0)
 	{
-		if (id==ID_LINKTO)
+		int id=event.GetId();
+		wxTreeItemId itemId = tree->GetSelection();
+		NodeTree *itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+		
+
+		if(itemData->pointer.positionableentity)
 		{
-			if(simuWorld->CheckItemLinked(itemData->pointer.positionableentity))
+			simuWorld=itemData->getSimu();
+			if (id==ID_LINKTO)
 			{
-				return;
+				if(simuWorld->CheckItemLinked(itemData->pointer.positionableentity))
+				{
+					return;
+				}
+				state=1;
+				wxSetCursor(wxCURSOR_POINT_LEFT);
+				simuWorld->SetEntityToLink(itemData->pointer.positionableentity);
+				simuWorld->SetIdToLink(itemId);
+				id=NULL;
 			}
-			state=1;
-			wxSetCursor(wxCURSOR_POINT_LEFT);
-			simuWorld->SetEntityToLink(itemData->pointer.positionableentity);
-			simuWorld->SetIdToLink(itemId);
-			id=NULL;
+			if (id==ID_UNLINK)
+			{
+				if (showLinks==true) tree->EraseMarks();
+				
+				if(treeStruc==true) 
+				{
+					tree->Restructure(simuWorld,tree->GetWorld(itemId));
+				}
+				simuWorld->EraseLinked(itemData->pointer.positionableentity,itemId);
+				itemData->pointer.positionableentity->LinkTo(NULL); //Deslinkar
+				tree->showTreeStructure(simuWorld,true);
+				state=0;
+			}
 		}
 
-		if (id==ID_UNLINK)
-		{
-			simuWorld->EraseLinked(itemData->pointer.positionableentity,itemId);
-			itemData->pointer.positionableentity->LinkTo(NULL); //Deslinkar
-			state=0;
-		}
 
 		if (id==ID_SHOWLINKS)
 		{
-			bool showL=treeToolbar->GetToolState(id);
-			if(showL) 
+			showLinks=treeToolbar->GetToolState(id);
+			if(showLinks) 
 			{
 				tree->setShowLinks(true);
 				treeStruc=false;

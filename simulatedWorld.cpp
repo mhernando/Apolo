@@ -196,15 +196,14 @@ void SimulatedWorld::InsertLinkerEntity (PositionableEntity* obj,wxTreeItemId It
 }
 
 
-void SimulatedWorld::InsertLinkedEntity(PositionableEntity* obj,wxTreeItemId Item)
+void SimulatedWorld::InsertLinkedEntity(PositionableEntity* linker,PositionableEntity* linked,wxTreeItemId ItemLinked)
 {
-	PositionableEntity* pos=obj->getLinkedTo();
 	for(int i=0;i<LinkersPos.size();i++)
 	{
-		if (pos==LinkersPos[i])
+		if (linker==LinkersPos[i])
 		{
-			LinksPos[i].push_back(obj);
-			LinksId[i].push_back(Item);
+			LinksPos[i].push_back(linked);
+			LinksId[i].push_back(ItemLinked);
 		}
 	}
 }
@@ -230,14 +229,20 @@ void SimulatedWorld::EraseLinked(PositionableEntity* pos,wxTreeItemId item)
 	{
 		for(int j=0;j<LinksPos[i].size();j++)
 		{
-			if(LinksPos[i][j]==pos);
+			if(LinksPos[i][j]==pos)
+			{
+				LinksPos[i].erase(LinksPos[i].begin()+j);	
+			}
 		}
 	}
 	for(int i=0;i<LinksId.size();i++)
 	{
 		for(int j=0;j<LinksId[i].size();j++)
 		{
-			if(LinksId[i][j]==item) ;
+			if(LinksId[i][j]==item)
+			{
+				LinksId[i].erase(LinksId[i].begin()+j);
+			}
 		}
 	}
 }
@@ -337,6 +342,19 @@ void SimulatedWorld::UpdateLinks()
 				LinksId.push_back(idlinked);
 				LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
 			}
+		}
+	}
+}
+
+
+PositionableEntity* SimulatedWorld::getLinker(PositionableEntity* linked)
+{
+	for(int i=0;i<LinksPos.size();i++)
+	{
+		for(int j=0;j<LinksPos[i].size();j++)
+		{
+			if(LinksPos[i][j]==linked)
+			return LinkersPos[i];
 		}
 	}
 }

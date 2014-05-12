@@ -50,37 +50,31 @@ void PanelXML::CreatePanel()
 	wxFont font(9,wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxBOLD,false);
 	wxFont staticfont(18,wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxBOLD,false);
 	wxFont EntFont(10,wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxBOLD,false);
-	wxColour col1(0,30,255);
-	wxColour col2(255,200,0);
-	wxColour col3(175,238,238);
-	this->SetBackgroundColour(col3);
-	wxBitmapButton* staticonworld=new wxBitmapButton(this,ID_SHOWWORLDXML,icons[0],wxDefaultPosition,wxSize(30,30));
-	selectW=new wxComboBox();
-	selectW->Create(this,ID_SELECTW,wxEmptyString,wxDefaultPosition,wxSize(110,20),Choices,wxCB_DROPDOWN);
-	wxStaticBitmap* entityIcon=new wxStaticBitmap(this,wxID_ANY,icons[2],wxDefaultPosition,wxSize(30,30));
-	EntityName=new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(150,20),wxTE_READONLY);
-	EntityName->SetFont(EntFont);
-	EntityName->SetForegroundColour(*wxBLUE);
-	EntityName->SetBackgroundColour(*wxWHITE);
-	InitToolbars();
-	textCtrl=new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(490,520),wxTE_MULTILINE|wxTE_LEFT|wxHSCROLL);
-	textCtrl->SetBackgroundColour(*wxWHITE);
-	textCtrl->SetForegroundColour(*wxBLACK);
-	textCtrl->SetFont(font);
-	wxStaticBitmap* objectsIcon=new wxStaticBitmap(this,wxID_ANY,icons[1],wxDefaultPosition,wxSize(150,150));
-	wxStaticText* list=new wxStaticText(this,wxID_ANY,wxT("Entities"),wxDefaultPosition,wxDefaultSize);
-	list->SetFont(staticfont);
-	list->SetForegroundColour(*wxBLUE);
-	Objectslist=new wxListBox(this,ID_SELECTEDENTITY,wxDefaultPosition,wxSize(150,150),Items);
-	Objectslist->SetBackgroundColour(col1);
-	Objectslist->SetForegroundColour(col2);
-	Objectslist->SetFont(font);
 	wxBoxSizer *Select=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Tools=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *ele=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *BOX=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *ItemList=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *edit=new wxBoxSizer(wxHORIZONTAL);
+	wxBitmapButton* staticonworld=new wxBitmapButton(this,ID_SHOWWORLDXML,icons[0],wxDefaultPosition,wxSize(30,30));
+	selectW=new wxComboBox();
+	wxStaticBitmap* entityIcon=new wxStaticBitmap(this,wxID_ANY,icons[2],wxDefaultPosition,wxSize(30,30));
+	EntityName=new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(150,20),wxTE_READONLY);
+	selectW->Create(this,ID_SELECTW,wxEmptyString,wxDefaultPosition,wxSize(110,20),Choices,wxCB_DROPDOWN);
+	InitToolbars();
+	textCtrl=new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(490,520),wxTE_MULTILINE|wxTE_LEFT|wxHSCROLL);
+	wxStaticBitmap* objectsIcon=new wxStaticBitmap(this,wxID_ANY,icons[1],wxDefaultPosition,wxSize(150,150));
+	wxStaticText* list=new wxStaticText(this,wxID_ANY,wxT("Entities"),wxDefaultPosition,wxSize(40,30));
+	EntityName->SetFont(EntFont);
+	EntityName->SetForegroundColour(*wxBLUE);
+	EntityName->SetBackgroundColour(*wxWHITE);
+	textCtrl->SetBackgroundColour(*wxWHITE);
+	textCtrl->SetForegroundColour(*wxBLACK);
+	textCtrl->SetFont(font);
+	list->SetFont(staticfont);
+	list->SetForegroundColour(*wxBLUE);
+	Objectslist=new wxListBox(this,ID_SELECTEDENTITY,wxDefaultPosition,wxSize(150,400),Items);
+	Objectslist->SetFont(font);
 	Select->Add(staticonworld,0,wxEXPAND);
 	Select->Add(selectW,0,wxEXPAND);
 	Select->Add(entityIcon,0,wxEXPAND);
@@ -94,14 +88,12 @@ void PanelXML::CreatePanel()
 	ItemList->Add(Objectslist,0,wxEXPAND);
 	edit->Add(ItemList,0,wxEXPAND);
 	SetSizer(edit);
-	
 }
 
 
 
 void PanelXML::InitToolbars()
 {
-	wxColour col3(175,238,238);
 	wxBitmap icons[5];
 	icons[0]=wxBitmap(update_xpm);
 	icons[1]=wxBitmap(createworld_xpm);
@@ -110,7 +102,6 @@ void PanelXML::InitToolbars()
 	icons[4]=wxBitmap(SaveXMLEdit_xpm);
 	Toolbar=new wxToolBar();
 	Toolbar->Create(this,wxID_ANY,wxDefaultPosition,wxSize(210,40),wxBORDER_NONE|wxTB_HORIZONTAL);
-	Toolbar->SetBackgroundColour(col3);
 	Toolbar->AddTool(ID_UPDATEXML,icons[0], wxT("Update World"));
 	Toolbar->AddTool(ID_VALIDATEXML,icons[2], wxT("Validate"));
 	Toolbar->AddTool(ID_CREATEWORLDXML,icons[1], wxT("Create World"));
@@ -235,7 +226,10 @@ void PanelXML::SaveXML(wxCommandEvent& WXUNUSED(event))
 				wxString cont=getContent();
 				wxStringInputStream Stream(cont);
 				wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
+				m_pXmlDocument->Load(Stream);
 				m_pXmlDocument->Save(filec);
 				wxLogMessage(wxT("Successfully save in %s"), saveFile.GetPath().c_str());
 			}
 }
+
+
