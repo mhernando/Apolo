@@ -71,12 +71,14 @@ public:
 	void SetCondition(int a){estado=a;};
 	int GetCondition(){return estado;};
 	void eraseDesign();
-
 	bool Intersection(float Sx1,float Sx2,float Sy1,float Sy2,float Qa1,float Qa2,float Qb1,float Qb2);
 	void SetPaste(bool val){paste=val;};
 	void clearAuxPoints(){auxpoints.clear();}
 	bool GetGridState(){return Grid;};
 	void SetGridState(bool state){Grid=state;};
+	void SetCanvasSize(int xi,int xf, int yi,int yf){limXi=xi;limXf=xf;limYi=yi;limYf=yf;};
+	void InitializeCanvas(int selection);
+
 	
 
 
@@ -95,8 +97,14 @@ private:
 	vector<Vector2D> points;
 	vector<Vector2D> auxpoints;
 	vector<bool> marcas;
+	float border;
+
+	
 
 	bool Align,Grid,MousePoint,paste;
+
+	double limYi,limYf,limXi,limXf;
+
 
 	int estado;
 	DECLARE_EVENT_TABLE()

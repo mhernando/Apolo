@@ -20,9 +20,13 @@
 #include "bitmaps/icon_copy.xpm"
 #include "bitmaps/PasteIcon.xpm"
 #include "bitmaps/grid.xpm"
+#include "bitmaps/zoom.xpm"
+#include "bitmaps/align.xpm"
+#include "bitmaps/SceneSize.xpm"
+#include "bitmaps/DesignSize.xpm"
 
 
-
+DECLARE_EVENT_TYPE(wxEVT_EDIT_CLOSED, -1)
 
 class PointsList;
 
@@ -35,6 +39,8 @@ public:
 
 	void CreatePanel();
 	void CreateFace();
+	void InitToolbar();
+	void InsertSizes();
 	DesignMine* GetScreen2D(){return Screen2D;};
 	void ChangeZoom(wxCommandEvent& event);
 	void FaceAlign(wxCommandEvent& event);
@@ -46,28 +52,35 @@ public:
 	void DeletePoint(wxCommandEvent& event);
 	void ChangePolygonPosition(wxCommandEvent& event);
 	void ManagePoints(bool addPoint=true, bool changePoint=false, bool deletePoint=false, int deleteRow=0);
-
+	void OnClose(wxCloseEvent& event);
 	void LoadFace(Face* loaded);
 	Face* GetFace(){return face;};
 	void ManageButtons(wxCommandEvent& event);
-	void Paint(wxPaintEvent& event);
+	void OnPaint(wxPaintEvent& event);
 	void OnChangeZoom(wxCommandEvent& event);
 	void DeleteFace();
 	void PasteDesign(vector<Vector2D> CopiedFace);
+	void SetCanvasSize(wxCommandEvent& event);
+	void UpdateSlidersValues();
 
 
 private:
 	wxPanel* Panel;
 	DesignMine* Screen2D;
 	PointsList *points;
-
+	wxToolBar* Toolbar;
 	wxSpinCtrl* radioGrid;
 	wxSlider* Vertical;
 	wxSlider* Horizontal;
-	GenericSlider* Zoom;
+	wxSlider *slidZoom;
 	Face *face;
 	wxWindow* window;
 	wxButton* Finish,*Cancel;
+	wxTextCtrl *ZoomValue;
+	bool initializing;
+	int xSize,ySize;
+	wxComboBox* selectSize;
+	wxArrayString Sizes;
 
 	DECLARE_EVENT_TABLE();
 };

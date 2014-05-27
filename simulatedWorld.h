@@ -29,23 +29,37 @@ public:
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
 	ChildView* getChild(){return childView;}
-	
+
 	void SetCopiedDesign(vector<Vector2D> Copy);
 	vector<Vector2D> GetCopiedDesign(){return CopiedDesign;}
 	void CleanClipboard(){CopiedDesign.clear();};
 
-	vector<PositionableEntity*> GetLinked(){return Linked;}
-	vector<PositionableEntity*> GetLinkers(){return Linker;}
-	void EraseLinked(int ind){Linked.erase(Linked.begin()+ ind);};
-	PositionableEntity* GetParentEntity(){return Linker[Linker.size()-1];}
-	void InsertPositionableEntity (PositionableEntity* obj){Linker.push_back(obj);};
-	void InsertLinkedEntity (PositionableEntity* obj){Linked.push_back(obj);};
 
+	void SetEntityToLink(PositionableEntity* pos){EntityToLink=pos;}
+	PositionableEntity* GetEntityToLink(){return EntityToLink;}
+	void SetIdToLink(wxTreeItemId id){IdToLink=id;}
+	wxTreeItemId GetIdToLink(){return IdToLink;}
+	vector<PositionableEntity*> GetLinkersPos(){return LinkersPos;}
+	vector<wxTreeItemId> getIdLinkersId(){return LinkersId;} 
+	vector<vector<PositionableEntity*>> getLinksPos(){return LinksPos;}
+	vector<vector<wxTreeItemId>> getLinksId(){return LinksId;}
+	wxTreeItemId getItemID(int n,int m){return LinksId[n][m];}
+	void InsertLinkerEntity (PositionableEntity* obj,wxTreeItemId Item);
+	void InsertLinkedEntity (PositionableEntity* Linker,PositionableEntity* Linked,wxTreeItemId ItemLinked);
+	void EraseLinked(PositionableEntity* pos,wxTreeItemId item);
+	int getLinkerPositionable(PositionableEntity *en);
+	wxTreeItemId getPositionableId(PositionableEntity *pos);
+	bool CheckItemLinked(PositionableEntity* pos);
+	void UpdateLinks();
+	wxTreeItemId getLoadedObjectId(PositionableEntity* pos);
+	void InsertLoadedId(wxTreeItemId nod){LoadedIds.push_back(nod);}
+	PositionableEntity* getLinker(PositionableEntity* linked);
+
+
+
+	Tree* getTree(){return tree;}
 	static MainWindow *mainWin;
 	static Tree *tree;
-
-	
-
 
 	
 private:
@@ -56,9 +70,16 @@ private:
 	ChildView* childView;
 	World* m_world;
 	vector<Vector2D> CopiedDesign;
-	vector<PositionableEntity*> Linker;  //Se almacenan los objetos a los que se linkan los demás
-	vector<PositionableEntity*> Linked; //Se almacenan los objetos que han sido ya linkados
-	
+	vector<PositionableEntity*> LinkersPos;  //Se almacenan los objetos a los que se linkan los demás
+	vector<vector<wxTreeItemId>> LinksId;
+	vector<vector<PositionableEntity*>> LinksPos;
+	vector<wxTreeItemId> LinkersId;
+	vector<wxTreeItemId> LoadedIds;
+	PositionableEntity* EntityToLink;
+	wxTreeItemId IdToLink;
+
+
+
 
 };
 #endif //__APOLO__SIMULATED_WORLD__H
