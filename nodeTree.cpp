@@ -22,7 +22,8 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	menus.menu_connection = false;
 	menus.menu_design = false;
 	menus.menu_simplejoint = false;
-	
+	menus.menu_facesetpart=false;
+	menus.menu_prismaticpart=false;
 
 
 	//primero las clases bases que pueden ser compuestas
@@ -35,7 +36,8 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	if(dynamic_cast<RobotSim *>(pos)) menus.menu_robotsim = true;
 	if(dynamic_cast<MeshPart *>(pos)) menus.menu_meshpart = true;
 	if(dynamic_cast<SimpleJoint *>(pos)) menus.menu_simplejoint = true;
-	
+	if(dynamic_cast<FaceSetPart*>(pos)) menus.menu_facesetpart=true;
+	if(dynamic_cast<PrismaticPart*>(pos)) menus.menu_prismaticpart=true;
 
 
 	//Ahora los punteros a las clases base que pueden ser parte
@@ -372,3 +374,5 @@ NodeTree::NodeTree(SimulatedWorld *simu)
 	name = simu->getName();
 	if(name.empty()) name = "World Special";
 }
+
+

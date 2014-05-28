@@ -166,7 +166,6 @@ struct MRClient
 
 struct ContextualMenu
 {
-
 	bool menu_positionable;
 	bool menu_solid;
 	bool menu_composed;
@@ -178,6 +177,8 @@ struct ContextualMenu
 	bool menu_laser;
 	bool menu_design;
 	bool menu_simplejoint;
+	bool menu_facesetpart;
+	bool menu_prismaticpart;
 	
 };
 
@@ -193,7 +194,7 @@ public:
 	void setName(wxString _name){name=_name;}
 	wxString getNameTree(){return name;}
 	SimulatedWorld * getSimu(){return simuWorld;}
-
+	
 
 
 	int typeConnection; //0 Nothing //1 Server //2 Client

@@ -264,13 +264,13 @@ void RobotSimGoTo::checkSelections()
 
 	selection = typemov->GetString(typemov->GetSelection());
 	if (selection=="Cubic Polinomial Trajectory")
-		itemnode->pointer.robotsim->setInterpolatorType(CPT);
+		itemnode->pointer.robotsim->setPositionInterpolator(CPT);
 
 	else if (selection=="Trapezoidal Velocity Profile") 
-		itemnode->pointer.robotsim->setInterpolatorType(TVP);
+		itemnode->pointer.robotsim->setPositionInterpolator(TVP);
 
 	else //if (selection=="Spline") 
-		itemnode->pointer.robotsim->setInterpolatorType(SPLINE);
+		itemnode->pointer.robotsim->setPositionInterpolator(SPLINE);
 
 	selection = typetraj->GetString(typetraj->GetSelection());
 	if (selection=="Linear Path")

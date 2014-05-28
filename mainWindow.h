@@ -18,9 +18,9 @@
 #include "apoloPort.h"
 #include "manageWindows.h"
 #include "robotSimGoTo.h"
-
 #include "globalView.h"
-
+#include "panelXML.h"
+#include "faceSelection.h"
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -32,6 +32,16 @@
 #include "bitmaps/loadObjectXML.xpm"
 #include "bitmaps/saveWorldXML.xpm"
 #include "bitmaps/saveObjectXML.xpm"
+#include "bitmaps/xml.xpm"
+#include "bitmaps/Links.xpm"
+#include "bitmaps/treeStructure.xpm"
+#include "bitmaps/NewWorld.xpm"
+#include "bitmaps/mainLWorld.xpm"
+#include "bitmaps/mainLxml.xpm"
+#include "bitmaps/axis.xpm"
+
+
+
 
 #include <wx/wx.h>
 #include <wx/menu.h>
@@ -46,11 +56,13 @@
 
 
 
+using namespace mr;
 using namespace std;
 
 class ApoloPort;
 class ManageWindows;
 class RobotSimGoTo;
+class FaceSelection;
 class MainWindow : public wxMDIParentFrame
 {
 public:
@@ -67,7 +79,7 @@ public:
 	void OnConverter(wxCommandEvent& event);
 	void OnChangeForm(wxCommandEvent& event);
 	void OnLinkTo(wxCommandEvent& event);
-	void LinkObjects(wxMouseEvent& event);
+	void UpdateTreeStructure(wxCommandEvent& event);
 	void SetState(int num){state=num;};
 	int GetState(){return state;}
 	void OnChangeLocationCtrl(wxCommandEvent& event);
@@ -92,17 +104,14 @@ public:
 	void UpdateUILoadObject(wxUpdateUIEvent& event);
 	void UpdateUISaveObject(wxUpdateUIEvent& event);
 	void UpdateUISaveWorld(wxUpdateUIEvent& event);
-
 	void OnLoadWorldXML(wxCommandEvent& event);
 	//void OnLoadMesh(wxCommandEvent& event);
 	void OnLoadObjectXML(wxCommandEvent& event);
 	void OnSaveWorldXML(wxCommandEvent& event);
 	void OnSaveObjectXML(wxCommandEvent& event);
-
 	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
-
 	void OnReplaceMenuBar();
 	void CreateMenuBar();
 	void InitToolBar(wxToolBar* tool);
@@ -131,42 +140,53 @@ public:
 	wxMenu* getMenuAbout(){return menuAbout;}
 	wxMenu* getMenuSettings(){return menuSettings;}
 	vector <SimulatedWorld *> listWorlds;
-	wxColour getColour(){return colour;};
 	void CopyPasteDesign(wxCommandEvent& event);
-	void IncreaseValueCont(int index);
-	int getIndex(){return index;};
-	bool RestoreColor(wxColour colour);
+	void CloseEditConsole(wxCommandEvent& event);
+	bool GetTreeStructureState(){ return treeStruc;}
+	bool GetShowLinksState(){return showLinks;}
+////////
+	void showXMLEditor(wxCommandEvent& event);
+	void CloseXMLEditor(wxCommandEvent& event);
+	void UpdateXMLEdit(wxCommandEvent& event);
+	void UpdateSelectedWorld(wxCommandEvent& event);
+	int getWorldToUpdate();
+	void getItemXML(wxCommandEvent& event);
+//////
 
 	
 private:
-
 	bool treeVisible;
 	bool referVisible;
 	bool drawBox;
 	bool rToogle;
 	bool slider,popmenu,design_slider;
 	bool objectlinked;
+	bool xmlEditorVisible;
+	bool editionVisible;
 	ApoloPort *port;
 	SimulatedWorld* simuWorld;
 	RobotConnection *connection;
 	Tree* tree;
 	globalView* view;
+	PanelXML* edit;
+	FaceSelection* vsele;
 	wxTreeItemId m_root;
 	wxToolBar* toolbar;
 	wxAuiNotebook* note;
 	wxMenu *menuFile,*menuAbout,*menuSettings,*menuFile2,*menuView,*menuSimulator;
 	wxMenu* filesubmenu3;
 	wxMenuBar* menubar;
+	wxToolBar* treeToolbar;
 	wxPanel* m_panel;
 	wxSashLayoutWindow *s;
 	int w, h;
+	int typ;
 	wxMenu *ipro,*osel,*dwid;
 	ManageWindows*	managewindow;
 	wxColour colour;
-	vector<wxColour> Colours; ////////Vector de colores para los linkados///
-	vector<int> count; ////Contador para ver la utilizacion del color
-	int index;   //Índice del color empleado
 	int state;  //Variable estado para controlar el linkado
+	int worldSel;
+	bool treeStruc,showLinks;
 
 	DECLARE_EVENT_TABLE();
 

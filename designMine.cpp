@@ -43,15 +43,15 @@ DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos
 	CalculateScale();
 	gridSize=2;
 	Align=false;
-	previousZoom=100;
-	zoom=100;
+	previousZoom=1;
+	zoom=1;
 	MarkNum=-1;
 	Grid=true;
 
 	estado=0;
 	MousePoint=false;
 	paste=false;
-
+	border=5;
 	previousH=50;
 	previousV=50;
 	clicks=0;
@@ -296,7 +296,6 @@ void DesignMine::ManageOptions(wxCommandEvent& event)
 			estado=4; //a la espera de la selección de los puntos
 	}
 	
-
 }
 
 
@@ -389,21 +388,22 @@ void DesignMine::SetView(double xi,double xf,double yi,double yf)
 
 void DesignMine::ChangeZoom(double z)
 {
+	double change=(border-1)/9;
 	if (z<previousZoom)  //estamos disminuyendo zoom
 	{
 		double aux=previousZoom-z;
-		x2Di=x2Di-0.05*aux;
-		x2Df=x2Df+0.05*aux;
-		y2Di=y2Di-0.05*aux;
-		y2Df=y2Df+0.05*aux;	
+		x2Di=x2Di-change*aux;
+		x2Df=x2Df+change*aux;
+		y2Di=y2Di-change*aux;
+		y2Df=y2Df+change*aux;	
 	}
 	if (z>previousZoom)  //estamos aumentando zoom
 	{
 		double aux=z-previousZoom;
-		x2Di=x2Di+0.05*aux;
-		x2Df=x2Df-0.05*aux;
-		y2Di=y2Di+0.05*aux;
-		y2Df=y2Df-0.05*aux;	
+		x2Di=x2Di+change*aux;
+		x2Df=x2Df-change*aux;
+		y2Di=y2Di+change*aux;
+		y2Df=y2Df-change*aux;	
 	}
 		DrawScene2D();
 		previousZoom=z;	
@@ -416,39 +416,53 @@ void DesignMine::ChangePosition(bool vertical,bool horizontal,double variation)
 	if ((vertical==true)&&(horizontal==true)) return;
 	if (vertical==true)
 	{
-		if (previousV<variation)  //Moviendo vertical hacia abajo
+		if (previousV<variation)  
 		{
-			double aux=variation-previousV;
-			y2Di=y2Di-0.1*aux;
-			y2Df=y2Df-0.1*aux;
+			if(variation!=100)
+			{
+				float increaseV=(border+y2Di)/(100-variation);
+				double aux=variation-previousV;
+				y2Di=y2Di-increaseV*aux;
+				y2Df=y2Df-increaseV*aux;
+			}
 		}
-		if (previousV>variation)  //Moviendo vertical hacia abajo
+		if (previousV>variation)  
 		{
-			double aux=previousV-variation;
-			y2Di=y2Di+0.1*aux;
-			y2Df=y2Df+0.1*aux;
+			if(variation!=0)
+			{
+				float increaseV=(border-y2Df)/(variation);
+				double aux=previousV-variation;
+				y2Di=y2Di+increaseV*aux;
+				y2Df=y2Df+increaseV*aux;
+			}
 		}
 		previousV=variation;
-		
 	}
 
 	if (horizontal==true)
 	{
-		if (previousH<variation)  //Moviendo horizontal hacia derecha
+		if (previousH<variation) 
 		{
-			double aux=variation-previousH;
-			x2Di=x2Di+0.1*aux;
-			x2Df=x2Df+0.1*aux;
+			if (variation!=100)
+			{
+				float increaseH=(border-x2Df)/(100-variation);
+				double aux=variation-previousH;
+				x2Di=x2Di+increaseH*aux;
+				x2Df=x2Df+increaseH*aux;
+			}
 		}
-		if (previousH>variation)  //Moviendo horizontal hacia izquierda
+		if (previousH>variation)  
 		{
-			double aux=previousH-variation;
-			x2Di=x2Di-0.1*aux;
-			x2Df=x2Df-0.1*aux;
+			if(variation!=0)
+			{
+				float increaseH=(border+x2Di)/(variation);
+				double aux=previousH-variation;
+				x2Di=x2Di-increaseH*aux;
+				x2Df=x2Df-increaseH*aux;
+			}
 		}
 		previousH=variation;
 	}
-
 
 	DrawScene2D();
 }
@@ -930,3 +944,42 @@ bool DesignMine::Intersection(float Sx1,float Sx2,float Sy1,float Sy2,float Qx1,
 	if (((Smax.x >= Qmin.x)&&(Qmax.x>=Smin.x)&&(Smax.y>=Qmin.y)&&(Qmax.y>=Smin.y))) intersection=true;
 	return intersection;
 }
+
+
+void DesignMine::InitializeCanvas(int selection)
+{
+	previousH=50;
+	previousV=50;
+	previousZoom=1;
+	zoom=1;
+	if(selection==0)
+	{
+		SetCanvasSize(-5,5,-5,5);
+		SetView(-5,5,-5,5);
+		border=5;
+	}
+
+	if(selection==1)
+	{
+		SetCanvasSize(-10,10,-10,10);
+		SetView(-10,10,-10,10);
+		border=10;
+	}
+
+	if(selection==2)
+	{
+		SetCanvasSize(-2.5,2.5,-2.5,2.5);
+		SetView(-2.5,2.5,-2.5,2.5);
+		border=2.5;
+	}
+
+	if(selection==3)
+	{
+		SetCanvasSize(-25,25,-25,25);
+		SetView(-25,25,-25,25);
+		border=25;
+	}
+}
+
+
+
