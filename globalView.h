@@ -24,6 +24,8 @@
 #include "bitmaps/align.xpm"
 #include "bitmaps/SceneSize.xpm"
 #include "bitmaps/DesignSize.xpm"
+#include "bitmaps/CancelIcon.xpm"
+#include "bitmaps/AcceptIcon.xpm"
 
 
 DECLARE_EVENT_TYPE(wxEVT_EDIT_CLOSED, -1)
@@ -53,7 +55,7 @@ public:
 	void ChangePolygonPosition(wxCommandEvent& event);
 	void ManagePoints(bool addPoint=true, bool changePoint=false, bool deletePoint=false, int deleteRow=0);
 	void OnClose(wxCloseEvent& event);
-	void LoadFace(Face* loaded);
+	void LoadFace(Face loaded);
 	Face* GetFace(){return face;};
 	void ManageButtons(wxCommandEvent& event);
 	void OnPaint(wxPaintEvent& event);
@@ -62,6 +64,7 @@ public:
 	void PasteDesign(vector<Vector2D> CopiedFace);
 	void SetCanvasSize(wxCommandEvent& event);
 	void UpdateSlidersValues();
+	void ManageSliders();
 
 
 private:
@@ -75,7 +78,8 @@ private:
 	wxSlider *slidZoom;
 	Face *face;
 	wxWindow* window;
-	wxButton* Finish,*Cancel;
+	wxBitmapButton* Accept,*Cancel;
+	int newSize;
 	wxTextCtrl *ZoomValue;
 	bool initializing;
 	int xSize,ySize;

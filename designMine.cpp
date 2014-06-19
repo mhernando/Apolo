@@ -731,8 +731,8 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						{
 							difx=abs(x-points[i].x);
 							dify=abs(y-points[i].y);
-
-							if((abs(difx)<0.3)&&(abs(dify)<0.3)&&(aux==false))
+							float rang=0.3*border/(10*zoom);
+							if((abs(difx)<rang)&&(abs(dify)<rang)&&(aux==false))
 							{
 								aux=true;
 
@@ -946,40 +946,65 @@ bool DesignMine::Intersection(float Sx1,float Sx2,float Sy1,float Sy2,float Qx1,
 }
 
 
-void DesignMine::InitializeCanvas(int selection)
+void DesignMine::InitializeCanvas(int selection,bool personalval)
 {
 	previousH=50;
 	previousV=50;
 	previousZoom=1;
 	zoom=1;
-	if(selection==0)
+	if (personalval==false)
 	{
-		SetCanvasSize(-5,5,-5,5);
-		SetView(-5,5,-5,5);
-		border=5;
-	}
+		switch (selection)
+		{
+			case 0:
+			{
+				SetCanvasSize(-5,5,-5,5);
+				SetView(-5,5,-5,5);
+				border=5;
+				break;
+			}
 
-	if(selection==1)
-	{
-		SetCanvasSize(-10,10,-10,10);
-		SetView(-10,10,-10,10);
-		border=10;
-	}
+			case 1:
+			{
+				SetCanvasSize(-10,10,-10,10);
+				SetView(-10,10,-10,10);
+				border=10;
+				break;
+			}	
 
-	if(selection==2)
-	{
-		SetCanvasSize(-2.5,2.5,-2.5,2.5);
-		SetView(-2.5,2.5,-2.5,2.5);
-		border=2.5;
-	}
+			case 2:
+			{
+				SetCanvasSize(-2.5,2.5,-2.5,2.5);
+				SetView(-2.5,2.5,-2.5,2.5);
+				border=2.5;
+				break;
+			}
 
-	if(selection==3)
+			case 3:
+			{
+				SetCanvasSize(-25,25,-25,25);
+				SetView(-25,25,-25,25);
+				border=25;
+			}
+		}
+	}
+	else 
 	{
-		SetCanvasSize(-25,25,-25,25);
-		SetView(-25,25,-25,25);
-		border=25;
+		SetCanvasSize(-selection,selection,-selection,selection);
+		SetView(-selection,selection,-selection,selection);
+		border=selection;
 	}
 }
 
+bool DesignMine::getCompleteViewV()
+{
+	if((y2Df==border)&&(y2Di==-border)) return true;
+	else return false;
+}
 
+bool DesignMine::getCompleteViewH()
+{
+	if((x2Df==border)&&(x2Di==-border)) return true;
+	else return false;
+}
 

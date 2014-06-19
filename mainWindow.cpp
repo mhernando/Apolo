@@ -60,7 +60,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_SAVEOBJXML, MainWindow::OnSaveObjectXML)
 	EVT_MENU(ID_SAVEWORLDXML, MainWindow::OnSaveWorldXML)
 	EVT_MENU(ID_SHOWEDITXML, MainWindow::showXMLEditor)
-	EVT_COMMAND(wxID_ANY,wxEVT_XMLPANEL_CLOSED,MainWindow::CloseXMLEditor)
 	EVT_COMMAND(wxID_ANY,wxEVT_EDIT_CLOSED,MainWindow::CloseEditConsole)
 	EVT_MENU(ID_DELETE, MainWindow::OnDeleteWorld)
 	EVT_MENU(ID_DRAWBOX,MainWindow::ShowSelection)
@@ -120,10 +119,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_BUTTON(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
-	EVT_MENU(ID_UPDATEXML, MainWindow::UpdateXMLEdit)
-	EVT_COMBOBOX(ID_SELECTW,MainWindow::UpdateSelectedWorld)
-	EVT_COMMAND(wxID_ANY,wxEVT_SELECTED_ITEM,MainWindow::getItemXML)
-	EVT_BUTTON(ID_SHOWWORLDXML, MainWindow::UpdateSelectedWorld)
 END_EVENT_TABLE()
 
 
@@ -189,8 +184,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	//make a Aui Notebook
 	note = new wxAuiNotebook(s, wxID_ANY,wxDefaultPosition,wxDefaultSize, wxAUI_NB_TOP  | wxAUI_NB_TAB_SPLIT | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_TAB_EXTERNAL_MOVE);
 	tree = new Tree(note, ID_TREE);
-	edit=new PanelXML(this,wxID_ANY,wxT("Edit XML"));
+	CreatePanelXML();
 	tree->m_mainWin = this;	
+	tree->XMLPanel=NULL;
 	m_root = tree->AddRoot(wxT("Universe"), 0, 47, new TreeItemData(wxT("Root item")));
 	tree->Parent(m_root);
 
@@ -702,7 +698,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		view->Show(true);
 		editionVisible=true;
 		view->MakeModal(true);
-		view->LoadFace(&itemData->pointer.prismaticpart->getPolygonalBase());
+		view->LoadFace(itemData->pointer.prismaticpart->getPolygonalBase());
 		return;
 	}
 
@@ -710,19 +706,17 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	{
 		vsele->Show(false);
 		vsele->MakeModal(false);
-		vsele->getFacePSelected()->setColor(1,1,1,0);
 		view=new globalView(this,wxID_ANY,wxT("Edit"));
 		view->Show(true);
 		editionVisible=true;
 		view->MakeModal(true);
-		view->LoadFace(vsele->getFacePSelected());
+		view->LoadFace(*(vsele->getFaceSelected()));
 	}
 
 	if(id==ID_CANCELSELECTION)
 	{
 		vsele->Show(false);
 		editionVisible=false;
-		vsele->getFacePSelected()->setColor(1,1,1,0);
 		vsele->MakeModal(false);
 	}
 
@@ -736,15 +730,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 
 	if ((id==ID_ADDOWNFACE)&&(typ==1))
 	{
-		for(int i=itemData->pointer.facesetpart->getFaceP_I(vsele->numSelected())->getNumVertex()-1;i>=0;i--)
-		{
-			itemData->pointer.facesetpart->getFaceP_I(vsele->numSelected())->deleteVertex(i);
-		}
-		
-		for(int i=0;i<view->GetScreen2D()->NumPoints();i++)
-		{
-			itemData->pointer.facesetpart->getFaceP_I(vsele->numSelected())->addVertex(view->GetScreen2D()->GetVector()[i].x,view->GetScreen2D()->GetVector()[i].y);
-		}
+		itemData->pointer.facesetpart->ModifyFace(vsele->numSelected(),*(view->GetFace()));
 		view->Show(false);
 		view->MakeModal(false);
 		editionVisible=false;
@@ -1603,243 +1589,25 @@ void MainWindow::CopyPasteDesign(wxCommandEvent& event)
 }
 
 
+void MainWindow::CreatePanelXML()
+{
+	edit=new PanelXML(this,wxID_ANY,wxT("XML Edition"),tree);
+}
+
+
 void MainWindow::showXMLEditor(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	if (id==ID_SHOWEDITXML)
-	{	
-		edit->MakeModal(true);
-		edit->setState(0);
-		
-		if(xmlEditorVisible==false)
-		{
-			if(listWorlds.size()>0)
-			{
-				for(int i=0;i<listWorlds.size();i++)
-				{
-					bool aux=false;
-					wxString w(listWorlds[i]->getName());
-					for(int j=0;j<edit->getChoices().size();j++)
-					if(w==edit->getChoices()[j])aux=true;
-					if (aux==false) edit->AddWorld(w);
-				}
-				edit->SetWorld(0);
-				XMLfile xml_file("doc");
-				xml_file.write(listWorlds[0]->getWorld());
-				XML* aux(xml_file.getXML());
-				xml_file.save();
-				wxArrayString Items;
-				World* w=listWorlds[0]->getWorld();
-				for(int i=0;i<w->getNumObjects();i++)
-				{
-					string aux=(*w)[i]->getName();
-					Items.Add(aux);
-				}
-				edit->UpdateObjetcsList(Items);
-				wxXmlDocument* docu=new wxXmlDocument(); 
-				if(docu->Load(wxT("doc"),"UTF-8",wxXMLDOC_KEEP_WHITESPACE_NODES));
-				wxString sData;
-				wxStringOutputStream Stream(&sData);
-				docu->Save(Stream,wxXML_NO_INDENTATION);
-				edit->getTextCtrl()->Clear();
-				edit->InsertText(sData);
-				edit->Show(true);
-				xmlEditorVisible=true;
-			}
-			else
-			{
-				edit->Show(true);
-				xmlEditorVisible=true;
-			}
-		}
-		else 
-		{
-			edit->Show(false);
-			xmlEditorVisible=false;
-		}
+	{
+		edit->ShowPanel();
 	}
 }
 
 
-void MainWindow::CloseXMLEditor(wxCommandEvent& event)
-{
-	xmlEditorVisible=false;
-	edit->MakeModal(false);
-}
 
 
-void MainWindow::UpdateXMLEdit(wxCommandEvent& event)
-{
-	if(edit->getState()==0) //Modify an existing world
-	{
-		getWorldToUpdate();
-		SimulatedWorld* first=listWorlds[worldSel];
-		XMLElement *parent=new XMLElement();
-		edit->Show(false);
-		wxString cont=edit->getContent();
-		wxStringInputStream Stream(cont);
-		wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
-		if(m_pXmlDocument->Load(Stream))
-		{
-			m_pXmlDocument->Save("doc");
-			XMLfile xml_file("doc");
-			Object *test1 = xml_file.load("doc");
-			World *test2 = dynamic_cast<World *>(test1);
-			test2->writeToXML(parent);
-			listWorlds[worldSel]->getWorld()->readFromXML(parent);
-			listWorlds[worldSel]->getTree()->UpdateTree(listWorlds[worldSel]);
-			edit->setState(0);
-			edit->Clear();
-			edit->Show(false);
-			xmlEditorVisible=false;
-			edit->MakeModal(false);
-		}
-		else edit->Show(true);
-	}
 
-	if(edit->getState()==1)//Creating a new world
-	{
-		edit->Show(false);
-		wxString cont=edit->getContent();
-		wxStringInputStream Stream(cont);
-		wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
-		if(m_pXmlDocument->Load(Stream))
-		{
-			m_pXmlDocument->Save("doc");
-			XMLfile xml_file("doc");
-			Object *test1 = xml_file.load("doc");
-			World *test2 = dynamic_cast<World *>(test1);
-			simuWorld=new SimulatedWorld(test2);
-			listWorlds.push_back(simuWorld);
-			edit->setState(0);
-			edit->Clear();
-			edit->Show(false);
-			xmlEditorVisible=false;
-			edit->MakeModal(false);
-		}
-		else edit->Show(true);
-	}
-
-
-	if(edit->getState()==2)  //Modify an existing Entity
-	{
-		getWorldToUpdate();
-		wxString cont=edit->getContent();
-		wxStringInputStream Stream(cont);
-		wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
-		XMLElement *parent=new XMLElement();
-		int EntityIndex=edit->getSelection();
-		if(m_pXmlDocument->Load(Stream))
-		{
-			m_pXmlDocument->Save("doc");
-			XMLfile xml_file("doc");
-			Object *test1 = xml_file.load("doc");
-			test1->writeToXML(parent);
-			((*listWorlds[worldSel]->getWorld())[EntityIndex])->readFromXML(parent);
-			listWorlds[worldSel]->getChild()->UpdateWorld();
-			tree->UpdateTree(listWorlds[worldSel]);
-			edit->setState(0);
-			edit->Clear();
-			edit->Show(false);
-			xmlEditorVisible=false;
-			edit->MakeModal(false);
-		}
-		else edit->Show(true);
-	}
-
-	if(edit->getState()==3)  //Creating a new Entity
-	{
-		getWorldToUpdate();
-		wxString cont=edit->getContent();
-		wxStringInputStream Stream(cont);
-		wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
-		XMLElement *parent=new XMLElement();
-		int EntityIndex=edit->getSelection();
-		if(m_pXmlDocument->Load(Stream))
-		{
-			m_pXmlDocument->Save("doc");
-			XMLfile xml_file("doc");
-			Object *obj= xml_file.load("doc");
-			PositionableEntity* p_obj = dynamic_cast<PositionableEntity *>(obj);
-			if(obj)
-			{
-				(*listWorlds[worldSel]->getWorld())+=p_obj;
-				listWorlds[worldSel]->getChild()->UpdateWorld();
-				tree->AddNode(p_obj, listWorlds[worldSel]->getTreeItem(),listWorlds[worldSel]);
-			}
-			edit->setState(0);
-			edit->Clear();
-			edit->Show(false);
-			xmlEditorVisible=false;
-			edit->MakeModal(false);
-		}
-		else edit->Show(true);
-	}
-}
-
-
-void MainWindow::UpdateSelectedWorld(wxCommandEvent& event)
-{
-	if(listWorlds.size()>0)
-	{
-		edit->setState(0);
-		getWorldToUpdate();
-		XMLfile xml_file("doc");
-		xml_file.write(listWorlds[worldSel]->getWorld());
-		xml_file.save();
-		wxXmlDocument* docu=new wxXmlDocument();
-		if(docu->Load(wxT("doc"), "UTF-8",wxXMLDOC_KEEP_WHITESPACE_NODES));
-		wxString sData;
-		wxStringOutputStream Stream(&sData);
-		docu->Save(Stream,wxXML_NO_INDENTATION);
-		edit->getTextCtrl()->Clear();
-		edit->InsertText(sData);
-		wxArrayString Items;
-		World* w=listWorlds[worldSel]->getWorld();
-		for(int i=0;i<w->getNumObjects();i++)
-		{
-			string aux=(*w)[i]->getName();
-			Items.Add(aux);
-		}
-		edit->UpdateObjetcsList(Items);
-	}
-}
-
-int MainWindow::getWorldToUpdate()
-{
-	if(listWorlds.size()>0)
-	{
-		wxString wo=edit->getWorld();
-		for(int i=0;i<listWorlds.size();i++)
-		{
-			wxString aux(listWorlds[i]->getName());
-			if(wo==aux)
-			{
-				worldSel=i;
-			}
-		}
-		return worldSel;
-	}
-}
-
-void MainWindow::getItemXML(wxCommandEvent& event)
-{
-		getWorldToUpdate();
-		int index=edit->getSelection();
-		XMLfile xml_file("doc");
-		World* w=listWorlds[worldSel]->getWorld();
-		xml_file.write((*w)[index]);
-		xml_file.save();
-		wxXmlDocument* docu=new wxXmlDocument();
-		if(docu->Load(wxT("doc"), "UTF-8",wxXMLDOC_KEEP_WHITESPACE_NODES));
-		wxString sData;
-		wxStringOutputStream Stream(&sData);
-		docu->Save(Stream,wxXML_NO_INDENTATION);
-		edit->getTextCtrl()->Clear();
-		edit->InsertText(sData);
-		wxString aux=(*w)[index]->getName();
-		edit->updateEntity(aux);
-}
 
 
 

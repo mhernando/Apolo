@@ -38,14 +38,14 @@ PointsList::PointsList(wxWindow *window,const wxString label ,const wxPoint& pos
 void PointsList::CreatePanel()
 {
 
-	 wxBoxSizer *pbox=new wxBoxSizer(wxVERTICAL);
-	 wxStaticBoxSizer *cbox=new wxStaticBoxSizer(wxVERTICAL,this,name);
-
+	wxBoxSizer *pbox=new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *cbox=new wxStaticBoxSizer(wxVERTICAL,this,name);
+	wxColour colour(140,160,230);
 	grid=new wxGrid( this, -1, wxDefaultPosition,wxDefaultSize);
-	grid->SetDefaultColSize(54,true);
+	grid->SetDefaultColSize(60,true);
 	grid->SetDefaultCellBackgroundColour(*wxWHITE);
 	grid->CreateGrid(1,2);
-	grid->SetLabelBackgroundColour(*wxCYAN);
+	grid->SetLabelBackgroundColour(*wxWHITE);
 	grid->SetColLabelValue(0,wxT("X"));
 	grid->SetColLabelValue(1,wxT("Y"));
 	grid->SetColLabelSize(wxGRID_AUTOSIZE);
@@ -54,7 +54,7 @@ void PointsList::CreatePanel()
 	
 	if(name==wxEmptyString)
 	{
-		pbox->Add(grid,0);
+		pbox->Add(grid,5,wxEXPAND);
 		SetSizer(pbox);
 	}
 	else
@@ -90,7 +90,7 @@ void PointsList::OnChange(wxGridEvent& event)
 
 void PointsList::SetVertex(int r)
 {
-	
+		wxColour colour(193,221,224);
 		if(grid->GetCellValue(r,0)!=wxEmptyString && grid->GetCellValue(r,1)!=wxEmptyString) 
 		{
 			if(col==0) // We do this to overwrite te cell values if you select a point from the 2D map,
@@ -103,8 +103,8 @@ void PointsList::SetVertex(int r)
 			value=grid->GetCellValue(r,1);
 			value.ToDouble(&lastPoint.y);
 			value.Clear();
-			grid->SetCellBackgroundColour(r,0,*wxGREEN);
-			grid->SetCellBackgroundColour(r,1,*wxGREEN);
+			grid->SetCellBackgroundColour(r,0,colour);
+			grid->SetCellBackgroundColour(r,1,colour);
 			
 			
 			grid->SetReadOnly(row,0);
@@ -410,18 +410,18 @@ void PointsList::DeletePoints()
 {
 	if(grid->GetNumberRows()>0)
 	{
-		for(int i=grid->GetNumberRows()-1;i>=0;i--)
+		for(int i=grid->GetNumberRows()-1;i>0;i--)
 		{
 			grid->DeleteRows(i,1);
-			row--;
 		}
-			facesAssociated=false;
-			designAssociated=true;
-			col=0;
-			row=0;
-			auxrow=0;
-			CreatePanel();
+		grid->SetCellBackgroundColour(0,0,*wxWHITE);
+		grid->SetCellBackgroundColour(0,1,*wxWHITE);
+		facesAssociated=false;
+		designAssociated=true;
+		grid->ClearGrid();
+		col=0;
+		row=0;
+		auxrow=0;
 	}
-
 }
 

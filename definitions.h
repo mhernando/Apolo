@@ -165,6 +165,7 @@
 #define ID_SHOWWORLDXML 4059
 #define ID_SAVEXMLEDIT 4060
 #define ID_SETSIZE 4061
+#define ID_SELECTLISTEDITEM 4062
 
 
 // Define  for wxwigets reseved 50XX

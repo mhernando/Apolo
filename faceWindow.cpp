@@ -163,7 +163,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 
 void FaceWindow::AddFace()
 {
-	node->pointer.facesetpart->addFace((*canvas->GetView()->GetFace()));
+	node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
 	canvas->GetCanvas3d()->ClearObjects();
 	canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 	roll->setValue(0);

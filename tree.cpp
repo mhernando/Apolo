@@ -5,7 +5,7 @@
 BEGIN_EVENT_TABLE(Tree, wxTreeCtrl)
 	EVT_TREE_ITEM_MENU(ID_TREE, Tree::OnItemMenu)
 	EVT_TREE_SEL_CHANGED(ID_TREE,Tree::ShowSelection)
-	EVT_LEFT_DCLICK(Tree::OnShowCanvas)
+	EVT_LEFT_DCLICK(Tree::ManageTreeSelection)
 	EVT_MOTION(Tree::ControlMouse)
 END_EVENT_TABLE()
 
@@ -74,6 +74,7 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	sel=false;
 	showLinks=false;
 	PreviousitemId=NULL;
+	num=0;
 }
 
 
@@ -94,7 +95,6 @@ void Tree::Parent(wxTreeItemId r)
 
 wxTreeItemId Tree::GenerateSubTree(SimulatedWorld* simu)
 {
-	static int num = 0;
 	World* w=simu->getWorld();
 	text.Printf(wxT("World %d"),++num);
 	NodeTree *auxW = new NodeTree(simu);
@@ -130,7 +130,7 @@ NodeTree* Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWo
 
 void Tree::OnItemMenu(wxTreeEvent& event)
 {
-	if(m_mainWin->getState()==0)
+	if(m_mainWin->GetState()==0)
 	{
 	wxTreeItemId itemId = GetSelection();
 	itemId = event.GetItem();
@@ -322,42 +322,65 @@ bool Tree::CheckLink(PositionableEntity* selected,PositionableEntity* n)
 
 
 
-void Tree::OnShowCanvas(wxMouseEvent& event)
+void Tree::ManageTreeSelection(wxMouseEvent& event)
 {
-	if (m_mainWin->GetState()==0)
+	if(XMLPanel!=NULL)
 	{
-	wxTreeItemId itemId;
-
-	if( GetSelection()==root)
-		return;
-	else
-		itemId=GetSelection();
-
-	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
-	if(itemId.IsOk())
-	{
-		if(itemData->getTipo()==N_World)
+		if(XMLPanel->IsShown()) 
 		{
-			if(!itemData->getSimu()->getChild()->IsShown())
-				itemData->getSimu()->getChild()->Show();
-			wxLogStatus(wxT("Item seleccionado"));
-			itemData->getSimu()->getChild()->Maximize(!itemData->getSimu()->getChild()->IsMaximized());
-			itemData->getSimu()->getChild()->Update();
-		}
-		else
-		{
-			if(itemData->pointer.solidentity)
+			wxTreeItemId itemId;
+			if( GetSelection()==root)
+				return;
+			else
+				itemId=GetSelection();
+
+			NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+			if (itemData->getTipo()==N_World) 
 			{
-				bool box=itemData->pointer.solidentity->getDrawBox();
-				itemData->pointer.solidentity->setDrawBox(!box);
-				itemData->getSimu()->getChild()->Refresh();
+				XMLPanel->SetInformationFromTree(itemData,N_World);
+			}
+			else 
+			{
+				XMLPanel->SetInformationFromTree(itemData,N_PositionableEntity);
 			}
 		}
 	}
-	else  wxLogStatus(wxT("No item under mouse"));
 
-	event.StopPropagation();
-	}
+	else 
+	{
+		if (m_mainWin->GetState()==0)
+		{
+			wxTreeItemId itemId;
+
+			if( GetSelection()==root)
+				return;
+			else
+				itemId=GetSelection();
+				NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+				if(itemId.IsOk())
+				{
+					if(itemData->getTipo()==N_World)
+					{
+						if(!itemData->getSimu()->getChild()->IsShown())
+						itemData->getSimu()->getChild()->Show();
+						wxLogStatus(wxT("Item seleccionado"));
+						itemData->getSimu()->getChild()->Maximize(!itemData->getSimu()->getChild()->IsMaximized());
+						itemData->getSimu()->getChild()->Update();
+					}
+					else
+					{
+						if(itemData->pointer.solidentity)
+						{
+							bool box=itemData->pointer.solidentity->getDrawBox();
+							itemData->pointer.solidentity->setDrawBox(!box);
+							itemData->getSimu()->getChild()->Refresh();
+						}
+					}
+				}
+				else  wxLogStatus(wxT("No item under mouse"));
+
+			event.StopPropagation();
+		}
 	
 	
 	if (m_mainWin->GetState()==1)
@@ -409,6 +432,7 @@ void Tree::OnShowCanvas(wxMouseEvent& event)
 			}
 			else wxSetCursor(wxCURSOR_NO_ENTRY);
 		}	
+	}
 	}
 }
 
@@ -565,16 +589,19 @@ void Tree::ShowSelection(wxTreeEvent& event)
 }
 
 
-	
+
 void Tree::ControlMouse(wxMouseEvent& event)
 {
-	if(m_mainWin->getState()==1)
+	if(m_mainWin!=NULL)
 	{
-		wxSetCursor(wxCURSOR_POINT_LEFT);
+		if(m_mainWin->GetState()==1)
+		{
+			wxSetCursor(wxCURSOR_POINT_LEFT);
+		}
+		else wxSetCursor(wxCURSOR_ARROW);
 	}
-	else wxSetCursor(wxCURSOR_ARROW);
-
 }
+
 	
 
 void Tree::RestoreItemImage(wxTreeItemId Id)
