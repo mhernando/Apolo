@@ -33,9 +33,9 @@ END_EVENT_TABLE()
 
 
 PanelXML::PanelXML(wxWindow *parent,wxWindowID id,const wxString& title,Tree* tr)
-: wxFrame(parent,wxID_ANY,title,wxDefaultPosition, wxSize(990,580),wxSTAY_ON_TOP | wxCAPTION | wxCLOSE_BOX)
+: wxFrame(parent,wxID_ANY,title,wxDefaultPosition, wxSize(990,680),wxSTAY_ON_TOP | wxCAPTION | wxCLOSE_BOX)
 {
-	panel=new wxPanel(this,wxID_ANY,wxDefaultPosition,wxSize(990,580));
+	panel=new wxPanel(this,wxID_ANY,wxDefaultPosition,wxSize(990,680));
 	tree=tr;
 	CreatePanel();
 	state=0;
@@ -65,7 +65,7 @@ void PanelXML::CreatePanel()
 	wxBoxSizer *L=new wxBoxSizer(wxVERTICAL);
 	edit=new wxBoxSizer(wxHORIZONTAL);
 
-	ItemsList=new wxListCtrl(panel, ID_SELECTLISTEDITEM, wxDefaultPosition, wxSize(260,430), wxLC_REPORT|wxLC_SINGLE_SEL);
+	ItemsList=new wxListCtrl(panel, ID_SELECTLISTEDITEM, wxDefaultPosition, wxSize(260,680), wxLC_REPORT|wxLC_SINGLE_SEL);
 	ItemsList->SetBackgroundColour(wxColour(160,250,180));
 	wxListItem col0;
     col0.SetId(0);
@@ -86,7 +86,7 @@ void PanelXML::CreatePanel()
 	EntityName=new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(150,20),wxTE_READONLY);
 	selectW->Create(panel,ID_SELECTW,wxEmptyString,wxDefaultPosition,wxSize(110,20),Choices,wxCB_DROPDOWN);
 	InitToolbars();
-	textCtrl=new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(490,520),wxTE_MULTILINE|wxTE_LEFT|wxHSCROLL|wxTE_RICH2);
+	textCtrl=new wxTextCtrl(panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(490,620),wxTE_MULTILINE|wxTE_LEFT|wxHSCROLL|wxTE_RICH2);
 	wxStaticBitmap* objectsIcon=new wxStaticBitmap(panel,wxID_ANY,icons[1],wxDefaultPosition,wxDefaultSize);
 	
 	EntityName->SetFont(EntFont);
@@ -437,15 +437,18 @@ void PanelXML::SelectItemInList(wxListEvent& event)
 	int Itemsnum;
 	Itemsnum=ItemsList->GetItemCount();
 	int id=event.GetId();
-	if (id==ID_SELECTLISTEDITEM)
+	if((state==0)||(state==5))
 	{
-		long itemIndex=-1;
-		itemIndex = ItemsList->GetNextItem(itemIndex, wxLIST_NEXT_ALL,wxLIST_STATE_SELECTED);
-		if (itemIndex == -1) return;
-		state=2; 
-		selectedItem=Itemsnum-itemIndex-1;
-		EntityName->SetBackgroundColour(wxColour(140,255,180));
-		getItemXML();
+		if (id==ID_SELECTLISTEDITEM)
+		{
+			long itemIndex=-1;
+			itemIndex = ItemsList->GetNextItem(itemIndex, wxLIST_NEXT_ALL,wxLIST_STATE_SELECTED);
+			if (itemIndex == -1) return;
+			state=2; 
+			selectedItem=Itemsnum-itemIndex-1;
+			EntityName->SetBackgroundColour(wxColour(140,255,180));
+			getItemXML();
+		}
 	}
 }
 
@@ -547,46 +550,36 @@ void PanelXML::TreatXMLText(char *XMLText)
 bool PanelXML::CheckDeclaredElement(string ele)
 {
 	vector <string> elements;
-	string world("World");
-	string prismatic("PrismaticPart");
-	string faceset("FaceSetPart");
-	string vertex("vertex");
-	string face("face");
-	string spherepart("SpherePart"); 
-	string colour("colour");
-	string worldE("/World");
-	string prismaticE("/PrismaticPart");
-	string facesetE("/FaceSetPart");
-	string vertexE("/vertex");
-	string faceE("/face");
-	string spherepartE("/SpherePart"); 
-	string colourE("/colour");
-	string position("position");
-	string positionE("/position");
-	string orientation("orientation");
-	string orientationE("/orientation");
-	string SimpleJoint("SimpleJoint");
-	string SimpleJointE("/SimpleJoint");
-	elements.push_back(faceset);
-	elements.push_back(prismatic);
-	elements.push_back(world);
-	elements.push_back(vertex);
-	elements.push_back(face);
-	elements.push_back(spherepart);
-	elements.push_back(colour);
-	elements.push_back(facesetE);
-	elements.push_back(prismaticE);
-	elements.push_back(worldE);
-	elements.push_back(vertexE);
-	elements.push_back(faceE);
-	elements.push_back(spherepartE);
-	elements.push_back(colourE);
-	elements.push_back(position);
-	elements.push_back(positionE);
-	elements.push_back(orientation);
-	elements.push_back(orientationE);
-	elements.push_back(SimpleJoint);
-	elements.push_back(SimpleJointE);
+	string world("World"); elements.push_back(world);
+	string worldE("/World"); elements.push_back(worldE);
+	string prismatic("PrismaticPart"); 	elements.push_back(prismatic);
+	string prismaticE("/PrismaticPart"); elements.push_back(prismaticE);
+	string faceset("FaceSetPart"); elements.push_back(faceset);
+	string facesetE("/FaceSetPart"); elements.push_back(facesetE);
+	string vertex("vertex"); elements.push_back(vertex);
+	string vertexE("/vertex"); elements.push_back(vertexE);
+	string face("face"); elements.push_back(face);
+	string faceE("/face"); elements.push_back(faceE);
+	string spherepart("SpherePart"); elements.push_back(spherepart);
+	string spherepartE("/SpherePart"); elements.push_back(spherepartE);
+	string colour("colour"); elements.push_back(colour);
+	string colourE("/colour"); elements.push_back(colourE);
+	string position("position"); elements.push_back(position);
+	string positionE("/position"); elements.push_back(positionE);
+	string orientation("orientation"); elements.push_back(orientation);
+	string orientationE("/orientation"); elements.push_back(orientationE);
+	string SimpleJoint("SimpleJoint"); elements.push_back(SimpleJoint);
+	string SimpleJointE("/SimpleJoint"); elements.push_back(SimpleJointE);
+	string CylindricalPart("CylindricalPart");elements.push_back(CylindricalPart);
+	string CylindricalPartE("/CylindricalPart");elements.push_back(CylindricalPartE);
+	string Asea("AseaIRB2000Sim");	elements.push_back(Asea);
+	string AseaE("/AseaIRB2000Sim"); elements.push_back(AseaE);
+	string Puma("Puma560Sim"); elements.push_back(Puma);
+	string PumaE("/Puma560Sim"); elements.push_back(PumaE);
+	string Composed("ComposedEntity"); elements.push_back(Composed);
+	string ComposedE("/ComposedEntity"); elements.push_back(ComposedE);
+	string Scara("AdeptOneSim"); elements.push_back(Scara);
+	string ScaraE("/AdeptOneSim"); elements.push_back(ScaraE);
 
 	for(int i=0;i<elements.size();i++)
 	{
@@ -598,34 +591,21 @@ bool PanelXML::CheckDeclaredElement(string ele)
 bool PanelXML::CheckDeclaredAttribute(string attr)
 {
 	vector <string> attributes;
-	string name("name");
-	string height("height");
-	string id("id");
-	string red("r");
-	string blue("b");
-	string green("g");
-	string radius("radius");
-	string axis("axis");
-	string factor("factor");
-	string prisamtic("prismatic");
-	string value("value");
-	string vmax("vmax");
-	string vmin("vmin");
-	string offset("offset");
-	attributes.push_back(name);
-	attributes.push_back(height);
-	attributes.push_back(id);
-	attributes.push_back(red);
-	attributes.push_back(blue);
-	attributes.push_back(green);
-	attributes.push_back(radius);
-	attributes.push_back(axis);
-	attributes.push_back(factor);
-	attributes.push_back(prisamtic);
-	attributes.push_back(value);
-	attributes.push_back(vmax);
-	attributes.push_back(vmin);
-	attributes.push_back(offset);
+	string name("name"); attributes.push_back(name);
+	string height("height"); attributes.push_back(height);
+	string id("id"); attributes.push_back(id);
+	string red("r"); attributes.push_back(red);
+	string blue("b"); attributes.push_back(blue);
+	string green("g"); attributes.push_back(green);
+	string radius("radius"); attributes.push_back(radius);
+	string axis("axis"); attributes.push_back(axis);
+	string factor("factor"); attributes.push_back(factor);
+	string prisamtic("prismatic"); attributes.push_back(prisamtic);
+	string value("value"); attributes.push_back(value);
+	string vmax("vmax"); attributes.push_back(vmax);
+	string vmin("vmin");attributes.push_back(vmin);
+	string offset("offset"); attributes.push_back(offset);
+	string linkto("linkTo"); attributes.push_back(linkto);
 
 	for(int i=0;i<attributes.size();i++)
 	{
@@ -647,15 +627,17 @@ void PanelXML::CreateTree()
 
 void PanelXML::UpdateTreeView()
 {
-	treevisible->SetWorldsNum(0);
-	treevisible->DeleteChildren(m_root);
 	if(tree->m_mainWin->listWorlds.size()>0)
 	{
+		treevisible->SetWorldsNum(0);
+		treevisible->DeleteChildren(m_root);
+
 		for(int i=0;i<tree->m_mainWin->listWorlds.size();i++)
 			treevisible->GenerateSubTree(tree->m_mainWin->listWorlds[i]);
+
+		treevisible->Expand(treevisible->GetRootItem());
+		treevisible->Expand(treevisible->GetLastChild(treevisible->GetRootItem()));
 	}
-	treevisible->Expand(treevisible->GetRootItem());
-	treevisible->Expand(treevisible->GetLastChild(treevisible->GetRootItem()));
 }
 
 

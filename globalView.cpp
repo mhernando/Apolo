@@ -436,7 +436,6 @@ void globalView::ManageButtons(wxCommandEvent& event)
 	if (id==ID_ERASEPOINTS)
 	{
 		Screen2D->eraseDesign();
-
 		points->DeletePoints();
 		DeleteFace();
 	}
@@ -487,7 +486,10 @@ void globalView::OnPaint(wxPaintEvent& event)
 
 void globalView::DeleteFace()
 {
-	delete face;
+	for(int i=face->getNumVertex()-1;i>=0;i--)
+	{
+		face->deleteVertex(i);
+	}
 }
 
 void globalView::PasteDesign(vector<Vector2D> CopiedFace)
