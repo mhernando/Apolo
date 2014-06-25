@@ -6,6 +6,7 @@
 #include "childView.h"
 #include "nodeTree.h"
 
+
 #include <wx/wx.h>
 #include <wx/treectrl.h>
 #include <wx/event.h>
@@ -58,7 +59,7 @@
 #include "bitmaps/link.xpm"
 #include "bitmaps/link2.xpm"
 
-
+class PanelXML;
 class MainWindow;
 class SimulatedWorld;
 class Tree : public wxTreeCtrl
@@ -68,11 +69,13 @@ private:
 	wxTreeItemId root;
 	wxTreeItemId m_parent;
 	bool sel;
+	int num;
 	bool showLinks;
 	struct m_item {int id; wxString name; wxIcon icon;};
 	wxTreeItemId PreviousitemId;
 	vector<NodeTree*> Nod;
 	DECLARE_EVENT_TABLE();	
+
 
 public:
 	wxTreeItemId GetWorld(wxTreeItemId i);
@@ -87,7 +90,7 @@ public:
 	Tree::m_item SimplyItems(int id,wxString name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);
 	wxTreeItemId GenerateSubTree(ComposedEntity* w,SimulatedWorld* simu);
-	void OnShowCanvas(wxMouseEvent& event);
+	void ManageTreeSelection(wxMouseEvent& event);
 	void ShowSelection(wxTreeEvent& event);
 	void SetShowSelection(bool show){sel=show;};
 	void RestoreItemImage(wxTreeItemId ID);
@@ -98,10 +101,11 @@ public:
 	void EraseMarks();
 	bool ValidateNodeToLink(TypeNode type);
 	void UnlinkNode(SimulatedWorld *sim,PositionableEntity* pos);
+	void SetWorldsNum(int numW){num=numW;}
 
 	
 	MainWindow* m_mainWin;
-
+	PanelXML* XMLPanel;
 };
 
 
@@ -111,6 +115,7 @@ public:
 	TreeItemData(const wxString& dat) : m_dat(dat){}
 private:
 	wxString m_dat;
+	
 
 };
 

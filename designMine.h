@@ -77,7 +77,9 @@ public:
 	bool GetGridState(){return Grid;};
 	void SetGridState(bool state){Grid=state;};
 	void SetCanvasSize(int xi,int xf, int yi,int yf){limXi=xi;limXf=xf;limYi=yi;limYf=yf;};
-	void InitializeCanvas(int selection);
+	void InitializeCanvas(int selection, bool personalval=false);
+	bool getCompleteViewV();
+	bool getCompleteViewH();
 
 	
 

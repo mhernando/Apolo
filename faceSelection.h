@@ -25,8 +25,7 @@ public:
 	void SelectFace(wxSpinEvent& event);
 	void AddFace(int num);
 	void EditFace(wxCommandEvent& event);
-	Face getFaceSelected(){return face;};
-	Face* getFacePSelected(){return dir->getFaceP_I(facesel);};
+	Face* getFaceSelected(){return face;};
 	int numSelected(){return facesel;}
 
 
@@ -35,9 +34,8 @@ private:
 	wxTextCtrl* textCtrl;
 	Canvas *canvas3dG;
 	wxSpinButton* num;
-	FaceSetPart faceset;
 	FaceSetPart* dir;
-	Face face;
+	Face* face;
 	wxButton* ok,*cancel;
 	globalView* ed;
 	int facesetSize;

@@ -136,7 +136,6 @@ public:
 	bool getSliderValue(){return slider;}
 	bool getPopMenuValue(){return popmenu;}
 	bool getDesignValue(){return design_slider;}
-	bool getState(){return state;}
 	wxMenu* getMenuAbout(){return menuAbout;}
 	wxMenu* getMenuSettings(){return menuSettings;}
 	vector <SimulatedWorld *> listWorlds;
@@ -144,14 +143,10 @@ public:
 	void CloseEditConsole(wxCommandEvent& event);
 	bool GetTreeStructureState(){ return treeStruc;}
 	bool GetShowLinksState(){return showLinks;}
-////////
+	void CreatePanelXML();
 	void showXMLEditor(wxCommandEvent& event);
-	void CloseXMLEditor(wxCommandEvent& event);
-	void UpdateXMLEdit(wxCommandEvent& event);
-	void UpdateSelectedWorld(wxCommandEvent& event);
-	int getWorldToUpdate();
-	void getItemXML(wxCommandEvent& event);
-//////
+	
+
 
 	
 private:
@@ -185,7 +180,6 @@ private:
 	ManageWindows*	managewindow;
 	wxColour colour;
 	int state;  //Variable estado para controlar el linkado
-	int worldSel;
 	bool treeStruc,showLinks;
 
 	DECLARE_EVENT_TABLE();

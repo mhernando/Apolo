@@ -1,13 +1,15 @@
 #ifndef __APOLO__PANEL_XML__H
 #define __APOLO__PANEL_XML__H
 
-
+#include "mrcore.h"
+#include "tree.h"
 #include <wx/frame.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/listbox.h>
 #include <wx/wx.h>
+#include <wx/listctrl.h>
 #include "bitmaps/iconsearch.xpm"
 #include "bitmaps/update.xpm"
 #include "bitmaps/selworldxml.xpm"
@@ -18,54 +20,63 @@
 #include "bitmaps/AddXMLEntity.xpm"
 #include "bitmaps/xmlwindow.xpm"
 #include "bitmaps/SaveXMLEdit.xpm"
+#include <wx/laywin.h>
 
 
-DECLARE_EVENT_TYPE(wxEVT_XMLPANEL_CLOSED, -1)  
-DECLARE_EVENT_TYPE(wxEVT_SELECTED_ITEM,-1)
+using namespace std;
 
 
 class PanelXML : public wxFrame
 {
 public:
-	PanelXML(wxWindow *parent,wxWindowID id,const wxString& title);
+	PanelXML(wxWindow *parent,wxWindowID id,const wxString& title,Tree* tree);
 	void CreatePanel();
-	void Controls(wxCommandEvent& event);
-	void InsertText(wxString str);
-	wxTextCtrl* getTextCtrl(){return textCtrl;}
 	void InitToolbars();
-	wxString getContent(){return textCtrl->GetValue();}
-	void Clear(){ textCtrl->Clear();}
-	void AddWorld(const wxString& w);
-	wxString getWorld();
-	void SetWorld(int numW){selectW->SetSelection(numW);}
-	wxArrayString getChoices(){return Choices;}
-	void CreateWorld(wxCommandEvent& event);
-	int getState(){return state;}
-	void setState(int num);
-	void UpdateObjetcsList(wxArrayString ob);
-	void OnClose(wxCloseEvent& event);
-	void SelectItem(wxCommandEvent& event);
-	int getSelection(){return selection;}
-	void CreateNewEntity(wxCommandEvent& event);
-	void updateEntity(wxString name);
+	void Initialize();
 	void ParseXML(wxCommandEvent& event);
 	void SaveXML(wxCommandEvent& WXUNUSED(event));
-
-
-
+	void UpdateXML(wxCommandEvent& event);
+	void getItemXML();
+	void UpdateSelectedWorld(wxCommandEvent& event);
+	void UpdateObjetcsList();
+	void UpdateWorldsList();
+	void ShowPanel();
+	void ManageState();
+	void updateEntity(wxString name);
+	void CreateWorld(wxCommandEvent& event);
+	wxArrayString getChoices(){return Choices;}
+	void SelectItem(wxCommandEvent& event);
+	void OnClose(wxCloseEvent& event);
+	void CreateNewEntity(wxCommandEvent& event);
+	void SelectItemInList(wxListEvent& event);
+	bool CheckDeclaredElement(string ele);
+	bool CheckDeclaredAttribute(string attr);
+	void CreateTree();
+	void TreatXMLText(char * XMLText);
+	void UpdateTreeView();
+	void SetInformationFromTree(NodeTree* nod,TypeNode type);
+	
 
 private:
 	wxPanel *panel;
 	wxTextCtrl* textCtrl;
 	wxTextCtrl*	EntityName;
+	wxListCtrl* ItemsList;
+	wxArrayString worldNames;
 	wxArrayString Choices;
 	wxComboBox* selectW;
-	wxListBox *Objectslist;
 	wxToolBar* Toolbar;
+	wxBitmapButton* staticonworld;
 	wxArrayString Items;
-	wxArrayString Variables;
+	wxBoxSizer *edit;
 	int state;    //Create or modify
-	int selection;
+	int selectedItem;
+	int selectedWorld;
+	wxTreeItemId m_root;
+	Tree* tree;
+	Tree* treevisible;
+	NodeTree* item;
+
 	DECLARE_EVENT_TABLE();
 };
 

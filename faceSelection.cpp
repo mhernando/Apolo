@@ -23,10 +23,11 @@ FaceSelection::FaceSelection(wxWindow *parent,wxWindowID id,const wxString& titl
 {
 	CreatePanel();
 	panel=new wxPanel(this,wxID_ANY,wxDefaultPosition,wxSize(400,400));
-	dir=set;
+	dir=new FaceSetPart(*set);
 	facesetSize=(set->getSize())-1;
 	num->SetRange(0,facesetSize);
 	facesel=0;
+	face=dir->getFaceI(0);
 	oldselection=0;
 	wxString numsele;
 	numsele<<0;
@@ -62,7 +63,7 @@ void FaceSelection::CreatePanel()
 
 void FaceSelection::AddFaceSetPart()
 {
-		dir->getFaceP_I(facesel)->setColor(1,1,0,0);
+		dir->getFaceI(facesel)->setColor(1,1,0,0);
 		canvas3dG->AddObject(dir);
 		canvas3dG->Update();
 		canvas3dG->Refresh();
@@ -79,14 +80,15 @@ void FaceSelection::SelectFace(wxSpinEvent& event)
 	numsele<<sel;
 	NumFace->AppendText(numsele);
 	if(facesel==oldselection) return;
+	face=dir->getFaceI(facesel);
 	AddFace(facesel);
 }
 
 
 void FaceSelection::AddFace(int num)
 {
-	dir->getFaceP_I(num)->setColor(1,1,0,0);
-	dir->getFaceP_I(oldselection)->setColor(1,1,1,0);
+	dir->getFaceI(num)->setColor(1,1,0,0);
+	dir->getFaceI(oldselection)->setColor(1,1,1,0);
 	canvas3dG->Update();
 	canvas3dG->Refresh();
 }
