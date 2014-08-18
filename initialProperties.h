@@ -2,18 +2,22 @@
 #define __APOLO__INITIAL_PROPERTIES__H  
 
 
-#include "positionableWidget.h"
-#include "designWidget.h"
+
+
 #include "prismWindow.h"
 #include "canvas.h"
 #include "faceWindow.h"
+#include "CreateComposed.h"
+#include "designWidget.h"
 
 
-class PositionableWidget;
+
 class MainWindow;
 class PrismWindow;
 class FaceWindow;
-class FaceWidget;
+class CreateComposed;
+class PositionableWidget;
+
 
 class InitialProperties:public wxDialog
 {
@@ -22,24 +26,24 @@ public:
 	InitialProperties(wxWindow *parent,NodeTree *obj, const wxString& title,wxWindowID id=0);
 	void OnButton(wxCommandEvent& event);
 	bool GetButtom(){return b_sel;}
-	void RefreshCanvas(wxCommandEvent &event);
 	void OnClose(wxCloseEvent &event){	b_sel=false; Destroy();}
 	void CreatePanel();
+	FaceWindow* getface(){return face;}
 
 private:
-	
-	FaceWidget *base;
+
 	wxButton *cView;
 	bool b_sel, worldView;
 	NodeTree *node;	
-	DesignWidget *dp;
 	PrismWindow *priW;
-	PositionableWidget *pw;
-	wxString defName;
 	wxWindowID wID;
 	MainWindow* mainWin;
 	FaceWindow *face;
-	
+	CreateComposed* comp;
+	PositionableWidget *pw;
+	DesignWidget *dp;
+	wxString defName;
+
 
 	DECLARE_EVENT_TABLE();
 };

@@ -4,13 +4,9 @@
 
 
 BEGIN_EVENT_TABLE(InitialProperties, wxDialog)
-
-
-
 	EVT_BUTTON(ID_ACCEPT, InitialProperties::OnButton)
 	EVT_BUTTON(ID_CANCEL, InitialProperties::OnButton)
-	EVT_BUTTON(ID_DEFAULT, InitialProperties::OnButton)
-	EVT_COMMAND(wxID_ANY, wxEVT_GENERIC_SLIDER_CHANGE, InitialProperties::RefreshCanvas)
+	EVT_BUTTON(ID_FINISHCOMPOSED, InitialProperties::OnButton)
 	EVT_CLOSE(InitialProperties::OnClose)
 END_EVENT_TABLE()
 
@@ -22,7 +18,8 @@ InitialProperties::InitialProperties(wxWindow *parent, NodeTree *obj, const wxSt
 	worldView=true;
 	node=obj;
 	wID=id;
-	defName=node->getSimu()->tree->GetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()));
+	if((wID!=ID_ADDIRRPRI)&&(wID!=ID_ADDFACESET))
+		defName=node->getSimu()->tree->GetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()));
 	CreatePanel();
 	
 }
@@ -51,34 +48,34 @@ void InitialProperties::CreatePanel()
 		face=new FaceWindow(this,node,wxEmptyString,wxDefaultPosition,wxSize(1040,700));
 		vbox->Add(face,0,wxEXPAND);	
 	}
-			
-	else
+
+	else if(wID==ID_ADDCUSTOM)
 	{
-	
-
-	dp=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
-	
-		if (wID!=ID_ADDIRRPRI)
-			pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
-		else
-			pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color,ID_ADDIRRPRI);
-
-	wxButton *df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
-	
-	vbox->Add(df,0,wxEXPAND);
-	vbox->Add(pw,0,wxEXPAND);
-	vbox->Add(dp,0,wxEXPAND);
-	//vbox->AddSpacer(40);
-
-		if(wID==ID_ADDIRRPRI)
-
-		{
-			priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-			tbox->Add(priW,0,wxEXPAND);	
-		}
+		node->pointer.composedentity=dynamic_cast<ComposedEntity *>(node->pointer.positionableentity);
+		comp=new CreateComposed(this,node,wxID_ANY,wxDefaultPosition,wxSize(1000,800));
+		tbox->Add(comp,0,wxEXPAND);
+		SetSizer(tbox);
+		tbox->SetSizeHints(this);
+		return;
 	}
 
-	
+	else if(wID==ID_ADDIRRPRI)
+	{
+		node->pointer.prismaticpart=dynamic_cast<PrismaticPart *>(node->pointer.positionableentity);
+		priW=new PrismWindow(this,node,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+		vbox->Add(priW,0,wxEXPAND);		
+	}
+
+	else
+	{
+		dp=new DesignWidget(this,node,wxEmptyString,wxDefaultPosition , wxDefaultSize,mainWin->getDesignValue());
+		pw=new PositionableWidget(this,node,wxT("Positionable Parameters"),wxDefaultPosition,wxDefaultSize,mainWin->getSliderValue(),color);
+		wxButton *df = new wxButton(this,ID_DEFAULT,wxT("Create object with default parameters"),wxDefaultPosition,wxDefaultSize);
+		vbox->Add(df,0,wxEXPAND);
+		vbox->Add(pw,0,wxEXPAND);
+		vbox->Add(dp,0,wxEXPAND);
+	}
+
 
 	////Buttom box///
 	wxBoxSizer *b_box=new wxBoxSizer(wxHORIZONTAL);
@@ -88,36 +85,45 @@ void InitialProperties::CreatePanel()
 	b_box->Add(cancel,1,wxALIGN_BOTTOM);
 
 
-	
 	//Close Dialog Design//
 	
 	vbox->Add(b_box,1,wxEXPAND);
 	vbox->SetMinSize(vbox->GetMinSize());
 	SetSizer(tbox);
 	tbox->SetSizeHints(this);
+
+	
 }
 
 
 
 void InitialProperties::OnButton(wxCommandEvent& event)
 {
-	
 	int id=event.GetId();
 	
-
 	if(id == ID_ACCEPT)	
 	{	
 		if(wID==ID_ADDFACESET)
-		{
 			face->AddFace();
-		}
-			
-		
 		Destroy();
-
+	}
+	
+	if(id==ID_FINISHCOMPOSED)
+	{
+		if(comp->getcheckAddition()==true)
+		{
+			node->pointer.composedentity=comp->getCreation();
+			node->getSimu()->getTree()->UpdateTree(node->getSimu());
+			Destroy();
+		}
+		else 
+		{
+			wxMessageDialog *dial = new wxMessageDialog(NULL, wxT("Last item needs to be added"), wxT("Error"),wxOK | wxICON_EXCLAMATION);
+			dial->ShowModal();
+		}
 	}
 
-	if(id == ID_DEFAULT)
+	if((id == ID_DEFAULT)&&(wID!=ID_ADDIRRPRI))
 	{
 		Transformation3D t;
 		t.position=pw->getDefPosition();
@@ -127,20 +133,12 @@ void InitialProperties::OnButton(wxCommandEvent& event)
 		dp->SetSpecificValues(true);
 		node->getSimu()->tree->SetItemText(node->getSimu()->tree->GetLastChild(node->getSimu()->tree->GetSelection()),defName);
 		node->pointer.solidentity->setColor(pw->getDefRedColor(),pw->getDefGreenColor(),pw->getDefBlueColor());
-		Destroy();
-
 	}
+
 	if(id==ID_CANCEL)
 		Close(true);
-	
-	
-	
-
 }
 
-void InitialProperties::RefreshCanvas(wxCommandEvent &event)
-{
-	if(wID==ID_ADDIRRPRI)
-		priW->RefreshCanvas();
-}
+
+
 

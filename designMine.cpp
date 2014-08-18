@@ -473,8 +473,8 @@ void DesignMine::ChangePosition(bool vertical,bool horizontal,double variation)
 void DesignMine::ChangeView(bool up,bool down,bool right,bool left)
 {
 
-	if ((up==true)&&(down==true)) return;  //no puede moverse arriba y abajo a la vez
-	if ((right==true)&&(left==true)) return; //no puede moverse a la izquierda y a la derecha a la vez
+	if ((up==true)&&(down==true)) return;  
+	if ((right==true)&&(left==true)) return; 
 	
 	if (right==true) 
 	{
@@ -738,7 +738,6 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 
 								MarkNum=i;
 								marcas[i]=true;
-								
 							}
 							else
 							{
@@ -746,7 +745,6 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 								MarkNum=-1;
 							}				
 						}
-
 						DrawScene2D();
 						break;
 
@@ -756,7 +754,6 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						wxSetCursor(wxCURSOR_POINT_LEFT);
 						for (int i=0;i<(int)points.size();i++)
 						{
-
 							bool intersect=false;
 							if (marcas[i]==true)
 							{
@@ -770,11 +767,7 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 								GetEventHandler()->ProcessEvent(FreePointEvent);
 								MousePoint=false;
 							}
-
-								
-							
 						}
-
 						break;
 
 					case 2: 
@@ -794,13 +787,11 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 							points[i].x=points[i].x+(x-xLast);
 							points[i].y=points[i].y+(y-yLast);
 							MarkNum=i;
-							
 						}
 							xLast=x;
 							yLast=y;
 							DrawScene2D();
 							break;
-
 					case 4:
 					case 5:
 					case 6:
@@ -810,14 +801,14 @@ void DesignMine::ManagePoints(wxMouseEvent& event)
 						{
 							difx=abs(x-points[i].x);
 							dify=abs(y-points[i].y);
-							if((abs(difx)<0.5/(zoom/15))&&(abs(dify)<0.5/(zoom/20)))
+							float rang=0.3*border/(10*zoom);
+							if((abs(difx)<rang)&&(abs(dify)<rang))
 							{
 								marcas[i]=true;
 							}
 							else
 							{
 								marcas[i]=false;
-
 							}				
 						}
 					case 8:
@@ -882,7 +873,7 @@ void DesignMine::MenuRightButton(wxMouseEvent& event)
 				ScalePoint();
 				xLast=x;
 				yLast=y;
-				estado=3; //Se mueven todos los puntos
+				estado=3; 
 			}
 			if ((event.RightUp()&&(estado==3))) 
 			{

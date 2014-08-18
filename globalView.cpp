@@ -410,7 +410,6 @@ void globalView::ManagePoints(bool addPoint,bool changePoint,bool deletePoint,in
 			int ind=deleteRow;
 			face->deleteVertex (ind);
 			Screen2D->DeleteVertex(ind);
-			face->deleteVertex (ind);
 		}
 		else 
 		{
@@ -440,8 +439,6 @@ void globalView::ManageButtons(wxCommandEvent& event)
 		DeleteFace();
 	}
 
-
-
 	if (id==ID_SELECTPOINTS)
 	{
 		Screen2D->SetCondition(2);
@@ -451,7 +448,6 @@ void globalView::ManageButtons(wxCommandEvent& event)
 	{
 		Screen2D->SetCondition(4);
 	}
-
 
 	if (id==ID_SHOWGRID) 
 	{

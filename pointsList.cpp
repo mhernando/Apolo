@@ -124,10 +124,8 @@ void PointsList::SetVertex(int r)
 }
 
 
-	void PointsList::OnMenuChangePoint(wxCommandEvent& event)
+void PointsList::OnMenuChangePoint(wxCommandEvent& event)
 {	
-	
-
 		int id = event.GetId();
 
 		if(id == ID_CHANGEVERTEX)
@@ -313,10 +311,6 @@ void PointsList::InsertedPoint(int first,int second,double x,double y)
 		designAssociated=true;
 	}
 }
-
-
-
-
 
 
 

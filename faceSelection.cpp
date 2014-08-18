@@ -63,7 +63,11 @@ void FaceSelection::CreatePanel()
 
 void FaceSelection::AddFaceSetPart()
 {
-		dir->getFaceI(facesel)->setColor(1,1,0,0);
+	for(int i=0;i<dir->getSize();i++)
+	{
+		dir->getAbsoluteFaceI(i)->setColor(1,1,1,0);
+	}
+		dir->getAbsoluteFaceI(facesel)->setColor(1,1,0,0);
 		canvas3dG->AddObject(dir);
 		canvas3dG->Update();
 		canvas3dG->Refresh();
@@ -80,15 +84,15 @@ void FaceSelection::SelectFace(wxSpinEvent& event)
 	numsele<<sel;
 	NumFace->AppendText(numsele);
 	if(facesel==oldselection) return;
-	face=dir->getFaceI(facesel);
-	AddFace(facesel);
+	face=dir->getAbsoluteFaceI(facesel);
+	UpdateSelectedFace(facesel);
 }
 
 
-void FaceSelection::AddFace(int num)
+void FaceSelection::UpdateSelectedFace(int num)
 {
-	dir->getFaceI(num)->setColor(1,1,0,0);
-	dir->getFaceI(oldselection)->setColor(1,1,1,0);
+	dir->getAbsoluteFaceI(num)->setColor(1,1,0,0);
+	dir->getAbsoluteFaceI(oldselection)->setColor(1,1,1,0);
 	canvas3dG->Update();
 	canvas3dG->Refresh();
 }

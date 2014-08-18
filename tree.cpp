@@ -102,8 +102,7 @@ wxTreeItemId Tree::GenerateSubTree(SimulatedWorld* simu)
 	auxW->SetId(node);
 	for (int i=0;i<w->getNumObjects();i++)
 	{
-		wxTreeItemId aux=AddNode((*w)[i],node,simu)->GetId();
-		simu->InsertLoadedId(aux);
+		AddNode((*w)[i],node,simu)->GetId();
 	}
 	return node;
 }
@@ -116,12 +115,27 @@ NodeTree* Tree::AddNode(PositionableEntity* pos, wxTreeItemId parent,SimulatedWo
 	
 	wxTreeItemId mynode = AppendItem(parent,auxP->getNameTree(), auxP->bit, auxP->bitsel, auxP);
 	auxP->SetId(mynode);
+	if (simu->checkAddedItem(pos)==false)
+	{
+		simu->InsertId(mynode);
+		simu->InsertItem(auxP->pointer.positionableentity);
+	}
+
 	ComposedEntity * auxC = dynamic_cast<ComposedEntity *>(pos);
 	if(auxC)
+	{
 		for(int j=0;j<auxC->getNumObjects();j++)
-			AddNode((*auxC)[j],mynode,simu);
-		
-	
+		{
+			NodeTree* aux;
+			aux=AddNode((*auxC)[j],mynode,simu);
+			wxTreeItemId auxnode=aux->GetId();
+			if (simu->checkAddedItem((*auxC)[j])==false)
+			{
+				simu->InsertId(auxnode);
+				simu->InsertItem((*auxC)[j]);
+			}
+		}
+	}
 	return auxP;
 
 }
@@ -170,6 +184,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		{
 		menuWorld.Append(ID_ADDOBJ,wxT("Add Simples Entities"));
 		menuWorld.Append(ID_ADDCOMP,wxT("Add Complex Entities"));
+
 		}
 		else
 		{
@@ -262,7 +277,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0)menuTree.AppendSeparator();
 		if((itemData->menus.menu_positionable)&&(itemData->pointer.positionableentity->getLinkedTo()==NULL)) menuTree.Append(ID_LINKTO, wxT("Link to"));
-		if((itemData->menus.menu_positionable)&&(itemData->pointer.positionableentity->getLinkedTo()!=0)&&(itemData->getSimu()->CheckItemLinked(itemData->pointer.positionableentity)))
+		if((itemData->menus.menu_positionable)&&(itemData->pointer.positionableentity->getLinkedTo()!=0)&&(itemData->pointer.positionableentity->getLinkedTo()))
 			menuTree.Append(ID_UNLINK, wxT("UnLink"));
 		if(itemData->menus.menu_prismaticpart) menuTree.Append(ID_CHANGEFORM, wxT("Edit Prism"));
 		if(itemData->menus.menu_facesetpart) menuTree.Append(ID_MODIFYFACE, wxT("Edit FaceSetPart"));
@@ -279,6 +294,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_wheeledbased)menuTree.AppendSeparator();
 		if(itemData->menus.menu_wheeledbased) menuTree.Append(ID_MOVE, wxT("Move control"));
 		if(itemData->menus.menu_robotsim) menuTree.AppendSeparator();
+		if((itemData->menus.menu_robotsim)&&(itemData->pointer.robotsim)) menuTree.Append(ID_SAVEASROBOT, wxT("Save as RobotSim"));
 		if(itemData->menus.menu_robotsim) 
 		{
 			menuTree.Append(ID_ROBOTGOTO, wxT("Go to target"));//simulate robot goes to a target
@@ -310,16 +326,6 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 	event.Skip();
 	}
 }
-
-
-///Función recursiva para comprobar que no se linka con un linker de nivel superior
-bool Tree::CheckLink(PositionableEntity* selected,PositionableEntity* n)
-{
-	if (n->getLinkedTo()==selected) return true;
-	else if (n->getLinkedTo()==NULL) return false;
-	else CheckLink(selected,n->getLinkedTo());
-}
-
 
 
 void Tree::ManageTreeSelection(wxMouseEvent& event)
@@ -383,56 +389,77 @@ void Tree::ManageTreeSelection(wxMouseEvent& event)
 		}
 	
 	
-	if (m_mainWin->GetState()==1)
-	{
-		wxSetCursor(wxCURSOR_POINT_LEFT);
-		wxTreeItemId itemId;
-		if(GetSelection()==root)
-		return;
-		else
-		itemId=GetSelection();
-		bool aux=false;
-		NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
-		if(itemId.IsOk())
+		if (m_mainWin->GetState()==1)
 		{
-			//Para evitar el autolinkado del elemento que hemos seleccionado 
-			if(itemData->pointer.positionableentity!=m_mainWin->GetSimulated()->GetEntityToLink())
-			{
-				aux=CheckLink(m_mainWin->GetSimulated()->GetEntityToLink(),itemData->pointer.positionableentity);
-				if(aux==false)
-				{
-					if(ValidateNodeToLink(itemData->getTipo()))
-					{
-						m_mainWin->GetSimulated()->GetEntityToLink()->LinkTo(itemData->pointer.positionableentity);
-						m_mainWin->GetSimulated()->InsertLinkerEntity(itemData->pointer.positionableentity,itemId);
-						m_mainWin->GetSimulated()->InsertLinkedEntity(itemData->pointer.positionableentity,m_mainWin->GetSimulated()->GetEntityToLink(),m_mainWin->GetSimulated()->GetIdToLink());
-						wxSetCursor(wxCURSOR_ARROW);
-						m_mainWin->SetState(0);
-						wxLogStatus(wxT("Link done"));
-					}
-					else 
-					{
-						Tcp* t=itemData->pointer.composedentity->getTcp();
-						m_mainWin->GetSimulated()->GetEntityToLink()->LinkTo(t);
-						m_mainWin->GetSimulated()->InsertLinkerEntity(itemData->pointer.composedentity,itemId);
-						m_mainWin->GetSimulated()->InsertLinkedEntity(itemData->pointer.positionableentity,m_mainWin->GetSimulated()->GetEntityToLink(),m_mainWin->GetSimulated()->GetIdToLink());
-						wxSetCursor(wxCURSOR_ARROW);
-						m_mainWin->SetState(0);
-						wxLogStatus(wxT("Link done"));
-					}
-
-					if(m_mainWin->GetTreeStructureState())
-					{
-						SimulatedWorld * simuWorld=m_mainWin->GetSimulated();
-						Restructure(simuWorld,GetWorld(itemId));
-						showTreeStructure(simuWorld,true);
-					}
-				}
-				else wxSetCursor(wxCURSOR_NO_ENTRY);
+			wxSetCursor(wxCURSOR_POINT_LEFT);
+			wxTreeItemId itemId;
+			itemId=GetSelection();
+			bool aux=false;
+			NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+			if(GetSelection()==root)
+			{	
+				wxLogStatus(wxT("Invalid node"));
+				return;
 			}
-			else wxSetCursor(wxCURSOR_NO_ENTRY);
-		}	
-	}
+			else
+			{
+				aux=isWorldNode(itemId);
+				if((itemId.IsOk())&&(aux==false))
+				{
+					//Para evitar el autolinkado del elemento que hemos seleccionado 
+					if(itemData->pointer.positionableentity!=m_mainWin->GetSimulated()->GetEntityToLink())
+					{
+						aux=m_mainWin->GetSimulated()->checkLink(itemData->pointer.positionableentity,m_mainWin->GetSimulated()->GetEntityToLink());
+						if(aux==true)
+						{
+							if(dynamic_cast<Tcp *>(itemData->pointer.positionableentity))
+							{
+								Tcp *Owner=dynamic_cast<Tcp *>(itemData->pointer.positionableentity);
+								m_mainWin->GetSimulated()->GetEntityToLink()->LinkTo(Owner);
+								wxSetCursor(wxCURSOR_ARROW);
+								m_mainWin->SetState(0);
+								wxLogStatus(wxT("Link done"));
+							}
+							else
+							{
+								if(ValidateNodeToLink(itemData->getTipo()))
+								{
+									m_mainWin->GetSimulated()->GetEntityToLink()->LinkTo(itemData->pointer.positionableentity);
+									wxSetCursor(wxCURSOR_ARROW);
+									m_mainWin->SetState(0);
+									wxLogStatus(wxT("Link done"));
+								}
+								else 
+								{
+									Tcp* t=itemData->pointer.composedentity->getTcp();
+									m_mainWin->GetSimulated()->GetEntityToLink()->LinkTo(t);
+									wxSetCursor(wxCURSOR_ARROW);
+									m_mainWin->SetState(0);
+									wxLogStatus(wxT("Link done"));
+								}
+							}
+							if(m_mainWin->GetTreeStructureState()==true)
+							{
+								m_mainWin->GetSimulated()->InitializeItemsVectors();
+								UpdateTree(m_mainWin->GetSimulated());
+								showTreeStructure(true);
+							}
+						}
+						else 
+						{
+							wxSetCursor(wxCURSOR_NO_ENTRY);
+							wxLogStatus(wxT("Illogical link"));
+						}
+					}
+					else wxSetCursor(wxCURSOR_NO_ENTRY);
+				}
+				else
+				{
+					wxLogStatus(wxT("Invalid node"));
+					return;
+				}
+			}
+		}
 	}
 }
 
@@ -458,47 +485,37 @@ void Tree::ShowSelection(wxTreeEvent& event)
 		bool check;
 		wxTreeItemId itemId;
 		itemId=GetSelection();
-
 		wxTreeItemId old=event.GetOldItem();
+		if(itemId==old) return;
 		if(root==old)
 		return;
+
 		//eliminar las marcas del item anterior 
 		if(old.IsOk())
 		{
 			NodeTree *itemData = old .IsOk() ? (NodeTree *)GetItemData(old ):NULL;
+			if(itemData->getTipo()==N_World) return;
 			SimulatedWorld* w;
 			w=itemData->getSimu();
 			SetItemBold(old,false);
 			SetItemTextColour(old,*wxBLACK);
-			aux=w->getLinkerPositionable(itemData->pointer.positionableentity); //Se comprueba si era linker
-			if(aux!=-1)
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				if(w->getLinksId().size()>0)
+				if(w->getItems()[i]->getLinkedTo()==itemData->pointer.positionableentity)
 				{
-					if(w->getLinksId()[aux].size()>0)
-					{
-						for(int i=0;i<w->getLinksId()[aux].size();i++)  //Búsqueda de los linked asociados
-						{
-							SetItemBackgroundColour(w->getItemID(aux,i),*wxWHITE);
-							RestoreItemImage(w->getItemID(aux,i));
-						}
-					}
+					SetItemBackgroundColour(w->getItemsId()[i],*wxWHITE);
+					SetItemBold(w->getItemsId()[i],false);
+					RestoreItemImage(w->getItemsId()[i]);
 				}
-			}	
+			}
 
-			check=w->CheckItemLinked(itemData->pointer.positionableentity);  //Se comprueba si era linked
-			if(check==true)
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				RestoreItemImage(old);
-				PositionableEntity* pos=w->getLinker(itemData->pointer.positionableentity);
-				if(w->GetLinkersPos().size()>0)
+				if(w->getItems()[i]==itemData->pointer.positionableentity->getLinkedTo())
 				{
-					for(int i=0;i<w->GetLinkersPos().size();i++)
-					{
-						aux=w->getLinkerPositionable(pos); //Búsqueda del indice del linker correspondiente
-					}
-					SetItemBackgroundColour(w->getIdLinkersId()[aux],*wxWHITE);
-					RestoreItemImage(w->getIdLinkersId()[aux]);
+					SetItemBackgroundColour(w->getItemsId()[i],*wxWHITE);
+					SetItemBold(w->getItemsId()[i],false);
+					RestoreItemImage(w->getItemsId()[i]);
 				}
 			}
 		}
@@ -508,6 +525,7 @@ void Tree::ShowSelection(wxTreeEvent& event)
 		PreviousitemId=itemId;
 		if(root==itemId)
 		return;
+		if(itemData->getTipo()==N_World) return;
 		
 		if(itemId.IsOk())
 		{
@@ -515,39 +533,27 @@ void Tree::ShowSelection(wxTreeEvent& event)
 			w=itemData->getSimu();
 			SetItemBold(GetSelection());
 			SetItemTextColour(GetSelection(),*wxBLUE);
-			
-			aux=w->getLinkerPositionable(itemData->pointer.positionableentity); //Se comprueba si es linker
-			if(aux!=-1)
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				if(w->getLinksId().size()>0)
+				if(w->getItems()[i]->getLinkedTo()==itemData->pointer.positionableentity)
 				{
-					if(w->getLinksId()[aux].size()>0)
-					{
-						for(int i=0;i<w->getLinksId()[aux].size();i++)  //Búsqueda de los linked asociados
-						{
-							SetItemBackgroundColour(w->getItemID(aux,i),*wxGREEN);
-							SetItemImage(w->getItemID(aux,i),48);
-						}
-					}	
+					SetItemBackgroundColour(w->getItemsId()[i],*wxGREEN);
+					SetItemBold(w->getItemsId()[i]);
+					SetItemImage(w->getItemsId()[i],48);
 				}
 			}
-			check=w->CheckItemLinked(itemData->pointer.positionableentity);  //Se comprueba si es linked
-			if(check==true)
+
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				PositionableEntity* pos=w->getLinker(itemData->pointer.positionableentity);
-				if(w->getIdLinkersId().size()>0)
+				if(w->getItems()[i]==itemData->pointer.positionableentity->getLinkedTo())
 				{
-					for(int i=0;i<w->getIdLinkersId().size();i++)
-					{
-						aux=w->getLinkerPositionable(pos); //Búsqueda del indice del linker correspondiente
-					}
-					SetItemBackgroundColour(w->getIdLinkersId()[aux],*wxRED);
-					SetItemImage(w->getIdLinkersId()[aux],49);
+					SetItemBackgroundColour(w->getItemsId()[i],*wxRED);
+					SetItemBold(w->getItemsId()[i]);
+					SetItemImage(w->getItemsId()[i],49);
 				}
 			}
 		}
 	}
-
 
 
 	wxTreeItemId itemId = GetSelection();
@@ -653,163 +659,50 @@ void Tree::UpdateTree(SimulatedWorld *N)
 }
 
 
-
-void Tree::showTreeStructure(SimulatedWorld* sim,bool view)
+void Tree::CreateLinksSubTree(PositionableEntity *pos,wxTreeItemId r,SimulatedWorld* simu)
 {
-	World* w=sim->getWorld();
-	wxTreeItemId main=sim->getTreeItem();
-	if(view==true)
+	for(int i=0;i<simu->getItems().size();i++)
 	{
-		bool aux=false;
-		bool linked;
-		int linker;
-
-		for(int x=0;x<sim->getWorld()->getNumObjects();x++)
+		if(simu->getItems()[i]->getLinkedTo()==pos)
 		{
-			linker=-1;
-			linked=false;
-			aux=false;
-
-			PositionableEntity* pos=(*w)[x];
-
-			///Se comprueba que ese positionable es un linker
-			linker=sim->getLinkerPositionable(pos);
-			if(linker!=-1) aux=true;
-
-			//Se comprueba si ese positionable es linked
-			linked=sim->CheckItemLinked(pos);
-
-			if(aux==true)
-			{
-				if((linker!=-1)&&(linked==false))////Ese item es un linker que no está linkado a nada
-				{ 
-					Delete(sim->getIdLinkersId()[linker]);
-					Structure(sim,linker,sim->GetLinkersPos()[linker],main);
-				}
-			}
-		}
-	}
-
-	if(view==false)
-	{
-		Restructure(sim,main);
-	}
-}
-
-
-void Tree::Structure(SimulatedWorld* sim,int linker,PositionableEntity* pos,wxTreeItemId nod)
-{
-	bool check;
-	AddNode(pos,nod,sim)->SetId(sim->getIdLinkersId()[linker]);
-	for(int n=0;n<sim->getLinksPos()[linker].size();n++)
-	{
-		check=false;
-		for(int y=0;y<sim->GetLinkersPos().size();y++)
-		{
-			if(sim->getLinksPos()[linker][n]==sim->GetLinkersPos()[y])
-			{
-				Delete(sim->getIdLinkersId()[y]);
-				Structure(sim,y,sim->GetLinkersPos()[y],sim->getIdLinkersId()[linker]);
-				check=true;
-			}
-		}
-
-		if(check==false)
-		{
-			Delete(sim->getLinksId()[linker][n]);
-			AddNode(sim->getLinksPos()[linker][n],sim->getIdLinkersId()[linker],sim)->SetId(sim->getLinksId()[linker][n]);
+			Delete(simu->getItemsId()[i]);
+			NodeTree* aux;
+			aux=AddNode(simu->getItems()[i],r,simu);
+			simu->getItemsId()[i]=aux->GetId();
+			CreateLinksSubTree(simu->getItems()[i],simu->getItemsId()[i],simu);
 		}
 	}
 }
 
 
-void Tree::Restructure(SimulatedWorld* sim,wxTreeItemId main)
-{
-	World* w=sim->getWorld();
-	int Plinker;
-	int linker;
-	int linked;
-	bool islinked;
-	bool islinker;
-	int aux=-1;
-	for(int x=0;x<sim->getWorld()->getNumObjects();x++)
-	{
-		islinked=false;
-		islinker=false;
-		PositionableEntity* pos=(*w)[x];
-		for(int i=0;i<sim->GetLinkersPos().size();i++)
-			if(pos==sim->GetLinkersPos()[i])
-			{
-				islinker=true;
-				Plinker=i;
-			}
 
-		for(int i=0;i<sim->getLinksPos().size();i++)
-			for(int j=0;j<sim->getLinksPos()[i].size();j++)
-				if(pos==sim->getLinksPos()[i][j]) 
+
+void Tree::showTreeStructure(bool val)
+{
+	if (val==true)
+	{
+		for(int i=0;i<m_mainWin->listWorlds.size();i++)
+		{
+			for(int j=0;j<m_mainWin->listWorlds[i]->getItems().size();j++)
+			{
+				if(m_mainWin->listWorlds[i]->getItems()[j]->getLinkedTo()==NULL)
 				{
-					islinked=true;
-					linked=j;
-					linker=i;
+					CreateLinksSubTree(m_mainWin->listWorlds[i]->getItems()[j],m_mainWin->listWorlds[i]->getItemsId()[j],m_mainWin->listWorlds[i]);
 				}
-
-		if((islinker==true)&&(islinked==true))
-		{
-			Delete(sim->getIdLinkersId()[Plinker]);
-			AddNode(pos,main,sim)->SetId(sim->getIdLinkersId()[Plinker]);
-		}
-
-		if((islinker==false)&&(islinked==true)) 
-		{
-			Delete(sim->getLinksId()[linker][linked]);
-			AddNode(pos,main,sim)->SetId(sim->getLinksId()[linker][linked]);
-		}
-	}
-}
-
-
-void Tree::UnlinkNode(SimulatedWorld *sim,PositionableEntity* pos)
-{
-	World* w=sim->getWorld();
-	wxTreeItemId main=sim->getTreeItem();
-	int Plinker;
-	int linker;
-	int linked;
-	bool islinked=false;
-	bool islinker=false;
-
-	for(int i=0;i<sim->getLinksPos().size();i++)
-		for(int j=0;j<sim->getLinksPos()[i].size();j++)
-			if(pos==sim->getLinksPos()[i][j]) 
-			{
-				islinked=true;
-				linked=j;
-				linker=i;
 			}
-
-	for(int i=0;i<sim->GetLinkersPos().size();i++)
-		if(pos==sim->GetLinkersPos()[i])
-		{
-			islinker=true;
-			Plinker=i;
 		}
-
-	//El item que vamos a deslinkar es únicamente linked
-	if((islinker==false)&&(islinked==true))
-	{
-		Delete(sim->getLinksId()[linker][linked]);
-		AddNode(pos,main,sim);
 	}
-
-	//El item que vamos a deslinkar es linker y linked a la vez
-	if((islinker==true)&&(islinked==true))
+	else
 	{
-		DeleteChildren(sim->getIdLinkersId()[Plinker]);
-		AddNode(pos,main,sim)->SetId(sim->getIdLinkersId()[Plinker]);
-		for(int i=0;i<sim->getLinksPos()[Plinker].size();i++)
-			AddNode(sim->getLinksPos()[Plinker][i],sim->getIdLinkersId()[Plinker],sim);
+		for(int i=0;i<m_mainWin->listWorlds.size();i++)
+		{
+			m_mainWin->listWorlds[i]->InitializeItemsVectors();
+			UpdateTree(m_mainWin->listWorlds[i]);
+		}
 	}
 }
+
+
 
 
 
@@ -823,44 +716,32 @@ void Tree::setShowLinks(bool sh)
 	{
 		showLinks=false;
 		//Se eliminan las marcas de la última selección activa antes de anular esta opción
-		int aux;
-		bool check;
+		
 		if(PreviousitemId.IsOk())
 		{
 			NodeTree *itemData = PreviousitemId .IsOk() ? (NodeTree *)GetItemData(PreviousitemId ):NULL;
+			if(itemData->getTipo()==N_World) return;
 			SimulatedWorld* w;
 			w=itemData->getSimu();
 			SetItemBold(PreviousitemId,false);
 			SetItemTextColour(PreviousitemId,*wxBLACK);
-			aux=w->getLinkerPositionable(itemData->pointer.positionableentity); //Se comprueba si era linker
-			if(aux!=-1)
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				if(w->getLinksId().size()>0)
+				if(w->getItems()[i]->getLinkedTo()==itemData->pointer.positionableentity)
 				{
-					if(w->getLinksId()[aux].size()>0)
-					{
-						for(int i=0;i<w->getLinksId()[aux].size();i++)  //Búsqueda de los linked asociados
-						{
-							SetItemBackgroundColour(w->getItemID(aux,i),*wxWHITE);
-							RestoreItemImage(w->getItemID(aux,i));
-						}
-					}
+					SetItemBackgroundColour(w->getItemsId()[i],*wxWHITE);
+					SetItemBold(w->getItemsId()[i],false);
+					RestoreItemImage(w->getItemsId()[i]);
 				}
-			}	
+			}
 
-			check=w->CheckItemLinked(itemData->pointer.positionableentity);  //Se comprueba si era linked
-			if(check==true)
+			for(int i=0;i<w->getItems().size();i++)
 			{
-				RestoreItemImage(PreviousitemId);
-				PositionableEntity* pos=w->getLinker(itemData->pointer.positionableentity);
-				if(w->GetLinkersPos().size()>0)
+				if(w->getItems()[i]==itemData->pointer.positionableentity->getLinkedTo())
 				{
-					for(int i=0;i<w->GetLinkersPos().size();i++)
-					{
-						aux=w->getLinkerPositionable(pos); //Búsqueda del indice del linker correspondiente
-					}
-					SetItemBackgroundColour(w->getIdLinkersId()[aux],*wxWHITE);
-					RestoreItemImage(w->getIdLinkersId()[aux]);
+					SetItemBackgroundColour(w->getItemsId()[i],*wxWHITE);
+					SetItemBold(w->getItemsId()[i],false);
+					RestoreItemImage(w->getItemsId()[i]);
 				}
 			}
 		}
@@ -868,31 +749,33 @@ void Tree::setShowLinks(bool sh)
 }
 
 
-void Tree::EraseMarks()  //Eliminar marca del linkado al realizar el unlink
+bool Tree::ValidateNodeToLink(TypeNode type)
 {
-	int aux;
-	wxTreeItemId itemId = GetSelection();
-	NodeTree *itemData = itemId.IsOk() ? (NodeTree *) GetItemData(itemId):NULL;
-	SimulatedWorld* w;
-	w=itemData->getSimu();
-	SetItemBold(itemId,false);
-	SetItemTextColour(itemId,*wxBLACK);
-	RestoreItemImage(itemId);
-	PositionableEntity* pos=itemData->pointer.positionableentity->getLinkedTo();
-	if(w->GetLinkersPos().size()>0)
-	{
-		for(int i=0;i<w->GetLinkersPos().size();i++)
-		{
-			aux=w->getLinkerPositionable(pos); //Búsqueda del indice del linker correspondiente
-		}
-		SetItemBackgroundColour(w->getIdLinkersId()[aux],*wxWHITE);
-		RestoreItemImage(w->getIdLinkersId()[aux]);
-	}
+	if((type==N_AseaIRB2000)||(type==N_RobotSim)||(type==N_PatrolbotSim)||(type==N_Pioneer3ATSim)||(type==N_ComposedEntity)) return false;
+	else return true;
 }
 
 
-bool Tree::ValidateNodeToLink(TypeNode type)
+bool Tree::isWorldNode(wxTreeItemId itemId)
 {
-	if((type==N_AseaIRB2000)||(type==N_RobotSim)||(type==N_PatrolbotSim)||(type==N_Pioneer3ATSim)) return false;
-	else return true;
+	NodeTree *itemData = itemId .IsOk() ? (NodeTree *)GetItemData(itemId ):NULL;
+	for(int i=0;i<m_mainWin->listWorlds.size();i++)
+	{
+		if(itemData->pointer.world==m_mainWin->listWorlds[i]->getWorld()) return true;
+	}
+	return false;
+}
+
+
+void Tree::EraseMarks(NodeTree* unlinkedItem)
+{
+	SimulatedWorld* w=unlinkedItem->getSimu();
+	for(int i=0;i<w->getItems().size();i++)
+	{
+		if(w->getItems()[i]==(unlinkedItem->pointer.positionableentity->getLinkedTo()))
+		{
+			SetItemBackgroundColour(w->getItemsId()[i],*wxWHITE);
+			RestoreItemImage(w->getItemsId()[i]);
+		}
+	}
 }

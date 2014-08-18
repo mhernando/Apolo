@@ -15,7 +15,7 @@
 
 using namespace mr;
 
-
+class globalView;
 class FaceSelection : public wxFrame
 {
 public:
@@ -23,8 +23,7 @@ public:
 	void CreatePanel();
 	void AddFaceSetPart();
 	void SelectFace(wxSpinEvent& event);
-	void AddFace(int num);
-	void EditFace(wxCommandEvent& event);
+	void UpdateSelectedFace(int num);
 	Face* getFaceSelected(){return face;};
 	int numSelected(){return facesel;}
 

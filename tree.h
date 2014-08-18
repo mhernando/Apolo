@@ -84,9 +84,7 @@ public:
 	NodeTree* AddNode(PositionableEntity * pos, wxTreeItemId parent,SimulatedWorld *simu);
 	void Parent(wxTreeItemId r);
 	void UpdateTree(SimulatedWorld* N);
-	void showTreeStructure(SimulatedWorld* sim,bool view);
-	void Structure(SimulatedWorld* sim,int linker,PositionableEntity* pos,wxTreeItemId nod);
-	void Restructure(SimulatedWorld* sim,wxTreeItemId main);
+	void showTreeStructure(bool val);
 	Tree::m_item SimplyItems(int id,wxString name, wxIcon icon);
 	void OnItemMenu(wxTreeEvent& event);
 	wxTreeItemId GenerateSubTree(ComposedEntity* w,SimulatedWorld* simu);
@@ -94,14 +92,16 @@ public:
 	void ShowSelection(wxTreeEvent& event);
 	void SetShowSelection(bool show){sel=show;};
 	void RestoreItemImage(wxTreeItemId ID);
-	bool CheckLink(PositionableEntity* selected,PositionableEntity* n);
 	void ControlMouse(wxMouseEvent& event);
 	void setShowLinks(bool sh);
 	bool getShowLinks(){return showLinks;};
-	void EraseMarks();
+	void EraseMarks(NodeTree* unlinkedItem);
 	bool ValidateNodeToLink(TypeNode type);
 	void UnlinkNode(SimulatedWorld *sim,PositionableEntity* pos);
 	void SetWorldsNum(int numW){num=numW;}
+	bool isWorldNode(wxTreeItemId itemId);
+	void CreateLinksSubTree(PositionableEntity* pos,wxTreeItemId r,SimulatedWorld* simu);
+
 
 	
 	MainWindow* m_mainWin;

@@ -38,7 +38,7 @@ public:
 	void UpdateXML(wxCommandEvent& event);
 	void getItemXML();
 	void UpdateSelectedWorld(wxCommandEvent& event);
-	void UpdateObjetcsList();
+	void UpdateList();
 	void UpdateWorldsList();
 	void ShowPanel();
 	void ManageState();
@@ -55,6 +55,10 @@ public:
 	void TreatXMLText(char * XMLText);
 	void UpdateTreeView();
 	void SetInformationFromTree(NodeTree* nod,TypeNode type);
+	void GetElementVariables();
+	void UpdateText(wxCommandEvent& event);
+	Object* CreateEntity(XMLElement * elem);
+
 	
 
 private:
@@ -76,6 +80,9 @@ private:
 	Tree* tree;
 	Tree* treevisible;
 	NodeTree* item;
+	vector<char *> variables;
+	vector<char *> values;
+
 
 	DECLARE_EVENT_TABLE();
 };

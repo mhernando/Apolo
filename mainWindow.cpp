@@ -106,7 +106,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_LINKTO,MainWindow::OnLinkTo)
 	EVT_MENU(ID_UNLINK,MainWindow::OnLinkTo)
 	EVT_MENU(ID_SHOWLINKS,MainWindow::OnLinkTo)
-	EVT_MENU(ID_TREESTRUCTURE, MainWindow::UpdateTreeStructure)
+	EVT_MENU(ID_TREESTRUCTURE, MainWindow::OnLinkTo)
 	EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, MainWindow::OnCloseNotebook)
 	EVT_UPDATE_UI(ID_LOADOBJ, MainWindow::UpdateUILoadObject)
 	EVT_UPDATE_UI(ID_SAVEOBJ,MainWindow::UpdateUISaveObject)
@@ -119,6 +119,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_BUTTON(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
+	EVT_MENU(ID_SAVEASROBOT,MainWindow::SaveRobotAsRobotSimXml)
 END_EVENT_TABLE()
 
 
@@ -137,6 +138,7 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	state=0;
 	managewindow=new ManageWindows();
 	treeStruc=false;
+	showLinks=false;
 
 	
 
@@ -532,13 +534,12 @@ void MainWindow::AddObject(wxCommandEvent& event)
 		id=ob_sel->GetObject();
 			if(id==0)return;
 	}
+
 	for(unsigned int i=0;i<listWorlds.size();i++)	
 		if (listWorlds[i]->getTreeItem() == tree->GetWorld(tree->GetSelection()))
 			listWorlds[i]->AddObject(id);
-	
-	
-	
 }
+
 
 void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 {
@@ -611,22 +612,6 @@ void MainWindow::DeleteObject(wxCommandEvent& WXUNUSED(event))
 		}
 			
 }
-
-
-/*bool MainWindow::checkPanelExist(NodeTree* node)
-{
-	int numPage = note->GetPageCount();
-	for(int i=0;i<numPage;i++)
-	{
-		if(((ApoloPanel *)note->GetPage(i))->getItemNode() == node)
-		{
-			return false;
-		}
-	}
-	return true;
-}*/
-
-
 
 void MainWindow::OnNameItemTree(wxCommandEvent& WXUNUSED(event))
 {
@@ -706,11 +691,13 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	{
 		vsele->Show(false);
 		vsele->MakeModal(false);
-		view=new globalView(this,wxID_ANY,wxT("Edit"));
-		view->Show(true);
-		editionVisible=true;
-		view->MakeModal(true);
-		view->LoadFace(*(vsele->getFaceSelected()));
+		ini= new InitialProperties(this,itemData,wxT("Properties"),ID_ADDFACESET);
+		ini->Show(true);
+		ini->getface()->getcanvas()->GetView()->Show(true);
+		ini->getface()->getcanvas()->MakeModal(true);
+		ini->getface()->getcanvas()->GetView()->LoadFace(*(vsele->getFaceSelected()));
+		ini->getface()->setType(true);
+		ini->getface()->setIndex(vsele->numSelected());
 	}
 
 	if(id==ID_CANCELSELECTION)
@@ -726,16 +713,6 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		editionVisible=false;
 		view->MakeModal(false);
 	}
-
-
-	if ((id==ID_ADDOWNFACE)&&(typ==1))
-	{
-		itemData->pointer.facesetpart->ModifyFace(vsele->numSelected(),*(view->GetFace()));
-		view->Show(false);
-		view->MakeModal(false);
-		editionVisible=false;
-	}
-
 
 	if ((id==ID_ADDOWNFACE)&&(typ==2))
 	{
@@ -1475,29 +1452,22 @@ void MainWindow::OnLinkTo(wxCommandEvent& event)
 			simuWorld=itemData->getSimu();
 			if (id==ID_LINKTO)
 			{
-				if(simuWorld->CheckItemLinked(itemData->pointer.positionableentity))
-				{
-					return;
-				}
 				state=1;
 				wxSetCursor(wxCURSOR_POINT_LEFT);
 				simuWorld->SetEntityToLink(itemData->pointer.positionableentity);
-				simuWorld->SetIdToLink(itemId);
 				wxLogStatus(wxT("Select Item(Link to)"));
 				id=NULL;
 			}
+
 			if (id==ID_UNLINK)
 			{
-				if (showLinks==true) tree->EraseMarks();
-				if(treeStruc==true) 
-				{
-					tree->UnlinkNode(simuWorld,itemData->pointer.positionableentity);
-				}
-				simuWorld->EraseLinked(itemData->pointer.positionableentity,itemId);
+				if (showLinks==true) tree->EraseMarks(itemData);
 				itemData->pointer.positionableentity->LinkTo(NULL); //Deslinkar
-				if(treeStruc==true) 
+				if(GetTreeStructureState()==true) 
 				{
-					simuWorld->getTree()->showTreeStructure(simuWorld,true);
+					simuWorld->InitializeItemsVectors();
+					tree->UpdateTree(simuWorld);
+					tree->showTreeStructure(true);
 				}
 				wxLogStatus(wxT("Unlink done"));
 				state=0;
@@ -1511,50 +1481,29 @@ void MainWindow::OnLinkTo(wxCommandEvent& event)
 			if(showLinks) 
 			{
 				tree->setShowLinks(true);
-				treeStruc=false;
 				treeToolbar->EnableTool(ID_TREESTRUCTURE,false);
 			}
 			else
 			{
 				tree->setShowLinks(false);
-				treeStruc=true;
 				treeToolbar->EnableTool(ID_TREESTRUCTURE,true);
 			}
 		}
-	}	
-}
 
 
-
-void MainWindow::UpdateTreeStructure(wxCommandEvent& event)
-{
-	int id=event.GetId();
-	if (id==ID_TREESTRUCTURE)
-	{
-		treeStruc=treeToolbar->GetToolState(id);
-		if(treeStruc)
+		if (id==ID_TREESTRUCTURE)
 		{
-			treeToolbar->EnableTool(ID_SHOWLINKS,false);
-			if(listWorlds.size()>0)
+			treeStruc=treeToolbar->GetToolState(id);
+			if(treeStruc)
 			{
-				for(int i=0;i<listWorlds.size();i++)
-				{
-					listWorlds[i]->getTree()->showTreeStructure(listWorlds[i],true);
-				}
+				tree->showTreeStructure(true);
+				treeToolbar->EnableTool(ID_SHOWLINKS,false);
 			}
-			return;
-		}
-		else
-		{
-			treeToolbar->EnableTool(ID_SHOWLINKS,true);
-			if(listWorlds.size()>0)
+			else
 			{
-				for(int i=0;i<listWorlds.size();i++)
-				{
-					listWorlds[i]->getTree()->showTreeStructure(listWorlds[i],false);
-				}
+				tree->showTreeStructure(false);
+				treeToolbar->EnableTool(ID_SHOWLINKS,true);
 			}
-			return;
 		}
 	}
 }
@@ -1602,6 +1551,37 @@ void MainWindow::showXMLEditor(wxCommandEvent& event)
 	{
 		edit->ShowPanel();
 	}
+}
+
+void MainWindow::SaveRobotAsRobotSimXml(wxCommandEvent& event)
+{
+	wxTreeItemId itemId = tree->GetSelection();
+	NodeTree* itemData = itemId.IsOk() ? (NodeTree *) tree->GetItemData(itemId):NULL;
+
+	if(itemData->menus.menu_robotsim && m_root!=itemId)
+	{
+		wxFileDialog saveFile(this,wxT("Save Object file XML"), wxEmptyString, wxEmptyString,
+        wxT("XML files (*.xml)|*.xml"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+		if(saveFile.ShowModal() == wxID_OK)
+		{
+			wxString fileName = saveFile.GetPath();
+			char c_file[100];
+			strcpy(c_file,(const char*)fileName.mb_str(wxConvUTF8));
+
+			XMLfile xml_file(c_file);			
+			itemData->pointer.positionableentity->setRelativeT3D(0);
+			string className = "RobotSim";
+			XMLElement* obj_xml=new XMLElement (xml_file.getRoot(),className.c_str());
+			RobotSim* robot;
+			robot=dynamic_cast<RobotSim *>(itemData->pointer.robotsim);
+			robot->writeToXMLasRobotSim(obj_xml);
+			xml_file.getRoot()->AddElement(obj_xml);
+			xml_file.getXMLElementsObjects().push_back(obj_xml);
+			xml_file.save();
+			wxLogMessage(wxT("Successfully save in %s"), saveFile.GetPath().c_str());
+		}
+	}
+	else wxLogMessage(wxT("Please select a Object."));
 }
 
 
