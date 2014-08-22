@@ -29,15 +29,18 @@ public:
 	void FaceOrientation(wxCommandEvent& event);
 	void FaceButton(wxCommandEvent& event);
 	void ColorChanged(wxCommandEvent& event);
-
 	void CopyDesign(wxCommandEvent& event);
 	void PasteDesign(wxCommandEvent& event);
-
+	FaceWidget* getcanvas(){return canvas;}
+	void setType(bool modification){modi=modification;}
+	void setIndex(int num){index=num;}	
 	
 private:
-	
+	bool modi;
+	int index;
 	bool worldView;
 	double red,green,blue;
+	Face editedFace;
 	FaceWidget *canvas;
 	GenericSlider *roll,*pitch,*x_pos,*y_pos,*plane_dis,*transparency;
 	wxButton *cView,*Accept;

@@ -9,14 +9,12 @@
 #include "simulatedWorld.h"
 #include "mrcore.h"
 #include "designMine.h"
-
 #include "genericSlider.h"
 
 
 #include "bitmaps/halfwaypoint.xpm"
 #include "bitmaps/move.xpm"
 #include "bitmaps/erase.xpm"
-
 #include "bitmaps/icon_copy.xpm"
 #include "bitmaps/PasteIcon.xpm"
 #include "bitmaps/grid.xpm"
@@ -44,7 +42,6 @@ public:
 	void InitToolbar();
 	void InsertSizes();
 	DesignMine* GetScreen2D(){return Screen2D;};
-	void ChangeZoom(wxCommandEvent& event);
 	void FaceAlign(wxCommandEvent& event);
 	void ChangeGridSize(wxSpinEvent& event);
 	void ChangePosition(wxCommandEvent& event);

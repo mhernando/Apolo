@@ -21,6 +21,8 @@
 #include "globalView.h"
 #include "panelXML.h"
 #include "faceSelection.h"
+#include "initialProperties.h"
+
 
 #include "bitmaps/new.xpm"
 #include "bitmaps/apolo.xpm"
@@ -63,6 +65,7 @@ class ApoloPort;
 class ManageWindows;
 class RobotSimGoTo;
 class FaceSelection;
+class InitialProperties;
 class MainWindow : public wxMDIParentFrame
 {
 public:
@@ -79,7 +82,6 @@ public:
 	void OnConverter(wxCommandEvent& event);
 	void OnChangeForm(wxCommandEvent& event);
 	void OnLinkTo(wxCommandEvent& event);
-	void UpdateTreeStructure(wxCommandEvent& event);
 	void SetState(int num){state=num;};
 	int GetState(){return state;}
 	void OnChangeLocationCtrl(wxCommandEvent& event);
@@ -109,6 +111,7 @@ public:
 	void OnLoadObjectXML(wxCommandEvent& event);
 	void OnSaveWorldXML(wxCommandEvent& event);
 	void OnSaveObjectXML(wxCommandEvent& event);
+	void SaveRobotAsRobotSimXml(wxCommandEvent& event);
 	void UpdateUILoadObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveObjectXML(wxUpdateUIEvent& event);
 	void UpdateUISaveWorldXML(wxUpdateUIEvent& event);
@@ -165,6 +168,7 @@ private:
 	globalView* view;
 	PanelXML* edit;
 	FaceSelection* vsele;
+	InitialProperties* ini;
 	wxTreeItemId m_root;
 	wxToolBar* toolbar;
 	wxAuiNotebook* note;

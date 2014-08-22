@@ -42,10 +42,8 @@ public:
 	void MovePoint(wxMouseEvent& event);
 	int NumPoints(){return points.size();};
 	vector<Vector2D> GetVector(){return points;};
-
 	vector<Vector2D> GetAuxVector(){return auxpoints;}; 
 	void SetAuxPoints(double x,double y){auxpoints.push_back(Vector2D(x,y));};
-
 	float GetLastPointX(){return xLast;};
 	float GetLastPointY(){return yLast;};
 	float GetPointX(){return x;}
@@ -65,7 +63,7 @@ public:
 	void MoveScreen(wxMouseEvent& event);
 	void ManageOptions(wxCommandEvent& event);
 	int GetMarkedPoint(){return MarkNum;}
-	bool GetTypeOfPoint(){return MousePoint;}  //Da a conocer si el punto introducido es por ratón o exteriormente
+	bool GetTypeOfPoint(){return MousePoint;}  
 	int GetPoint2Mark(){return point2Mark;};
 	int GetPoint1Mark(){return point1Mark;};
 	void SetCondition(int a){estado=a;};

@@ -26,7 +26,8 @@ FaceWindow::FaceWindow(wxWindow *parent,NodeTree *obj,const wxString& title, con
 	worldView=false;
 	red=green=blue=1.0f;
 	CreatePanel();
-
+	modi=false;
+	index=-1;
 }
 
 void FaceWindow::CreatePanel()
@@ -114,16 +115,21 @@ void FaceWindow::FaceOrientation(wxCommandEvent& event)
 	trans.orientation.setRPY(deg2rad(roll->getValue()),deg2rad(pitch->getValue()),0);
 	canvas->GetView()->GetFace()->setOrigin(trans.position);
 	canvas->GetView()->GetFace()->setBase(trans);
-	canvas->GetCanvas3d()->AddObject(canvas->GetView()->GetFace());         
+	if(modi==true)
+	{
+		editedFace.setOrigin(trans.position);
+		editedFace.setBase(trans);
+		node->pointer.facesetpart->modifyFace(index,editedFace);
+	}
 	canvas->GetCanvas3d()->Update();
 	canvas->RefreshCanvas();
+
 }
 
 void FaceWindow::FaceButton(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	if(id==ID_SHOWTHREED)
-
 	{
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		canvas->GetView()->Show(true);
@@ -132,44 +138,44 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 
 	if(id==ID_ADDOWNFACE)
 	{
-		//node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace())); //PARA VER LA CARA QUE ESTAMOS DIBUJANDO
-		canvas->GetCanvas3d()->AddObject(canvas->GetView()->GetFace());         //PERO QUE AUN ESTÁ SIN AÑADIR AL FACESETPART
+		editedFace=*(canvas->GetView()->GetFace());
+		if(modi==true) node->pointer.facesetpart->modifyFace(index,editedFace);
+		if(modi==false)canvas->GetCanvas3d()->AddObject(canvas->GetView()->GetFace());         
 		canvas->GetCanvas3d()->Update();
-		//canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		canvas->GetCanvas3d()->Refresh();
-		roll->setValue(0);
-		pitch->setValue(0);
-		plane_dis->setValue(0);	
 		canvas->GetView()->Show(false);
 		canvas->GetView()->MakeModal(false);
 	}
 
 	if(id==ID_OTHERFACE)
 	{
-
 		node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
 		canvas->GetCanvas3d()->ClearObjects();
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		roll->setValue(0);
 		pitch->setValue(0);
 		plane_dis->setValue(0);
-		canvas->CreateFace();
+		x_pos->setValue(0);
+		y_pos->setValue(0);
 		canvas->CreateVis2D();
 	}
-
 }
 
 
 
 void FaceWindow::AddFace()
 {
-	node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
-	canvas->GetCanvas3d()->ClearObjects();
-	canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
-	roll->setValue(0);
-	pitch->setValue(0);
-	plane_dis->setValue(0);
-	canvas->CreateFace();
+	if (modi==false)
+	{
+		node->pointer.facesetpart->addFace(*(canvas->GetView()->GetFace()));
+		canvas->GetCanvas3d()->ClearObjects();
+		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
+		roll->setValue(0);
+		pitch->setValue(0);
+		plane_dis->setValue(0);
+		x_pos->setValue(0);
+		y_pos->setValue(0);
+	}
 }
 
 
@@ -183,7 +189,9 @@ void  FaceWindow::ColorChanged(wxCommandEvent& event)
 			red = color.Red();
 			green = color.Green();
 			blue = color.Blue();
+			editedFace.setColor(red/255,green/255,blue/255,transparency->getValue());
 			canvas->GetView()->GetFace()->setColor(red/255,green/255,blue/255,transparency->getValue());
+			if(modi==true) node->pointer.facesetpart->modifyFace(index,editedFace);
 			canvas->RefreshCanvas();
 		}		
 }

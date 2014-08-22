@@ -21,14 +21,12 @@ SimulatedWorld::SimulatedWorld(World *world)
 	mainNode = tree->GenerateSubTree(this);
 	tree->UnselectAll();
 	tree->SelectItem(mainNode);
-	UpdateLinks();
-
 }
 
 
 void SimulatedWorld::AddObject(wxWindowID  	id)
 {	
-
+	InitialProperties *ini;
 	PositionableEntity *obj=NULL;
 	NodeTree *newNode=NULL;
 	NodeTree *itemData = tree->GetSelection().IsOk() ? (NodeTree *) tree->GetItemData(tree->GetSelection()):NULL;
@@ -113,9 +111,25 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		tree->SetItemText(tree->GetLastChild(tree->GetSelection()),wxT("Irregular Prism"));
 	}
 	// Initial Properties //
-	InitialProperties *ini= new InitialProperties(mainWin,newNode,wxT("Properties"),id); 
-	ini->ShowModal();
-	
+	if(id==ID_ADDCUSTOM)
+	{
+		CompOption=new wxMessageDialog(NULL, wxT("Use the interface to build it?"),wxT("Composed Design"),wxYES_NO,wxDefaultPosition);
+		if(CompOption->ShowModal()==wxID_YES)
+		{
+			ini= new InitialProperties(mainWin,newNode,wxT("Properties"),id); 
+			ini->ShowModal();
+		}
+		else
+		{
+			childView->UpdateWorld();
+			return;
+		}
+	}
+	else
+	{
+		ini= new InitialProperties(mainWin,newNode,wxT("Properties"),id); 
+		ini->ShowModal();
+	}
 
 
 	if(ini->GetButtom()==false)
@@ -170,214 +184,40 @@ SimulatedWorld::~SimulatedWorld()
 
 
 
-//////////////////////////////////////////////////////////////////
-/////////////Nuevas funciones de linkado/////////////
-
-
-void SimulatedWorld::InsertLinkerEntity (PositionableEntity* obj,wxTreeItemId Item)
+bool SimulatedWorld::checkAddedItem(PositionableEntity* pos)
 {
-	if(LinkersPos.size()>0)
+	if(Items.size()>0)
 	{
-		for(int i=0;i<LinkersPos.size();i++)
+		for(int i=0;i<Items.size();i++)
 		{
-			if(obj==LinkersPos[i]) 
-			{	
-				return;
-			}
-		}
-	}
-	LinkersPos.push_back(obj);
-	vector<PositionableEntity*> PosAux;
-	LinksPos.push_back(PosAux);
-	LinkersId.push_back(Item);
-	vector<wxTreeItemId> aux;
-	LinksId.push_back(aux);
-	return;
-}
-
-
-void SimulatedWorld::InsertLinkedEntity(PositionableEntity* linker,PositionableEntity* linked,wxTreeItemId ItemLinked)
-{
-	for(int i=0;i<LinkersPos.size();i++)
-	{
-		if (linker==LinkersPos[i])
-		{
-			LinksPos[i].push_back(linked);
-			LinksId[i].push_back(ItemLinked);
-		}
-	}
-}
-
-
-int SimulatedWorld::getLinkerPositionable(PositionableEntity* el)
-{
-	if(LinkersPos.size()>0)
-	{
-		for(int i=0;i<LinkersPos.size();i++)
-		{
-			if(el==LinkersPos[i]) return i;
-		}
-	}
-	return -1;
-}
-
-
-
-void SimulatedWorld::EraseLinked(PositionableEntity* pos,wxTreeItemId item)
-{
-	int aux;
-	for(int i=0;i<LinksPos.size();i++)
-	{
-		for(int j=0;j<LinksPos[i].size();j++)
-		{
-			if(LinksPos[i][j]==pos)
-			{
-				aux=i;
-				LinksPos[i].erase(LinksPos[i].begin()+j);
-				LinksId[i].erase(LinksId[i].begin()+j);
-			}
-		}
-	}
-	
-	if(LinksPos[aux].size()==0)
-	{
-		LinkersPos.erase(LinkersPos.begin()+aux);
-		LinkersId.erase(LinkersId.begin()+aux);
-		LinksPos.erase(LinksPos.begin()+aux);
-		LinksId.erase(LinksId.begin()+aux);
-	}
-	
-}
-
-
-wxTreeItemId SimulatedWorld::getPositionableId(PositionableEntity* pos)
-{
-	int aux=-1;
-	if (LinkersPos.size()>0)
-	{
-		for(int i=0;i<LinkersPos.size();i++)
-		{
-			if(LinkersPos[i]==pos) return LinkersId[i];
-		}
-	}
-	//////El elemento no era un linker
-	
-	if(LinksPos.size()>0)
-	{
-		for(int i=0;i<LinksPos.size();i++)
-		{
-			for(int j=0;j<LinksPos[i].size();j++)
-			{
-				if(pos==LinksPos[i][j]) return LinksId[i][j];
-			}
-		}
-	}
-}
-
-
-
-bool SimulatedWorld::CheckItemLinked(PositionableEntity* pos)
-{
-	for(int i=0;i<LinksPos.size();i++)
-	{
-		for(int j=0;j<LinksPos[i].size();j++)
-		{
-			if(pos==LinksPos[i][j]) return true;
+			if(pos==Items[i]) return true;
 		}
 	}
 	return false;
 }
 
 
-
-//Función encargada de obtener el id del nodo en el arbol correspondiente a ese entity 
-wxTreeItemId SimulatedWorld::getLoadedObjectId(PositionableEntity* pos)
+void SimulatedWorld::InitializeItemsVectors()
 {
-	for(int i=0;i<m_world->getNumObjects();i++)
+	ItemsId.clear();
+	Items.clear();
+}
+
+
+bool SimulatedWorld::checkLink(PositionableEntity* linker,PositionableEntity* linked)
+{
+	if (linker->getOwner()==linked->getOwner())
 	{
-		if(pos==(*m_world)[i]) return LoadedIds[i];
+		if(linker->getLinkedTo()==linked) return false;
+		else if (linker->getLinkedTo()==NULL) return true;
+		else checkLink(linker->getLinkedTo(),linked);
 	}
+	else if(dynamic_cast<Tcp *>(linker)) return true;
+	else return false;
 }
 
 
 
-void SimulatedWorld::UpdateLinks()
-{
-	bool added;
-	for(int x=0;x<m_world->getNumObjects();x++)
-	{
-		added=false;
-		PositionableEntity* pos=(*m_world)[x];
-		if(pos->getLinkedTo()!=NULL)
-		{
-			if(LinkersPos.size()>0)
-			{
-				for(int i=0;i<LinkersPos.size();i++)
-				{
-					if(pos->getLinkedTo()==LinkersPos[i])
-					{
-						LinksPos[i].push_back(pos);	
-						LinksId[i].push_back(LoadedIds[x]);
-						added=true;
-					}
-				}
-				if (added==false)
-				{
-					LinkersPos.push_back(pos->getLinkedTo());
-					LinkersId.push_back(getLoadedObjectId(pos->getLinkedTo()));
-					vector<PositionableEntity*> PosAux;
-					LinksPos.push_back(PosAux);
-					LinksPos[LinksPos.size()-1].push_back(pos);
-					vector<wxTreeItemId> IdAux;
-					LinksId.push_back(IdAux);
-					LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
-				}
-			}
-			else
-			{
-				string name=pos->getLinkedTo()->getClassName();
-				if (name=="Tcp")
-				{
-					EntitySet* Lnk;
-					Lnk=pos->getLinkedTo()->getOwner();
-					PositionableEntity* owner = dynamic_cast<PositionableEntity *>(Lnk);
-					LinkersPos.push_back(owner);
-					LinkersId.push_back(getLoadedObjectId(owner));
-					vector<PositionableEntity*> PosAux;
-					LinksPos.push_back(PosAux);
-					LinksPos[LinksPos.size()-1].push_back(pos);
-					vector<wxTreeItemId> idlinked;
-					LinksId.push_back(idlinked);
-					LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
-				}
-				else
-				{
-					LinkersPos.push_back(pos->getLinkedTo());
-					LinkersId.push_back(getLoadedObjectId(pos->getLinkedTo()));
-					vector<PositionableEntity*> PosAux;
-					LinksPos.push_back(PosAux);
-					LinksPos[LinksPos.size()-1].push_back(pos);
-					vector<wxTreeItemId> idlinked;
-					LinksId.push_back(idlinked);
-					LinksId[LinksId.size()-1].push_back(LoadedIds[x]);
-				}
-			}
-		}
-	}
-}
-
-
-PositionableEntity* SimulatedWorld::getLinker(PositionableEntity* linked)
-{
-	for(int i=0;i<LinksPos.size();i++)
-	{
-		for(int j=0;j<LinksPos[i].size();j++)
-		{
-			if(LinksPos[i][j]==linked)
-			return LinkersPos[i];
-		}
-	}
-}
 
 
 

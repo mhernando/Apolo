@@ -113,11 +113,7 @@ void ObjectSelection::PreliminarView(wxListEvent &event)
 			else if(itemIndex==10){preView->SetViewCenter(0,0,0.75); preView->SetViewPoint(4,0,0); preliminar=new PersonSim;object=ID_PERSON;}
 			//else if(itemIndex==11){preliminar=new MobileRobot("Robot") ;object=ID_MOBILEROBOT;}
 		}
-		
-		
-		
 	}
-	
 	preView->AddObject(preliminar);
 	
 }
