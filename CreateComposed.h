@@ -13,10 +13,8 @@
 #include "bitmaps/prismCom.xpm"
 #include "bitmaps/coloursComp.xpm"
 #include "bitmaps/AddComposedIcon.xpm"
-#include "bitmaps/CreateJoint.xpm"
 #include "bitmaps/AddAnotherItem.xpm"
 #include "bitmaps/FinishComp.xpm"
-#include "bitmaps/ComposedTCP.xpm"
 #include "bitmaps/IrrPrismCom.xpm"
 
 

@@ -43,6 +43,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_MOBILEROBOT, MainWindow::AddObject)
 	EVT_MENU(ID_PERSON, MainWindow::AddObject)
 	EVT_MENU(ID_QUADROTOR, MainWindow::AddObject)
+	EVT_MENU(ID_EUITIBOT, MainWindow::AddObject)
 	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
 	EVT_MENU(ID_LASMOD0, MainWindow::OnLaserStyle)
 	EVT_MENU(ID_LASMOD1, MainWindow::OnLaserStyle)
@@ -1569,7 +1570,6 @@ void MainWindow::SaveRobotAsRobotSimXml(wxCommandEvent& event)
 			strcpy(c_file,(const char*)fileName.mb_str(wxConvUTF8));
 
 			XMLfile xml_file(c_file);			
-			itemData->pointer.positionableentity->setRelativeT3D(0);
 			string className = "RobotSim";
 			XMLElement* obj_xml=new XMLElement (xml_file.getRoot(),className.c_str());
 			RobotSim* robot;

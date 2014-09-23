@@ -80,6 +80,8 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj=new LaserSensor3DSim;
 	else if(id==ID_NEMOLASER)
 		obj=new NemoLaserSensor3DSim;
+	else if(id==ID_EUITIBOT)
+		obj=new EUITIbotSim;
 		
 	else 
 		obj=new PositionableEntity;

@@ -58,6 +58,7 @@
 #include "bitmaps/aseaSelect.xpm"
 #include "bitmaps/link.xpm"
 #include "bitmaps/link2.xpm"
+#include "bitmaps/euitiBot.xpm"
 
 class PanelXML;
 class MainWindow;

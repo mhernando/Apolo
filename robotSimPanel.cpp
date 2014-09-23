@@ -8,7 +8,7 @@ END_EVENT_TABLE()
 
 RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& title_frame, NodeTree* itemData,
 							 NodeTree *parentData, bool onlyjoint)
-: wxFrame(parent, id,title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
+: wxFrame(parent, id,title_frame, wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER) 
 {
 	this->SetIcon(wxIcon(joint_xpm));
 	itemnode = itemData;
@@ -37,7 +37,7 @@ RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& tit
 
 				listJoints.push_back(joint);
 				vbox->Add(joint,0,wxEXPAND|wxALL,5);
-				vbox->AddSpacer(5);
+				vbox->AddSpacer(10);
 				
 			}
 			for(int i=0;i<numJoints;i++)

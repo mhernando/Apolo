@@ -9,10 +9,8 @@ BEGIN_EVENT_TABLE(CreateComposed,wxPanel)
 EVT_MENU(ID_CYLINDCOMPOSED,CreateComposed::AddNewObject)
 EVT_MENU(ID_SPHERECOMPOSED,CreateComposed::AddNewObject)
 EVT_MENU(ID_IRRPRISMCOMPOSED,CreateComposed::AddNewObject)
-EVT_MENU(ID_INSERTJOINT,CreateComposed::AddNewObject)
 EVT_MENU(ID_ADDCOMPPART,CreateComposed::AddNewComposed)
 EVT_MENU(ID_ADDANOTHERITEM,CreateComposed::AddActualItem)
-EVT_MENU(ID_ADDCOMPOSEDTCP,CreateComposed::AddNewObject)
 EVT_MENU(ID_REGPRISMCOMPOSED,CreateComposed::AddNewObject)
 EVT_BUTTON(ID_COLOR,CreateComposed::ChangeDesignProperties)
 EVT_BUTTON(ID_ADDOWNFACE, CreateComposed::ChangeDesignProperties)
@@ -70,10 +68,8 @@ void CreateComposed::CreatePanel()
 	bitmaps[2]=wxBitmap (prismCom_xpm);
 	bitmaps[3]=wxBitmap(coloursComp_xpm);
 	bitmaps[4]=wxBitmap(AddComposedIcon_xpm);
-	bitmaps[5]=wxBitmap(CreateJoint_xpm);
-	bitmaps[6]=wxBitmap(AddAnotherItem_xpm);
-	bitmaps[7]=wxBitmap(ComposedTCP_xpm);
-	bitmaps[8]=wxBitmap(IrrPrismCom_xpm);
+	bitmaps[5]=wxBitmap(AddAnotherItem_xpm);
+	bitmaps[6]=wxBitmap(IrrPrismCom_xpm);
 
 
 
@@ -81,7 +77,7 @@ void CreateComposed::CreatePanel()
 	MainToolbar->Create(this,wxID_ANY,wxDefaultPosition,wxSize(650,40),wxBORDER_NONE|wxTB_HORIZONTAL);
 	MainToolbar->AddTool(ID_ADDCOMPPART,bitmaps[4], wxT("Add new Composed"));
 	MainToolbar->AddSeparator();
-	MainToolbar->AddTool(ID_ADDANOTHERITEM,bitmaps[6], wxT("Add New Item"));
+	MainToolbar->AddTool(ID_ADDANOTHERITEM,bitmaps[5], wxT("Add New Item"));
 	MainToolbar->SetBackgroundColour(wxColour(255,255,131));
 	MainToolbar->Realize();
 
@@ -90,9 +86,7 @@ void CreateComposed::CreatePanel()
 	Toolbar->AddTool(ID_CYLINDCOMPOSED,bitmaps[0], wxT("Create Cylinder"));
 	Toolbar->AddTool(ID_SPHERECOMPOSED,bitmaps[1], wxT("Create Sphere"));
 	Toolbar->AddTool(ID_REGPRISMCOMPOSED,bitmaps[2],wxT("Create Regular Prism"));
-	Toolbar->AddTool(ID_IRRPRISMCOMPOSED,bitmaps[8], wxT("Create Irregular Prism"));
-	Toolbar->AddTool(ID_INSERTJOINT,bitmaps[5], wxT("Create Joint"));
-	Toolbar->AddTool(ID_ADDCOMPOSEDTCP,bitmaps[7], wxT("Insert TCP"));
+	Toolbar->AddTool(ID_IRRPRISMCOMPOSED,bitmaps[6], wxT("Create Irregular Prism"));
 	Toolbar->SetBackgroundColour(*wxWHITE);
 	Toolbar->Realize();
 
@@ -155,16 +149,24 @@ void CreateComposed::CreatePanel()
 
 void CreateComposed::AddNewObject(wxCommandEvent& event)
 {
+	string NameSet;
 	if(checkAddition==true)
 	{
 		int id=event.GetId();
 	
 		if (id==ID_CYLINDCOMPOSED)
 		{
+			Temp= new CylindricalPart();
+			wxTextEntryDialog myDialog(this,"Introduce name");
+			if (myDialog.ShowModal()==wxID_OK )
+			{
+				wxString Name=myDialog.GetValue();
+				NameSet=std::string(Name.mb_str());
+				Temp->setName(NameSet);
+			}
 			Height->Enable();
 			Radio->Enable();
 			BaseVertex->Disable();
-			Temp= new CylindricalPart();
 			canvas3d->AddObject(Temp);
 			canvas3d->Refresh();
 			ResetValues();
@@ -174,6 +176,13 @@ void CreateComposed::AddNewObject(wxCommandEvent& event)
 		if (id==ID_SPHERECOMPOSED)
 		{
 			Temp= new SpherePart();
+			wxTextEntryDialog myDialog(this,"Introduce name");
+			if (myDialog.ShowModal()==wxID_OK )
+			{
+				wxString Name=myDialog.GetValue();
+				NameSet=std::string(Name.mb_str());
+				Temp->setName(NameSet);
+			}
 			Height->Disable();
 			Radio->Enable();
 			BaseVertex->Disable();
@@ -186,6 +195,13 @@ void CreateComposed::AddNewObject(wxCommandEvent& event)
 		if (id==ID_IRRPRISMCOMPOSED)
 		{
 			Temp=new PrismaticPart();
+			wxTextEntryDialog myDialog(this,"Introduce name");
+			if (myDialog.ShowModal()==wxID_OK )
+			{
+				wxString Name=myDialog.GetValue();
+				NameSet=std::string(Name.mb_str());
+				Temp->setName(NameSet);
+			}
 			Height->Enable();
 			Radio->Disable();
 			BaseVertex->Disable();
@@ -195,28 +211,17 @@ void CreateComposed::AddNewObject(wxCommandEvent& event)
 			CreateFig->Show(true);
 		}
 
-		if (id==ID_INSERTJOINT)
-		{
-			Temp=new SimpleJoint();
-			type=4;
-			Height->Disable();
-			Radio->Disable();
-			BaseVertex->Disable();
-		}
-
-		if (id==ID_ADDCOMPOSEDTCP)
-		{
-			Temp=new Tcp();
-			Temp->setName("Tcp");
-			type=5;
-			Height->Disable();
-			Radio->Disable();
-			BaseVertex->Disable();
-		}
 
 		if (id==ID_REGPRISMCOMPOSED)
 		{
 			Temp=new PrismaticPart();
+			wxTextEntryDialog myDialog(this,"Introduce name");
+			if (myDialog.ShowModal()==wxID_OK )
+			{
+				wxString Name=myDialog.GetValue();
+				NameSet=std::string(Name.mb_str());
+				Temp->setName(NameSet);
+			}
 			prism=dynamic_cast<PrismaticPart*>(Temp);
 			prism->setRegularPolygonBase(1,4);	
 			prism->setColor(0.5,0.5,0.5);
@@ -226,7 +231,7 @@ void CreateComposed::AddNewObject(wxCommandEvent& event)
 			Radio->Enable();
 			BaseVertex->Enable();
 			ResetValues();
-			type=6;
+			type=4;
 		}
 		checkAddition=false;
 	}
@@ -353,41 +358,7 @@ void CreateComposed::ChangeDesignProperties(wxCommandEvent &event)
 	}
 
 
-	if(type==4) //Creating a SimpleJoint
-	{
-		joint=dynamic_cast<SimpleJoint*>(Temp);
-		Transformation3D t;
-		t.position.x=PositionX->getValue();	
-		t.position.y=PositionY->getValue();		
-		t.position.z=PositionZ->getValue();	
-		Vector3D orientation;
-		orientation.x=Roll->getValue();	
-		orientation.y=Pitch->getValue();
-		orientation.z=Yaw->getValue();
-		t.orientation.setRPY(deg2rad(orientation.x),deg2rad(orientation.y),deg2rad(orientation.z));
-		joint->setRelativeT3D(t);
-		canvas3d->Refresh();
-	}
-
-	if(type==5) //Creating  TCP
-	{
-		TCP=dynamic_cast<Tcp*>(Temp);
-		Transformation3D t;
-		t.position.x=PositionX->getValue();	
-		t.position.y=PositionY->getValue();		
-		t.position.z=PositionZ->getValue();	
-		Vector3D orientation;
-		orientation.x=Roll->getValue();	
-		orientation.y=Pitch->getValue();
-		orientation.z=Yaw->getValue();
-		t.orientation.setRPY(deg2rad(orientation.x),deg2rad(orientation.y),deg2rad(orientation.z));
-		TCP->setRelativeT3D(t);
-		canvas3d->AddObject(Temp);
-		TCP->setDrawReferenceSystem(true);
-		canvas3d->Refresh();
-	}
-
-	if(type==6)
+	if(type==4)
 	{
 		prism=dynamic_cast<PrismaticPart*>(Temp);
 		if (id==ID_COLOR)
@@ -443,9 +414,7 @@ void CreateComposed::AddNewComposed(wxCommandEvent& event)
 			CurrentComposed->AppendString(Name);
 		}
 		IntegratedParts.push_back(Comp);
-		ActualComp=IntegratedParts.size()-1;
 		(*currentComp)+=IntegratedParts[IntegratedParts.size()-1];
-		currentComp=IntegratedParts[IntegratedParts.size()-1];
 	}
 	wxMessageDialog *dial = new wxMessageDialog(NULL, wxT("Composed added"), wxT("Confirmation"), wxOK | wxICON_INFORMATION);
 	dial->ShowModal();
@@ -454,29 +423,19 @@ void CreateComposed::AddNewComposed(wxCommandEvent& event)
 
 void CreateComposed::AddActualItem(wxCommandEvent& event)
 {
-	if((type<4)||(type==6))
+	if(checkAddition==false)
 	{
 		(*currentComp)+=Temp;
 		ResetValues();
+		wxMessageDialog *dial = new wxMessageDialog(NULL, wxT("Item added"), wxT("Confirmation"), wxOK | wxICON_INFORMATION);
+		dial->ShowModal();
+		checkAddition=true;
 	}
-	else if(type==4) 
+	else 
 	{
-		Temp->LinkTo(currentComp);
-		actuator=new Actuator();
-		actuator->linkTo(Temp);
-		Actuators.push_back(actuator);
-		Joints.push_back(joint);
-		ResetValues();
+		wxMessageDialog *dial = new wxMessageDialog(NULL, wxT("This item has been already added"), wxT("Confirmation"), wxOK | wxICON_INFORMATION);
+		dial->ShowModal();
 	}
-	else if(type==5) 
-	{
-		Temp->LinkTo(currentComp);
-		ResetValues();
-	}
-	wxMessageDialog *dial = new wxMessageDialog(NULL, wxT("Item added"), wxT("Confirmation"), wxOK | wxICON_INFORMATION);
-	dial->ShowModal();
-	checkAddition=true;
-
 }
 
 

@@ -469,9 +469,10 @@ void globalView::ManageButtons(wxCommandEvent& event)
 
 void globalView::LoadFace(Face loaded)
 {
-	for(int i=0;i<loaded.getNumVertex();i++)
+	vector<Vector3D> v=loaded.getVertex();
+	for(int i=0;i<v.size();i++)
 	{
-		points->SetPoints(loaded.getAbsoluteVertex(i).x,loaded.getAbsoluteVertex(i).y);
+		points->SetPoints(v[i].x,v[i].y);
 	}
 }
 
