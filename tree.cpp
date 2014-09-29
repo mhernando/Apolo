@@ -14,7 +14,7 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 {
 	wxImageList *images = new wxImageList(16,16,true);
 	// should correspond to "bit" & "bitsel" enum 
-	wxIcon icons[50];
+	wxIcon icons[51];
 	icons[0] = wxIcon (universe_xpm); //universe
 	icons[1] = wxIcon (joint_xpm); //simple joint
 	icons[2] = wxIcon (jointSelect_xpm); //simple joint select 
@@ -65,6 +65,8 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	icons[47] = wxIcon (universeSelect_xpm);
 	icons[48]=	wxIcon (link_xpm);
 	icons[49]=	wxIcon(link2_xpm);
+	icons[50]=  wxIcon(euitiBot_xpm);
+
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 	{
@@ -193,7 +195,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		
 		///Number of items for Simple Entities Menu///
 		#define NUMBER_S 6
-		#define NUMBER_C 11
+		#define NUMBER_C 12
 		m_item simples[NUMBER_S];
 		m_item compos[NUMBER_C];
 		wxMenuItem *item_s[NUMBER_S];
@@ -223,6 +225,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		compos[8]=SimplyItems(ID_NEMOLASER,wxT("NemoLaser Sensor 3D "),wxIcon(nemolaser_xpm));
 		compos[9]=SimplyItems(ID_QUADROTOR,wxT("Quadrotor"),wxIcon(powercube_xpm));
 		compos[10]=SimplyItems(ID_PERSON,wxT("Person"),wxIcon(positionable_xpm));
+		compos[11]=SimplyItems(ID_EUITIBOT,wxT("Euitibot"),wxIcon(euitiBot_xpm));
 	//	compos[11]=SimplyItems(ID_MOBILEROBOT,wxT("Mobile Robot"),wxIcon(nemolaser_xpm));			
 		
 		for( int i=0; i<NUMBER_S;i++)

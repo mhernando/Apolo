@@ -424,7 +424,11 @@ void PanelXML::SaveXML(wxCommandEvent& WXUNUSED(event))
 				char filec[100];
 				strcpy(filec, (const char*) file.mb_str(wxConvUTF8));
 				wxString cont=textCtrl->GetValue();
-				wxStringInputStream Stream(cont);
+				wxString cad;
+				cad=wxT("<root>");
+				cad+=cont;
+				cad+=wxT("</root>");
+				wxStringInputStream Stream(cad);
 				wxXmlDocument* m_pXmlDocument = new wxXmlDocument();
 				m_pXmlDocument->Load(Stream);
 				m_pXmlDocument->Save(filec);
@@ -644,6 +648,20 @@ bool PanelXML::CheckDeclaredAttribute(string attr)
 	string vmin("vmin");attributes.push_back(vmin);
 	string offset("offset"); attributes.push_back(offset);
 	string linkto("linkTo"); attributes.push_back(linkto);
+	string intersectable("intersectable"); attributes.push_back(intersectable);
+	string speed("speed"); attributes.push_back(speed);
+	string maxSpeed("maxSpeed"); attributes.push_back(maxSpeed);
+	string meridian("meridian"); attributes.push_back(meridian);
+	string parallel("parallel"); attributes.push_back(parallel);
+	string rotSpeed("rotSpeed"); attributes.push_back(rotSpeed);
+	string startAngle("startAngle"); attributes.push_back(startAngle);
+	string stepAngle("stepAngle"); attributes.push_back(stepAngle);
+	string numSteps("numSteps"); attributes.push_back(numSteps);
+	string maxRange("maxRange"); attributes.push_back(maxRange);
+	string sigma("sigma"); attributes.push_back(sigma);
+
+
+
 
 	for(int i=0;i<attributes.size();i++)
 	{
@@ -779,9 +797,11 @@ void PanelXML::GetElementVariables()
 
 void PanelXML::UpdateText(wxCommandEvent& event)
 {
+	long cursor=textCtrl->GetInsertionPoint();
 	wxString cont=textCtrl->GetValue();
 	wxStringInputStream Stream(cont);
 	wxCharBuffer buffer=cont.ToUTF8();
 	char *xml=buffer.data();
 	TreatXMLText(xml);
+	textCtrl->SetInsertionPoint(cursor);
 }

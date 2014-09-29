@@ -9,7 +9,7 @@ BEGIN_EVENT_TABLE(ChangeLocationCtrl, wxDialog)
 END_EVENT_TABLE()
 
 ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wxString& title)
-:wxDialog(parent, id, title, wxDefaultPosition, wxSize(525,300),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
+:wxDialog(parent, id, title, wxDefaultPosition, wxSize(300,450),wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) 
 {
 	itemnode = 0;
 	winId = id;
@@ -40,10 +40,6 @@ ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wx
 		
 	}
 
-	
-	
-	
-	
 	wxBoxSizer *hbbox = new wxBoxSizer(wxHORIZONTAL);
 	hbbox->Add(accept,0,wxALIGN_LEFT);
 	hbbox->AddSpacer(5);
@@ -58,11 +54,10 @@ ChangeLocationCtrl::ChangeLocationCtrl(wxWindow *parent, wxWindowID id, const wx
 	vbox->Add(hbox,1,wxEXPAND|wxALL,5);
 	vbox->Add(hbbox,wxSizerFlags(0).Align(wxALIGN_BOTTOM));
 	panel->SetSizer(vbox);
-	vbox->SetMinSize(300,300);
-	vbox->SetSizeHints(this);
 }
 void ChangeLocationCtrl::OnValueChanged(wxCommandEvent& event)
 {
+
 	Transformation3D t=itemnode->pointer.positionableentity->getRelativeT3D();
 	
 	if(winId == ID_ORI)
@@ -81,14 +76,15 @@ void ChangeLocationCtrl::OnValueChanged(wxCommandEvent& event)
 		z=control2->getValue();
 		t.position=Vector3D(x,y,z);
 	}
-	
-
 	itemnode->pointer.positionableentity->setRelativeT3D(t);
 	itemnode->getSimu()->getChild()->RefreshChild();
 	event.Skip();
 }
 void ChangeLocationCtrl::OnButton(wxCommandEvent& event)
 {
+	Transformation3D t=itemnode->pointer.positionableentity->getRelativeT3D();
+	double roll,pitch,yaw;
+	double x,y,z;
 	int id = event.GetId();
 	wxObject *obj = event.GetEventObject();
 
@@ -101,7 +97,23 @@ void ChangeLocationCtrl::OnButton(wxCommandEvent& event)
 		control0->setValue(initialValues[0]);
 		control1->setValue(initialValues[1]);
 		control2->setValue(initialValues[2]);
+		if(winId == ID_ORI)
+		{
+			roll=deg2rad(initialValues[0]);
+			pitch=deg2rad(initialValues[1]);
+			yaw=deg2rad(initialValues[2]);
+			t.orientation.setRPY(roll,pitch,yaw);
+		}
+		else
+		{
+			x=initialValues[0];
+			y=initialValues[1];
+			z=initialValues[2];
+			t.position=Vector3D(x,y,z);
+		}
 		Close(true);
+		itemnode->pointer.positionableentity->setRelativeT3D(t);
+		itemnode->getSimu()->getChild()->RefreshChild();
 	}
 	event.Skip();
 }

@@ -13,6 +13,7 @@
 #include "bitmaps/nemolaser.xpm"
 #include "bitmaps/asea.xpm"
 #include "bitmaps/positionable.xpm"
+#include "bitmaps/euitiBot.xpm"
 
 
 BEGIN_EVENT_TABLE(ObjectSelection, wxDialog)
@@ -111,6 +112,7 @@ void ObjectSelection::PreliminarView(wxListEvent &event)
 			else if(itemIndex==8){preliminar=new PowerCube70Sim; preliminar->setDrawReferenceSystem(false);	object=ID_POWERCUBE;}
 			else if(itemIndex==9){preliminar=new NemoLaserSensor3DSim; preliminar->setDrawReferenceSystem(false); object=ID_NEMOLASER;}
 			else if(itemIndex==10){preView->SetViewCenter(0,0,0.75); preView->SetViewPoint(4,0,0); preliminar=new PersonSim;object=ID_PERSON;}
+			else if(itemIndex==11){preliminar=new EUITIbotSim;preliminar->setDrawReferenceSystem(false);object=ID_EUITIBOT;}
 			//else if(itemIndex==11){preliminar=new MobileRobot("Robot") ;object=ID_MOBILEROBOT;}
 		}
 	}
@@ -132,7 +134,7 @@ void ObjectSelection::CreateList()
 
 
 	wxImageList *im_list=new wxImageList(16,16);
-	wxIcon icons[14];
+	wxIcon icons[15];
 	icons[0]=wxIcon(sphere_xpm);
 	icons[1]=wxIcon(pioneer_xpm);
 	icons[2]=wxIcon(cylindrical_xpm);
@@ -147,6 +149,7 @@ void ObjectSelection::CreateList()
 	icons[11]=wxIcon(asea_xpm);
 	icons[12]=wxIcon(faceSetPart_xpm);
 	icons[13]=wxIcon(positionable_xpm);
+	icons[14]=wxIcon(euitiBot_xpm);
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 		im_list->Add(icons[i]);
@@ -189,6 +192,7 @@ void ObjectSelection::CreateList()
 	{
 		SetSize(1250,600);
 		//ob_list->InsertItem(index,wxT("MobileRobot"),10);			ob_list->SetItem(index,1,wxT("Add MobileRobot"));
+		ob_list->InsertItem(index,wxT("EuitiBot"),14);				ob_list->SetItem(index,1,wxT("Add EuitiBot"));
 		ob_list->InsertItem(index,wxT("Person"),13);				ob_list->SetItem(index,1,wxT("Add Human Figure"));   
 		ob_list->InsertItem(index,wxT("NemoLaser Sensor 3D"),10);	ob_list->SetItem(index,1,wxT("Add NemoLaser Sensor 3D, a laser formed with the SickLMS200 and the PowerCube")); 
 		ob_list->InsertItem(index,wxT("PowerCube"),6);				ob_list->SetItem(index,1,wxT("Add PowerCube,it provides the basis for flexible combinatorics in automation")); 
@@ -200,7 +204,7 @@ void ObjectSelection::CreateList()
 		ob_list->InsertItem(index,wxT("Robot ASEA"),5);				ob_list->SetItem(index,1,wxT("Add ASEA IRB 2000, a 6 degrees of freedom robot for welding aplications"));
 		ob_list->InsertItem(index,wxT("Robot PUMA"),5);				ob_list->SetItem(index,1,wxT("Add PUMA560, a 6 degrees of freedom robot due to 6 revolution joints"));
 		ob_list->InsertItem(index,wxT("Robot SCARA"),3);			ob_list->SetItem(index,1,wxT("Add ADEPTONE-MV,a robot with 3 rotational and 1 translational joints"));
-
+		
 	}
 	
 	Thread<ObjectSelection> rotationalView_Thid;
