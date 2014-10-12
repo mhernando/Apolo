@@ -123,7 +123,7 @@ void FaceWindow::FaceOrientation(wxCommandEvent& event)
 	}
 	canvas->GetCanvas3d()->Update();
 	canvas->RefreshCanvas();
-
+	node->getSimu()->getChild()->UpdateWorld();
 }
 
 void FaceWindow::FaceButton(wxCommandEvent& event)
@@ -145,6 +145,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 		canvas->GetCanvas3d()->Refresh();
 		canvas->GetView()->Show(false);
 		canvas->GetView()->MakeModal(false);
+		node->getSimu()->getChild()->UpdateWorld();
 	}
 
 	if(id==ID_OTHERFACE)
@@ -193,6 +194,7 @@ void  FaceWindow::ColorChanged(wxCommandEvent& event)
 			canvas->GetView()->GetFace()->setColor(red/255,green/255,blue/255,transparency->getValue());
 			if(modi==true) node->pointer.facesetpart->modifyFace(index,editedFace);
 			canvas->RefreshCanvas();
+			node->getSimu()->getChild()->UpdateWorld();
 		}		
 }
 

@@ -27,6 +27,7 @@ public:
 	void setObjConnected(bool con){objConnected=con;}
 	bool IsObjectConnected(){return objConnected;}
 	void AddObject(wxWindowID  	id);
+	SimpleJoint* AddJoint();
 	void DeleteObject(wxTreeItemId itemId);
 	World *getWorld(){return m_world;}
 	ChildView* getChild(){return childView;}
@@ -39,8 +40,6 @@ public:
 	//Link methods
 	void SetEntityToLink(PositionableEntity* pos){EntityToLink=pos;}
 	PositionableEntity* GetEntityToLink(){return EntityToLink;}
-	//void SetIdToLink(wxTreeItemId id){IdToLink=id;}
-	//wxTreeItemId GetIdToLink(){return IdToLink;}
 	void InsertId(wxTreeItemId id){ItemsId.push_back(id);}
 	void InsertItem(PositionableEntity* item){Items.push_back(item);}
 	vector<wxTreeItemId> getItemsId(){return ItemsId;}

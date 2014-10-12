@@ -1,5 +1,6 @@
 #include "simulatedWorld.h"
 
+
 MainWindow * SimulatedWorld::mainWin = 0;
 Tree * SimulatedWorld::tree = 0;
 
@@ -82,7 +83,10 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 		obj=new NemoLaserSensor3DSim;
 	else if(id==ID_EUITIBOT)
 		obj=new EUITIbotSim;
-		
+	else if(id==ID_ADDJOINT)
+	{
+		obj=AddJoint();
+	}
 	else 
 		obj=new PositionableEntity;
 
@@ -127,6 +131,10 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 			return;
 		}
 	}
+	else if (id==ID_ADDJOINT)
+	{
+		return;
+	}
 	else
 	{
 		ini= new InitialProperties(mainWin,newNode,wxT("Properties"),id); 
@@ -147,17 +155,37 @@ void SimulatedWorld::AddObject(wxWindowID  	id)
 
 void SimulatedWorld::DeleteObject(wxTreeItemId itemId)
 {
-	
 	wxTreeItemId parentItem=tree->GetItemParent(itemId);
 	wxTreeItemId objectItem=itemId;
 	NodeTree *objectData = objectItem.IsOk() ? (NodeTree *) tree->GetItemData(objectItem):NULL;
 	NodeTree *parentData = parentItem.IsOk() ? (NodeTree *) tree->GetItemData(parentItem):NULL;
-	
+
+	if(objectData->pointer.positionableentity->getLinkedTo()!=NULL)
+		objectData->pointer.positionableentity->LinkTo(NULL);
+
+	for(int i=0;i<Items.size();i++)
+	{
+		if(Items[i]->getLinkedTo()==objectData->pointer.positionableentity)
+			Items[i]->LinkTo(NULL);
+	}
+
+	for(int i=0;i<Items.size();i++)
+	{
+		if(Items[i]==objectData->pointer.positionableentity)
+		{
+			Items.erase(Items.begin()+i);
+			ItemsId.erase(ItemsId.begin()+i);
+		}
+	}
+
 	if(parentItem!=mainNode)
-		parentData->pointer.composedentity->erase(parentData->pointer.composedentity->getIndexOf(objectData->pointer.positionableentity));
+	{
+		parentData->pointer.composedentity->remove(objectData->pointer.positionableentity);
+	}
 	else 
 		delete objectData->pointer.positionableentity;
-	
+
+
 	tree->Delete(objectItem);
 	
 	childView->UpdateWorld();
@@ -208,19 +236,78 @@ void SimulatedWorld::InitializeItemsVectors()
 
 bool SimulatedWorld::checkLink(PositionableEntity* linker,PositionableEntity* linked)
 {
-	if (linker->getOwner()==linked->getOwner())
+	bool aux1,aux2;
+	aux1=false;
+	aux2=false;
+	for(int i=0;i<Items.size();i++)
 	{
-		if(linker->getLinkedTo()==linked) return false;
-		else if (linker->getLinkedTo()==NULL) return true;
+		if(linker==Items[i])aux1=true;
+	}
+	for(int i=0;i<Items.size();i++)
+	{
+		if(linked==Items[i])aux2=true;
+	}
+	if((aux1==true)&&(aux2==true))
+	{
+		if((linked->getOwner()==NULL)||(linker->getLinkedTo()==NULL)) return true; 
+		else if(linker->getOwner()!=linked->getOwner()) return false;
+		else if(linker->getLinkedTo()==linked) return false;
+		else if(linker->getOwner()!=linker->getLinkedTo()->getOwner()) return true;
 		else checkLink(linker->getLinkedTo(),linked);
 	}
-	else if(dynamic_cast<Tcp *>(linker)) return true;
 	else return false;
 }
 
 
 
+SimpleJoint* SimulatedWorld::AddJoint()
+{
+	SimpleJoint* createdJoint;
+	wxArrayString options; wxString option1("Prismatic"); wxString option2("rotational");
+	options.Add(option1); options.Add(option2);
+	wxArrayString AxisOptions; wxString AxisOption1("X_AXIS"); wxString AxisOption2("Y_AXIS");wxString AxisOption3("Z_AXIS");
+	AxisOptions.Add(AxisOption1);AxisOptions.Add(AxisOption2);AxisOptions.Add(AxisOption3);
+	bool prismatic=false; int axis=0;double vmin=-PI; double vmax=PI;
+	wxString Type;
+	wxSingleChoiceDialog myDialog(NULL,wxString("Select joint type"),wxString("Options"),options);
+	if (myDialog.ShowModal()==wxID_OK )
+	{
+		if(myDialog.GetStringSelection()==wxString("Prismatic")) prismatic=true;
+			else prismatic=false;
+	}
+	wxTextEntryDialog myDialogVmax(NULL,wxString("Introduce Vmax"),wxGetTextFromUserPromptStr,wxEmptyString,wxTextEntryDialogStyle,wxDefaultPosition);
+	if (myDialogVmax.ShowModal()==wxID_OK )
+	{
+		wxString value=myDialogVmax.GetValue();
+		value.ToDouble(&vmax);
+	}
+	wxTextEntryDialog myDialogVmin(NULL,wxString("Introduce Vmin"),wxGetTextFromUserPromptStr,wxEmptyString,wxTextEntryDialogStyle,wxDefaultPosition);
+	if (myDialogVmin.ShowModal()==wxID_OK )
+	{
+			wxString value=myDialogVmin.GetValue();
+			value.ToDouble(&vmin);
+			if(vmin>=vmax)
+			{
+				wxMessageDialog errorDialog(NULL, wxString("Wrong Value-SimpleJoint will be created with default values") ,wxMessageBoxCaptionStr,wxOK|wxCENTRE,wxDefaultPosition);
+				errorDialog.ShowModal();
+				vmin=-PI;
+				vmax=PI;
+			}
+	}
+	wxSingleChoiceDialog myDialog2(NULL,wxString("Select Axis"),wxString("Options"),AxisOptions);
+	if (myDialog2.ShowModal()==wxID_OK )
+	{
+		if(myDialog2.GetStringSelection()==wxString("X_AXIS")) axis=1;
+		if(myDialog2.GetStringSelection()==wxString("Y_AXIS")) axis=2;
+		else axis=3;
+	}
 
+	if (axis==1) createdJoint=new SimpleJoint(vmax,vmin,true,0,X_AXIS,prismatic);
+	else if(axis==2) createdJoint=new SimpleJoint(vmax,vmin,true,0,Y_AXIS,prismatic);
+	else createdJoint=new SimpleJoint(vmax,vmin,true,0,Z_AXIS,prismatic);
+
+	return createdJoint;
+}
 
 
 

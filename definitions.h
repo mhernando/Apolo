@@ -81,6 +81,7 @@
 #define ID_SIMPLEJOINT 1528
 #define ID_ROBOTGOTO 1529
 #define ID_EUITIBOT 1530
+#define ID_ADDJOINT 1531
 
 
 

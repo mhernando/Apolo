@@ -41,8 +41,6 @@ private:
 	ComposedEntity* creation;
 	ComposedEntity* currentComp;
 	vector<ComposedEntity *> IntegratedParts;
-	vector<SimpleJoint*> Joints;
-	vector<Actuator *> Actuators;
 	wxToolBar* Toolbar;
 	wxToolBar* MainToolbar;
 	wxComboBox* selectComposedtoView;
@@ -52,17 +50,15 @@ private:
 	CylindricalPart *cylin;
 	SpherePart* sphere;
 	PrismaticPart* prism;
-	SimpleJoint* joint;
-	Tcp* TCP;
-	Actuator* actuator;
-	GenericSlider *PositionX,*PositionY,*PositionZ,*Roll,*Pitch,*Yaw,*Height,*Radio,*BaseVertex;
+	GenericSlider *PositionX,*PositionY,*PositionZ;
+	GenericSlider *Roll,*Pitch,*Yaw,*Height,*Radio,*BaseVertex;
 	int type,ActualComp;
 	wxString Name;
 	wxArrayString VComposedNames;
 	wxArrayString ComposedIntegratedNames;
 	globalView* CreateFig;
 	bool checkAddition;
-	RobotSim* robot;
+
 
 
 
