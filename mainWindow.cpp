@@ -44,6 +44,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_PERSON, MainWindow::AddObject)
 	EVT_MENU(ID_QUADROTOR, MainWindow::AddObject)
 	EVT_MENU(ID_EUITIBOT, MainWindow::AddObject)
+	EVT_MENU(ID_ADDJOINT, MainWindow::AddObject)
 	EVT_MENU(ID_DELOBJ, MainWindow::DeleteObject)
 	EVT_MENU(ID_LASMOD0, MainWindow::OnLaserStyle)
 	EVT_MENU(ID_LASMOD1, MainWindow::OnLaserStyle)
@@ -431,7 +432,7 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
 
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nFrancisco Ramirez de Anton Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nAlberto Fernández Orozco 2012-2014\nFrancisco Ramirez de Anton Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
 
 				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
@@ -528,7 +529,7 @@ void MainWindow::AddObject(wxCommandEvent& event)
 {
 	int id= event.GetId();
 		
-	if(id!=ID_ADDCUSTOM && popmenu==true)
+	if((id!=ID_ADDCUSTOM)&&(id!=ID_ADDJOINT)&& (popmenu==true))
 	{
 		ObjectSelection *ob_sel=new ObjectSelection(this,id,wxDefaultPosition,wxDefaultSize);
 		ob_sel->ShowModal();
@@ -718,6 +719,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	if ((id==ID_ADDOWNFACE)&&(typ==2))
 	{
 		itemData->pointer.prismaticpart->setPolygonalBase(*(view->GetFace()));
+		itemData->getSimu()->getChild()->UpdateWorld();
 		view->Show(false);
 		view->MakeModal(false);
 		editionVisible=false;
@@ -1064,22 +1066,32 @@ void MainWindow::OnLoadWorldXML(wxCommandEvent& WXUNUSED(event))
 		char filec[500];
 		strcpy(filec, (const char*)file.mb_str(wxConvUTF8));
 
-		XMLfile xml_file(filec);
-		Object *test1 = xml_file.load(filec);
-		World *test2 = dynamic_cast<World *>(test1);				
-		//xml_file.save();
+		wxXmlDocument doc;
+		if(doc.Load(filec))
+		{
+			XMLfile xml_file(filec);
+			xml_file.load(filec);
+			Object *test1 = xml_file.load(filec);
+			World *test2 = dynamic_cast<World *>(test1);				
+			//xml_file.save();
 
 	
-		if(test2)
-		{
-			simuWorld = new SimulatedWorld(test2);
-			listWorlds.push_back(simuWorld);
+			if(test2)
+			{
+				simuWorld = new SimulatedWorld(test2);
+				listWorlds.push_back(simuWorld);
+			}
+			else 
+			{
+				delete test1;
+			}
 		}
-		else 
+		else
 		{
-			delete test1;
+			wxMessageDialog dial(NULL, wxT("File can´t be loaded"), wxT("Error"), wxOK | wxICON_ERROR);
+			dial.ShowModal();
+			return;
 		}
-		
 	}
 	wxFileInputStream input(openFile.GetPath());
 	if(!input.IsOk())
@@ -1108,18 +1120,27 @@ void MainWindow::OnLoadObjectXML(wxCommandEvent& WXUNUSED(event))
 				wxString fileName = openFile.GetPath();
 				char c_file[100];
 				strcpy(c_file,(const char*)fileName.mb_str(wxConvUTF8));
-				
-				XMLfile xml_file(c_file);
-				Object *obj = xml_file.load(c_file);
-				PositionableEntity* p_obj = dynamic_cast<PositionableEntity *>(obj);
 
-				if(obj)
+				wxXmlDocument doc;
+				if(doc.Load(c_file))
 				{
-					(*listWorlds[i]->getWorld())+=p_obj;
-					listWorlds[i]->getChild()->UpdateWorld();
-					tree->AddNode(p_obj, listWorlds[i]->getTreeItem(),listWorlds[i]);
+					XMLfile xml_file(c_file);
+					Object *obj = xml_file.load(c_file);
+					PositionableEntity* p_obj = dynamic_cast<PositionableEntity *>(obj);
+
+					if(obj)
+					{
+						(*listWorlds[i]->getWorld())+=p_obj;
+						listWorlds[i]->getChild()->UpdateWorld();
+						tree->AddNode(p_obj, listWorlds[i]->getTreeItem(),listWorlds[i]);
+					}
 				}
-			
+				else 
+				{
+					wxMessageDialog dial(NULL, wxT("File can´t be loaded"), wxT("Error"), wxOK | wxICON_ERROR);
+					dial.ShowModal();
+					return;
+				}
 			}
 			wxFileInputStream input(openFile.GetPath());
 			if(!input.IsOk())

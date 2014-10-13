@@ -275,6 +275,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDOBJ,wxT("Add Simple Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCOMP,wxT("Add Complex Object"));
 		if(itemData->menus.menu_composed && !itemData->menus.menu_connection) menuTree.Append(ID_ADDCUSTOM,wxT("Add Composed Object"));
+		if(itemData->menus.menu_composed) menuTree.Append(ID_ADDJOINT, wxT("Add Joint")); 
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJ, wxT("Save object"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_SAVEOBJXML, wxT("Save object XML"));
 		if(itemData->menus.menu_positionable && itemData->typeConnection==0) menuTree.Append(ID_DELOBJ, wxT("Delete Object"));
@@ -323,6 +324,7 @@ void Tree::OnItemMenu(wxTreeEvent& event)
 		if(itemData->menus.menu_connection && itemData->typeConnection==0) menuTree.Append(ID_LNCLIENT, wxT("Launch Client"));
 		if(itemData->menus.menu_connection && itemData->typeConnection==2) menuTree.Append(ID_STCLIENT, wxT("Stop Receiving Data"));
 		PopupMenu(&menuTree,pt);
+		
 		
 	}
 	
@@ -754,7 +756,7 @@ void Tree::setShowLinks(bool sh)
 
 bool Tree::ValidateNodeToLink(TypeNode type)
 {
-	if((type==N_AseaIRB2000)||(type==N_RobotSim)||(type==N_PatrolbotSim)||(type==N_Pioneer3ATSim)||(type==N_ComposedEntity)) return false;
+	if((type==N_AseaIRB2000)||(type==N_RobotSim)||(type==N_PatrolbotSim)||(type==N_Pioneer3ATSim)) return false;
 	else return true;
 }
 
