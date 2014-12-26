@@ -1,11 +1,9 @@
 #include "drawscene.h"
-#include "base\streamfile.h"
-#include "world\world.h"
+
 #include <math.h>
 #include <fstream>
 #include <iostream>
-#include "gl\gltools.h"
-#include "math\mrmath.h"
+
 #include <gl\GLU.h>
 
 

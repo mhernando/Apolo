@@ -5,7 +5,7 @@
 #include "wx/grid.h"
 #include "wx/wx.h"
 #include "faceWidget.h"
-#include "ChangeVertex.h"
+#include "changeVertex.h"
 
 
 

@@ -9,8 +9,7 @@
 #include "mrcore.h"
 #include <wx/button.h>
 #include "globalView.h"
-#include "math\face.h"
-#include "world\facesetpart.h"
+
 
 
 using namespace mr;

@@ -6,7 +6,7 @@
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
 #include <vector>
-#include "math\vector2d.h"
+
 
 
 

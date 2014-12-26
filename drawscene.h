@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/globject.h"
+#include "mrcore.h"
 #include <string>
 #include <vector>
 
