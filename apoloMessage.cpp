@@ -1,5 +1,7 @@
 #include "apoloMessage.h"
 #include <string.h>
+
+
 /**UTILITY UNIONS FOR CONVERSIONS**/
 union double2byteConversor
 {

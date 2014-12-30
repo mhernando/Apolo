@@ -1,7 +1,14 @@
 
-#include "apoloMex.h" //de momento inutil ...habrá que borrarlo 
+//#include "apoloMex.h" //de momento inutil ...habrá que borrarlo 
 #include "../apoloMessage.h"
 #include "mrcore.h"
+
+#ifdef _CHAR16T
+#define CHAR16_T
+#endif
+#include "mex.h"
+#include "matrix.h"
+
 static mr::Socket  *conection=0;
 
 /* Here is the exit function, which gets run when the MEX-file is
