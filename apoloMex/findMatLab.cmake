@@ -56,7 +56,7 @@ if(WIN32)
 
   # Directory name depending on whether the Windows architecture is 32
   # bit or 64 bit
-  set(CMAKE_SIZEOF_VOID_P 8) # Note: For some wierd reason this variable is undefined in my system...
+  #set(CMAKE_SIZEOF_VOID_P 8) # Note: For some wierd reason this variable is undefined in my system...
   if(CMAKE_SIZEOF_VOID_P MATCHES "4")
     set(WINDIR "win32")
   elseif(CMAKE_SIZEOF_VOID_P MATCHES "8")
@@ -83,11 +83,12 @@ if(WIN32)
   elseif(${CMAKE_GENERATOR} MATCHES "Visual Studio*")
     # If the compiler is Visual Studio, but not any of the specific
     # versions above, we try our luck with the microsoft directory
-    set(MATLAB_LIBRARIES_DIR "${MATLAB_ROOT}/extern/lib/${WINDIR}/microsoft/")
+    set(MATLAB_LIBRARIES_DIR "${MATLAB_ROOT}/extern/lib/${WINDIR}/microsoft")
+	
   else()
     message(FATAL_ERROR "Generator not compatible: ${CMAKE_GENERATOR}")
   endif()
-
+message(" MATLAB_LIBRARIES_DIR = ${MATLAB_LIBRARIES_DIR}")
   # Get paths to the Matlab MEX libraries
   find_library(MATLAB_MEX_LIBRARY
     libmex
