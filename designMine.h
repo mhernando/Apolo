@@ -78,7 +78,7 @@ public:
 	void InitializeCanvas(int selection, bool personalval=false);
 	bool getCompleteViewV();
 	bool getCompleteViewH();
-
+	void SetCurrent(){wxGLCanvas::SetCurrent(*m_context);}
 	
 
 
@@ -98,7 +98,7 @@ private:
 	vector<Vector2D> auxpoints;
 	vector<bool> marcas;
 	float border;
-
+	wxGLContext*	m_context;
 	
 
 	bool Align,Grid,MousePoint,paste;

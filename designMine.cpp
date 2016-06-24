@@ -34,7 +34,7 @@ BEGIN_EVENT_TABLE(DesignMine, wxGLCanvas)
 END_EVENT_TABLE()
 
 DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size)
-:wxGLCanvas(parent,id,pos,size)
+:wxGLCanvas(parent, id,NULL, pos, size,0)
 {
 	x2Di=-5;
 	y2Di=-5;
@@ -56,6 +56,7 @@ DesignMine::DesignMine(wxWindow* parent, const wxWindowID id, const wxPoint& pos
 	previousV=50;
 	clicks=0;
 	wxSetCursor(wxCURSOR_CROSS);
+	m_context = new wxGLContext(this);
 }
 
 

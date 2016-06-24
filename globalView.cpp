@@ -179,17 +179,17 @@ void globalView::InitToolbar()
 	bitmaps[5]=	 wxBitmap(grid_xpm);
 	Toolbar=new wxToolBar();
 	Toolbar->Create(Panel,wxID_ANY,wxDefaultPosition,wxSize(210,25),wxBORDER_NONE|wxTB_HORIZONTAL);
-	Toolbar->AddTool(ID_HALFWAYPOINT,bitmaps[0], wxT("Insert point"));
+	Toolbar->AddTool(ID_HALFWAYPOINT,"Insert point",bitmaps[0]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_SELECTPOINTS,bitmaps[1], wxT("Move Figure"));
+	Toolbar->AddTool(ID_SELECTPOINTS,"Move Figure", bitmaps[1]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_ERASEPOINTS,bitmaps[2], wxT("Erase Figure"));
+	Toolbar->AddTool(ID_ERASEPOINTS,"Erase Figure", bitmaps[2]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_COPYDESIGN,bitmaps[3], wxT("Copy Figure"));
+	Toolbar->AddTool(ID_COPYDESIGN,"Copy Figure", bitmaps[3]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_PASTEDESIGN,bitmaps[4], wxT("Paste Figure"));
+	Toolbar->AddTool(ID_PASTEDESIGN, "Paste Figure" , bitmaps[4]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_SHOWGRID,bitmaps[5], wxT("Show/Hide grid"));
+	Toolbar->AddTool(ID_SHOWGRID, "Show/Hide grid", bitmaps[5]);
 	Toolbar->SetBackgroundColour(*wxWHITE);
 	Toolbar->Realize();
 }
@@ -503,7 +503,7 @@ void globalView::PasteDesign(vector<Vector2D> CopiedFace)
 void globalView::OnClose(wxCloseEvent& event)
 {
 	this->Show(false);
-	this->MakeModal(false);
+//	this->MakeModal(false);
 }
 
 void globalView::SetCanvasSize(wxCommandEvent &event)

@@ -12,8 +12,9 @@ BEGIN_EVENT_TABLE(Canvas, wxGLCanvas)
 END_EVENT_TABLE()
 
 Canvas::Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size,bool triD)
-:wxGLCanvas(parent, id, pos, size,0)
+:wxGLCanvas(parent, id,NULL, pos, size,0)
 {
+	m_context = new wxGLContext(this);
 	window=parent;
 	dimension=triD;
 	flag = false;
@@ -41,12 +42,11 @@ void Canvas::InitGL()
 	if(dimension) scene.init();
 }
 
-double Canvas::GetViewPoint(double &dist_or_2Dx,double &rot_or_2Dy,double &elv_or_2Dfx,double s2Dfy)
+void Canvas::GetViewPoint(double &dist_or_2Dx,double &rot_or_2Dy,double &elv_or_2Dfx,double s2Dfy)
 {
 	if(dimension) 
 	{
 		scene.GetViewPoint(dist_or_2Dx,rot_or_2Dy,elv_or_2Dfx);
-		return 0;
 	}
 }
 

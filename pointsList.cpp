@@ -6,7 +6,7 @@
 
 BEGIN_EVENT_TABLE(PointsList, wxPanel)
 	
-		EVT_GRID_CMD_CELL_CHANGE(wxID_ANY,PointsList::OnChange)
+		EVT_GRID_CMD_CELL_CHANGED(wxID_ANY,PointsList::OnChange)
 		EVT_GRID_CELL_RIGHT_CLICK(PointsList::OnItemMenu)
 		EVT_MENU(ID_CHANGEVERTEX, PointsList::OnMenuChangePoint)
 		EVT_MENU(ID_DELETEVERTEX, PointsList::OnMenuDeletePoint)

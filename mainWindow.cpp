@@ -401,9 +401,9 @@ void MainWindow::InitToolBar(wxToolBar *tool)
 	bitmaps[11]= wxBitmap (xml_xpm);
 	bitmaps[12]=wxBitmap(Links_xpm);
 	bitmaps[13]=wxBitmap(treeStructure_xpm);
-	toolbar->AddTool(ID_NEW, bitmaps[0], wxT("New World"));
-	toolbar->AddTool(ID_LOADWORLD, bitmaps[1], wxT("Load World"));
-	toolbar->AddTool(ID_LOADWORLDXML, bitmaps[7], wxT("Load World XML"));
+	toolbar->AddTool(ID_NEW,"New World", bitmaps[0]);
+	toolbar->AddTool(ID_LOADWORLD, "Load World", bitmaps[1]);
+	toolbar->AddTool(ID_LOADWORLDXML,"Load World XML", bitmaps[7]);
 	toolbar->AddSeparator();
 	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxT("Show Item Selected"));
 	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
@@ -674,7 +674,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		vsele=new FaceSelection(this,wxID_ANY,wxString("FaceSetPart"),itemData->pointer.facesetpart);
 		vsele->Show(true);
 		editionVisible=true;
-		vsele->MakeModal(true);
+//		vsele->MakeModal(true);
 		return;
 	}
 
@@ -684,7 +684,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		view=new globalView(this,wxID_ANY,wxT("Edit Prism"));
 		view->Show(true);
 		editionVisible=true;
-		view->MakeModal(true);
+//		view->MakeModal(true);
 		view->LoadFace(itemData->pointer.prismaticpart->getPolygonalBase());
 		return;
 	}
@@ -692,11 +692,11 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	if(id==ID_SELECTEDFACE)
 	{
 		vsele->Show(false);
-		vsele->MakeModal(false);
+//		vsele->MakeModal(false);
 		ini= new InitialProperties(this,itemData,wxT("Properties"),ID_ADDFACESET);
 		ini->Show(true);
 		ini->getface()->getcanvas()->GetView()->Show(true);
-		ini->getface()->getcanvas()->MakeModal(true);
+//		ini->getface()->getcanvas()->MakeModal(true);
 		ini->getface()->getcanvas()->GetView()->LoadFace(*(vsele->getFaceSelected()));
 		ini->getface()->setType(true);
 		ini->getface()->setIndex(vsele->numSelected());
@@ -706,14 +706,14 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 	{
 		vsele->Show(false);
 		editionVisible=false;
-		vsele->MakeModal(false);
+//		vsele->MakeModal(false);
 	}
 
 	if (id==ID_CANCELDESIGN)
 	{
 		view->Show(false);
 		editionVisible=false;
-		view->MakeModal(false);
+//		view->MakeModal(false);
 	}
 
 	if ((id==ID_ADDOWNFACE)&&(typ==2))
@@ -721,7 +721,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 		itemData->pointer.prismaticpart->setPolygonalBase(*(view->GetFace()));
 		itemData->getSimu()->getChild()->UpdateWorld();
 		view->Show(false);
-		view->MakeModal(false);
+//		view->MakeModal(false);
 		editionVisible=false;
 		id=NULL;
 	}
@@ -732,7 +732,7 @@ void MainWindow::OnChangeForm(wxCommandEvent& event)
 void MainWindow::CloseEditConsole(wxCommandEvent &event)
 {
 	editionVisible=false;
-	view->MakeModal(false);
+//	view->MakeModal(false);
 }
 
 

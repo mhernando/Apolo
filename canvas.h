@@ -10,12 +10,12 @@ class Canvas : public wxGLCanvas
 {
 public:
 	Canvas(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size,bool triD=true);
-	
+	void SetCurrent(){wxGLCanvas::SetCurrent(*m_context);}
 	bool dimension;
 	void InitGL();
 	void AddObject(GLObject * obj);
 	void SetViewPoint(double dist_or_2Dx,double rot_or_2Dy,double elv_or_2Dfx,double s2Dfy=0);
-	double GetViewPoint(double &dist_or_2Dix,double &rot_or_2Diy,double &elv_or_2Dfx,double s2Dfy=0);
+	void GetViewPoint(double &dist_or_2Dix,double &rot_or_2Diy,double &elv_or_2Dfx,double s2Dfy=0);
 	void SetViewCenter(double x, double y, double z);
 	void SetShowFrame(bool show);
 	void ClearObjects();
@@ -35,7 +35,7 @@ private:
 	GLScene scene;
 	double x2Di,y2Di,x2Df,y2Df;
 	wxPoint pt;
-	
+	wxGLContext*	m_context;
 	wxWindow *window;
 	bool flag;
 	DECLARE_EVENT_TABLE()

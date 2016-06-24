@@ -23,7 +23,7 @@ Converter::Converter(wxWindow *parent, wxWindowID id, const wxString& title)
 		pan = new wxPanel(this);
 
 		toolbar = new wxToolBar(pan, wxID_ANY);
-		toolbar->AddTool(ID_SAVE, bitmaps[1], wxT("Save .stl"));
+		toolbar->AddTool(ID_SAVE, "Save .stl", bitmaps[1]);
 		toolbar->Realize();
 
 		tc2 = new wxTextCtrl(pan, wxID_ANY, wxT("***CPP CODE***\n"), wxDefaultPosition,wxSize(400,300), wxTE_MULTILINE);
@@ -44,8 +44,8 @@ Converter::Converter(wxWindow *parent, wxWindowID id, const wxString& title)
 		wxSplitterWindow *sp = new wxSplitterWindow(pan2,-1, wxDefaultPosition,wxSize(400,400));
 
 		toolbar = new wxToolBar(pan, wxID_ANY);
-		toolbar->AddTool(ID_OPEN, bitmaps[0], wxT("New .stl"));
-		toolbar->AddTool(ID_SAVE, bitmaps[1], wxT("Save .stl"));
+		toolbar->AddTool(ID_OPEN, "New .stl", bitmaps[0]);
+		toolbar->AddTool(ID_SAVE, "Save .stl", bitmaps[1]);
 		toolbar->Realize();
 
 		tc = new wxTextCtrl(sp, wxID_ANY, wxT("     *** STL CODE ***\n"), wxDefaultPosition, wxSize(100,350), wxTE_MULTILINE);

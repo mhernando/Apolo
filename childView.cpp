@@ -57,16 +57,16 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	bitmaps[7] = wxBitmap ( colour_xpm);
 
 
-	toolbar->AddTool(ID_UNSPLITF, bitmaps[4], wxT("view unsplit simple"));
-	toolbar->AddTool(ID_SPLITHF, bitmaps[0], wxT("view horizontal simple"));
-	toolbar->AddTool(ID_SPLITVF, bitmaps[1], wxT("view vertical simple"));
-	toolbar->AddTool(ID_SPLITHS, bitmaps[3], wxT("view horizontal complex"));
-	toolbar->AddTool(ID_SPLITVS, bitmaps[2], wxT("view vertical complex"));
+	toolbar->AddTool(ID_UNSPLITF, "view unsplit simple", bitmaps[4]);
+	toolbar->AddTool(ID_SPLITHF, "view horizontal simple",  bitmaps[0]);
+	toolbar->AddTool(ID_SPLITVF, "view vertical simple", bitmaps[1]);
+	toolbar->AddTool(ID_SPLITHS, "view horizontal complex", bitmaps[3]);
+	toolbar->AddTool(ID_SPLITVS, "view vertical complex",  bitmaps[2]);
 	toolbar->AddSeparator();
-	toolbar->AddTool(ID_PLAY, bitmaps[5], wxT("PLAY"));
-	toolbar->AddTool(ID_STOP2, bitmaps[6], wxT("STOP"));
+	toolbar->AddTool(ID_PLAY, "PLAY", bitmaps[5]);
+	toolbar->AddTool(ID_STOP2, "STOP", bitmaps[6]);
 	toolbar->AddSeparator();
-	toolbar->AddTool(ID_CANVASCOLOR, bitmaps[7], wxT("Change Background Colour"));
+	toolbar->AddTool(ID_CANVASCOLOR,"Change Background Colour",  bitmaps[7]);
 	toolbar->AddSeparator();
 	toolbar->Realize();
 	

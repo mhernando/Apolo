@@ -27,7 +27,7 @@ private:
 	vector<NodeTree*>log;
 	wxString tittle;
 	wxWindow *parent;
-	double row,col;
+	int row,col;
 	Mutex mutex;
 	
 	

@@ -133,7 +133,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 	{
 		canvas->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		canvas->GetView()->Show(true);
-		canvas->GetView()->MakeModal(true);
+		//canvas->GetView()->MakeModal(true);
 	}
 
 	if(id==ID_ADDOWNFACE)
@@ -144,7 +144,7 @@ void FaceWindow::FaceButton(wxCommandEvent& event)
 		canvas->GetCanvas3d()->Update();
 		canvas->GetCanvas3d()->Refresh();
 		canvas->GetView()->Show(false);
-		canvas->GetView()->MakeModal(false);
+		//canvas->GetView()->MakeModal(false);
 		node->getSimu()->getChild()->UpdateWorld();
 	}
 

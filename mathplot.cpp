@@ -2236,7 +2236,7 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
 	}
     // Once drawing is complete, actually save screen shot
     wxImage screenImage = screenBuffer.ConvertToImage();
-    return screenImage.SaveFile(filename, type);
+    return screenImage.SaveFile(filename, wxBitmapType(type));
 }
 
 void mpWindow::SetMargins(int top, int right, int bottom, int left)

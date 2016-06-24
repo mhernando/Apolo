@@ -75,18 +75,19 @@ void CreateComposed::CreatePanel()
 
 	MainToolbar=new wxToolBar();
 	MainToolbar->Create(this,wxID_ANY,wxDefaultPosition,wxSize(650,40),wxBORDER_NONE|wxTB_HORIZONTAL);
-	MainToolbar->AddTool(ID_ADDCOMPPART,bitmaps[4], wxT("Add new Composed"));
+	
+	MainToolbar->AddTool( ID_ADDCOMPPART, wxString("Add new Composed"), bitmaps[4]);
 	MainToolbar->AddSeparator();
-	MainToolbar->AddTool(ID_ADDANOTHERITEM,bitmaps[5], wxT("Add New Item"));
+	MainToolbar->AddTool(ID_ADDANOTHERITEM,wxString("Add New Item"), bitmaps[5]);
 	MainToolbar->SetBackgroundColour(wxColour(255,255,131));
 	MainToolbar->Realize();
 
 	Toolbar=new wxToolBar();
 	Toolbar->Create(this,wxID_ANY,wxDefaultPosition,wxSize(300,30),wxBORDER_NONE|wxTB_HORIZONTAL);
-	Toolbar->AddTool(ID_CYLINDCOMPOSED,bitmaps[0], wxT("Create Cylinder"));
-	Toolbar->AddTool(ID_SPHERECOMPOSED,bitmaps[1], wxT("Create Sphere"));
-	Toolbar->AddTool(ID_REGPRISMCOMPOSED,bitmaps[2],wxT("Create Regular Prism"));
-	Toolbar->AddTool(ID_IRRPRISMCOMPOSED,bitmaps[6], wxT("Create Irregular Prism"));
+	Toolbar->AddTool(ID_CYLINDCOMPOSED,"Create Cylinder",bitmaps[0]);
+	Toolbar->AddTool(ID_SPHERECOMPOSED,"Create Sphere",bitmaps[1]);
+	Toolbar->AddTool(ID_REGPRISMCOMPOSED,"Create Regular Prism",bitmaps[2]);
+	Toolbar->AddTool(ID_IRRPRISMCOMPOSED,"Create Irregular Prism",bitmaps[6]);
 	Toolbar->SetBackgroundColour(*wxWHITE);
 	Toolbar->Realize();
 

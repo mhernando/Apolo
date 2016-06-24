@@ -124,15 +124,15 @@ void PanelXML::InitToolbars()
 	Toolbar=new wxToolBar();
 	Toolbar->SetBackgroundColour(*wxWHITE);
 	Toolbar->Create(panel,wxID_ANY,wxDefaultPosition,wxSize(210,40),wxBORDER_NONE|wxTB_HORIZONTAL);
-	Toolbar->AddTool(ID_UPDATEXML,icons[0], wxT("Update World"));
+	Toolbar->AddTool(ID_UPDATEXML, "Update World", icons[0]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_VALIDATEXML,icons[2], wxT("Validate"));
+	Toolbar->AddTool(ID_VALIDATEXML,"Validate", icons[2]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_CREATEWORLDXML,icons[1], wxT("Create World"));
+	Toolbar->AddTool(ID_CREATEWORLDXML, "Create World", icons[1]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_ADDNEWENTITY,icons[3], wxT("Add Entity"));
+	Toolbar->AddTool(ID_ADDNEWENTITY, "Add Entity" , icons[3]);
 	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_SAVEXMLEDIT,icons[4],wxT("Save XML"));
+	Toolbar->AddTool(ID_SAVEXMLEDIT, "Save XML", icons[4]);
 	Toolbar->Realize();
 }
 
@@ -157,7 +157,7 @@ void PanelXML::ShowPanel()
 		UpdateWorldsList();
 	}
 	this->Show(true);
-	this->MakeModal(true);
+//	this->MakeModal(true);
 	selectW->SetSelection(0);
 }
 
@@ -178,7 +178,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			tree->UpdateTree(tree->m_mainWin->listWorlds[selectedWorld]);
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 
@@ -200,7 +200,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			state=0;
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 	
@@ -219,7 +219,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			state=0;
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 	
@@ -245,7 +245,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			state=0;
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 	if(state==4) //Modify existing Entity from tree
@@ -262,7 +262,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			state=0;
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 
@@ -280,7 +280,7 @@ void PanelXML::UpdateXML(wxCommandEvent &event)
 			state=0;
 			textCtrl->Clear();
 			this->Show(false);
-			this->MakeModal(false);
+//			this->MakeModal(false);
 		}
 	}
 }
@@ -454,7 +454,7 @@ void PanelXML::ManageState()
 void PanelXML::OnClose(wxCloseEvent& event)
 {
 	this->Show(false);
-	this->MakeModal(false);
+//	this->MakeModal(false);
 	tree->m_mainWin->SetState(0);
 }
 

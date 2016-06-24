@@ -60,7 +60,7 @@ void PrismWindow::OnButton(wxCommandEvent& event)
 	{
 		base->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		base->GetView()->Show(true);
-		base->GetView()->MakeModal(true);
+//		base->GetView()->MakeModal(true);
 	}
 
 	if(id==ID_ADDOWNFACE)
@@ -69,13 +69,13 @@ void PrismWindow::OnButton(wxCommandEvent& event)
 		base->GetCanvas3d()->UpdateWorld(node->getSimu()->getWorld());
 		base->GetCanvas3d()->AddObject(node->pointer.prismaticpart);
 		
-		base->GetView()->MakeModal(false);
+//		base->GetView()->MakeModal(false);
 		base->GetView()->Hide();
 
 	}
 	if(id==ID_CANCELDESIGN)
 	{
-		base->GetView()->MakeModal(false);
+//		base->GetView()->MakeModal(false);
 		base->GetView()->Hide();
 	}
 

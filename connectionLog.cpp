@@ -21,19 +21,19 @@ void ConnectionLog::CreatePanel()
 	grid->CreateGrid(0,7);
 	grid->EnableEditing(false);
 	grid->SetColLabelValue(col,wxT("  World  "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("  Server/Client  "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("      State      "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("Number of clients"));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("       Host      "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("      Adress      "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetColLabelValue(++col,wxT("       Port       "));
-	grid->SetColumnWidth(col,150);
+	grid->SetColSize(col,150);
 	grid->SetRowLabelSize(150);
 	//grid->GetParent()->SendSizeEvent();
 	this->SetMaxSize(wxSize(1210,2000));
@@ -54,7 +54,7 @@ void ConnectionLog::AddConnection(NodeTree *robot)
 	wxString s_c=wxEmptyString;
 	log.push_back(robot);
 	grid->AppendRows(1);
-	for(int i=0;i<7;i++) grid->SetCellAlignment(wxALIGN_CENTER,row,i);
+	for(int i=0;i<7;i++) grid->SetCellAlignment(row,i,wxALIGN_CENTER,wxALIGN_CENTER);
 	grid->SetRowLabelValue(row,wxString(robot->getNameTree()));
 	robot->getSimu()->setObjConnected(true);
 	
