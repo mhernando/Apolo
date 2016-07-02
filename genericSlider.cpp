@@ -86,8 +86,8 @@ void GenericSlider::createPanel(bool orientation)
 	{
 		m_min=new wxStaticText(this,wxID_ANY,wxT("()"),wxDefaultPosition,wxSize(45,20),wxALIGN_LEFT);//original
 		m_max=new wxStaticText(this,wxID_ANY,wxT("()"),wxDefaultPosition,wxSize(40,20),wxALIGN_RIGHT);
-		minmaxbs->Add(m_min,wxSizerFlags(1).Align(wxALIGN_RIGHT));
-		minmaxbs->Add(m_max,wxSizerFlags(1).Align(wxALIGN_LEFT));
+		minmaxbs->Add(m_min,wxSizerFlags(1).Align(wxALIGN_BOTTOM));
+		minmaxbs->Add(m_max,wxSizerFlags(1).Align(wxALIGN_BOTTOM));
 	}
 	 
 	horizontal_sizer->Add(minmaxbs,wxSizerFlags(1).Expand());

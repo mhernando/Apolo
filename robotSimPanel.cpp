@@ -65,8 +65,8 @@ RobotSimPanel::RobotSimPanel(wxWindow *parent, wxWindowID id,const wxString& tit
 	}
 	wxBoxSizer *tbox = new wxBoxSizer(wxVERTICAL);
 	tbox->Add(nbox,0,wxEXPAND|wxALIGN_TOP,5);
-	tbox->Add(vbox,0,wxEXPAND|wxALIGN_BOTTOM,5);
-
+	//tbox->Add(vbox,0,wxEXPAND|wxALIGN_BOTTOM,5);
+	tbox->Add(vbox,0,wxEXPAND,5);
 
 	panel->SetSizer(tbox);
 	tbox->SetSizeHints( this );

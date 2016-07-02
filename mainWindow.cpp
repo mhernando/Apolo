@@ -211,19 +211,19 @@ void MainWindow::CreateMenuBar()
 	wxMenuItem *item1 = new wxMenuItem(menuFile, ID_NEW, wxT("New world"),wxT("Create a new world"));
 	item1->SetBitmap(new_xpm);
 	menuFile->Append(item1);
-	wxMenuItem *item2 = new wxMenuItem(menuFile,ID_LOADWORLD, wxT("Load world"), wxT("Load a file of world"));
+	wxMenuItem *item2 = new wxMenuItem(menuFile,ID_LOADWORLD, wxT("Load world"), wxT("Load a binary world file"));
 	item2->SetBitmap(loadWorld_xpm);
 	menuFile->Append(item2);
 
 
-	wxMenuItem *itemXML0 = new wxMenuItem(menuFile,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a file XML of world"));
+	wxMenuItem *itemXML0 = new wxMenuItem(menuFile,ID_LOADWORLDXML, wxT("Load world XML"), wxT("Load a XML World file"));
 	itemXML0->SetBitmap(loadworldxml_xpm);
 	menuFile->Append(itemXML0);
 
 	menuFile->AppendSeparator();
-	menuFile->AppendCheckItem(ID_VIS_TREE, wxT("Unvisible tree"));
+	menuFile->AppendCheckItem(ID_VIS_TREE, wxT("Show/Hide tree"));
 	menuFile->AppendSeparator();
-	menuFile->Append(wxID_EXIT, wxT("E&xit"), wxT("Quit the program"));
+	menuFile->Append(wxID_EXIT, wxT("E&xit"), wxT("Quit program"));
 	
 	menuAbout = new wxMenu;
 	menuAbout->Append(wxID_ABOUT, wxT("&About..."), wxT("Information program"));
@@ -383,32 +383,33 @@ void MainWindow::OnClose(wxCloseEvent& event)
 }
 
 
+
 void MainWindow::InitToolBar(wxToolBar *tool)
 {
 	toolbar=tool;
-	wxBitmap bitmaps[14];
-	bitmaps[0] = wxBitmap (NewWorld_xpm);
-	bitmaps[1] = wxBitmap (mainLWorld_xpm);
-	bitmaps[2] = wxBitmap (loadObject_xpm);
-	bitmaps[3] = wxBitmap (saveWorld_xpm);
-	bitmaps[4] = wxBitmap (saveObject_xpm);
-	bitmaps[5] = wxBitmap (box_xpm);
-	bitmaps[6] = wxBitmap (axis_xpm);
-	bitmaps[7] = wxBitmap (mainLxml_xpm);
-	bitmaps[8] = wxBitmap (loadobjectxml_xpm);
-	bitmaps[9] = wxBitmap (saveworldxml_xpm);
-	bitmaps[10] = wxBitmap (saveobjectxml_xpm);
-	bitmaps[11]= wxBitmap (xml_xpm);
-	bitmaps[12]=wxBitmap(Links_xpm);
-	bitmaps[13]=wxBitmap(treeStructure_xpm);
-	toolbar->AddTool(ID_NEW,"New World", bitmaps[0]);
-	toolbar->AddTool(ID_LOADWORLD, "Load World", bitmaps[1]);
-	toolbar->AddTool(ID_LOADWORLDXML,"Load World XML", bitmaps[7]);
+	//wxBitmap bitmaps[14];
+	//bitmaps[0] = wxBitmap (NewWorld_xpm);
+	//bitmaps[1] = wxBitmap (mainLWorld_xpm);
+	//bitmaps[2] = wxBitmap (loadObject_xpm);
+	//bitmaps[3] = wxBitmap (saveWorld_xpm);
+	//bitmaps[4] = wxBitmap (saveObject_xpm);
+	//bitmaps[5] = wxBitmap (box_xpm);
+	//bitmaps[6] = wxBitmap (axis_xpm);
+	//bitmaps[7] = wxBitmap (mainLxml_xpm);
+	//bitmaps[8] = wxBitmap (loadobjectxml_xpm);
+	//bitmaps[9] = wxBitmap (saveworldxml_xpm);
+	//bitmaps[10] = wxBitmap (saveobjectxml_xpm);
+	//bitmaps[11]= wxBitmap (xml_xpm);
+	//bitmaps[12]=wxBitmap(Links_xpm);
+	//bitmaps[13]=wxBitmap(treeStructure_xpm);
+	toolbar->AddTool(ID_NEW,"New World", wxBitmap (NewWorld_xpm));
+	toolbar->AddTool(ID_LOADWORLD, "Load World", wxBitmap (mainLWorld_xpm));
+	toolbar->AddTool(ID_LOADWORLDXML,"Load World XML", wxBitmap (mainLxml_xpm));
 	toolbar->AddSeparator();
-	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),bitmaps[5],wxNullBitmap,wxT("Show Item Selected"));
-	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),bitmaps[6],wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
+	toolbar->AddCheckTool(ID_DRAWBOX,wxT("Draw Box"),wxBitmap (box_xpm),wxNullBitmap,wxT("Show Item Selected"));
+	toolbar->AddCheckTool(ID_COMPRS,wxT("Composed Reference System"),wxBitmap (axis_xpm),wxNullBitmap,wxT("Show Reference System of main objects and composed objects"));
 	toolbar->AddSeparator();
-	toolbar->AddTool(ID_SHOWEDITXML, wxT("View XML editor"), bitmaps[11],wxNullBitmap);
+	toolbar->AddTool(ID_SHOWEDITXML, wxT("View XML editor"), wxBitmap (xml_xpm),wxNullBitmap);
 	toolbar->Realize();
 }
 
@@ -431,10 +432,14 @@ void MainWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	
 	wxMessageBox(wxT("Apolo Simulator\n")
-
-		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2012\nAlberto Fernández Orozco 2012-2014\nFrancisco Ramirez de Anton Montoro 2012-2013\nCarlos Mateo Benito 2011-2012\nEsther LLorente Garcia 2010-2011\nHas been used MRCore Library License and wxWindows Library License:\nwxWidgets 2.9.3 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
-
-				 wxT("Information"),wxOK | wxICON_INFORMATION, this);
+		wxT("Authors: \nMiguel Hernando Gutierrez 2010-2016\n")
+		wxT("Alberto Fernández Orozco 2012-2014\n")
+		wxT("Francisco Ramirez de Anton Montoro 2012-2013\n")
+		wxT("Carlos Mateo Benito 2011-2012\n")
+		wxT("Esther LLorente Garcia 2010-2011\n")
+		wxT("APOLO make use of MRCore Library License and wxWindows Library License:\n")
+		wxT("Widgets 3.1.0 (www.wxwidgets.org)\nCopyright (C) 1998-2005 Julian Smart, Robert Roebling et al."),
+		wxT("Information"),wxOK | wxICON_INFORMATION, this);
 }
 
 void MainWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
