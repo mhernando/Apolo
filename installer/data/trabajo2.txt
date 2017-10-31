@@ -1,0 +1,5 @@
+Puntos Iniciales			
+apoloPlaceMRobot('Pioneer3AT',[0.7 2.5 0],0)
+Punto final
+apoloPlaceMRobot('Pioneer3AT',[2.1 14.5 0],0)
+
