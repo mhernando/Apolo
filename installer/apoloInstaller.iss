@@ -5,7 +5,9 @@
 
 [Setup]
 AppName=Apolo Robot Simulator
-AppVersion=1.0
+
+AppVersion=1.2
+
 DefaultDirName={pf}\Apolo
 DefaultGroupName=Apolo
 UninstallDisplayIcon={app}\Apolo.exe
@@ -30,7 +32,7 @@ Name: "libs"; Description: "External Libs -manual installation if needed"; Types
 
 [Files]
 Source: "Win32/*.*"; DestDir: "{app}"; Components: program
-Source: "Matlab32/*.*"; DestDir: "{app}/Matlab"; Components: matlab
+Source: "Matlab/*.*"; DestDir: "{app}/Matlab"; Components: matlab
 Source: "data/*.*"; DestDir: "{app}/data"; Components: data
 Source: "docs/*.*"; DestDir: "{app}/docs"; Components: docs
 Source: "libs/*.*"; DestDir: "{app}/ExternalLibs"; Components: libs

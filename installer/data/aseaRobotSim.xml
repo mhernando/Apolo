@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<root>
+	<RobotSim name="ASEA">
+		<ComposedEntity name="Base" id="0">
+			<PrismaticPart height="0.2" name="Prism" id="0">
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{-0.35,-0.175,0}
+						{0,-0.35,0}
+						{0.0905867,-0.338074,0}
+						{0.175,-0.303109,0}
+						{0.247487,-0.247487,0}
+						{0.303109,-0.175,0}
+						{0.338074,-0.0905867,0}
+						{0.35,0,0}
+						{0.338074,0.0905867,0}
+						{0.303109,0.175,0}
+						{0.247487,0.247487,0}
+						{0.175,0.303109,0}
+						{0.0905867,0.338074,0}
+						{0,0.35,0}
+						{-0.35,0.175,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<CylindricalPart height="0.07" radius="0.18" name="Cylinder" id="1">
+				<position>
+					{0,0,0.2}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.01" radius="0.15" name="Cylinder" id="2">
+				<position>
+					{0,0,0.27}
+				</position>
+				<colour r="0.7" g="0.7" b="0.7"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.1" radius="0.07" name="Cylinder" id="3">
+				<position>
+					{-0.26,0,0.2}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="0.565487" vmax="3.14159" vmin="-3.14159" name="Simple Joint" id="1" linkTo="$Base$"/>
+		<Actuator name="Actuator" id="2" linkTo="1"/>
+		<ComposedEntity name="Link 1" id="3" linkTo="1">
+			<CylindricalPart height="0.05" radius="0.175" name="Cylinder" id="0">
+				<position>
+					{0,0,0.28}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<PrismaticPart height="0.1" name="Prism" id="1">
+				<position>
+					{0,0,0.33}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.175,0.175,0}
+						{-0.175,0.175,0}
+						{-0.175,-0.175,0}
+						{0.175,-0.175,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.15" name="Prism" id="2">
+				<orientation>
+					{1.5708,-0,0}
+				</orientation>
+				<position>
+					{0,-0.14,0.43}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.148625,-0.05,0}
+						{0.168986,-0.0457762,0}
+						{0.185986,-0.0338018,0}
+						{0.196821,-0.0160531,0}
+						{0.199702,0.00454079,0}
+						{0.174624,0.386466,0}
+						{0.166311,0.429457,0}
+						{0.147586,0.469039,0}
+						{0.119621,0.502733,0}
+						{0.084167,0.52843,0}
+						{0.0434434,0.544522,0}
+						{0,0.55,0}
+						{-0.0434434,0.544522,0}
+						{-0.084167,0.52843,0}
+						{-0.119621,0.502733,0}
+						{-0.147586,0.469039,0}
+						{-0.166311,0.429457,0}
+						{-0.174624,0.386466,0}
+						{-0.199702,0.00454079,0}
+						{-0.196821,-0.0160531,0}
+						{-0.185986,-0.0338018,0}
+						{-0.168986,-0.0457762,0}
+						{-0.148625,-0.05,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.15" name="Prism" id="3">
+				<orientation>
+					{1.5708,0,3.14159}
+				</orientation>
+				<position>
+					{0,0.14,0.43}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.148625,-0.05,0}
+						{0.168986,-0.0457762,0}
+						{0.185986,-0.0338018,0}
+						{0.196821,-0.0160531,0}
+						{0.199702,0.00454079,0}
+						{0.174624,0.386466,0}
+						{0.166311,0.429457,0}
+						{0.147586,0.469039,0}
+						{0.119621,0.502733,0}
+						{0.084167,0.52843,0}
+						{0.0434434,0.544522,0}
+						{0,0.55,0}
+						{-0.0434434,0.544522,0}
+						{-0.084167,0.52843,0}
+						{-0.119621,0.502733,0}
+						{-0.147586,0.469039,0}
+						{-0.166311,0.429457,0}
+						{-0.174624,0.386466,0}
+						{-0.199702,0.00454079,0}
+						{-0.196821,-0.0160531,0}
+						{-0.185986,-0.0338018,0}
+						{-0.168986,-0.0457762,0}
+						{-0.148625,-0.05,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<CylindricalPart height="0.06" radius="0.15" name="Cylinder" id="4">
+				<orientation>
+					{-1.5708,-0,0}
+				</orientation>
+				<position>
+					{0,-0.14,0.78}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.06" radius="0.15" name="Cylinder" id="5">
+				<orientation>
+					{1.5708,-0,0}
+				</orientation>
+				<position>
+					{0,0.14,0.78}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.16" radius="0.08" name="Cylinder" id="6">
+				<orientation>
+					{1.5708,-0,0}
+				</orientation>
+				<position>
+					{0,0.08,0.78}
+				</position>
+			</CylindricalPart>
+			<CylindricalPart height="0.12" radius="0.08" name="Cylinder" id="7">
+				<orientation>
+					{1.5708,-0,0}
+				</orientation>
+				<position>
+					{0.1,0.14,0.53}
+				</position>
+				<colour r="0.2" g="0.2" b="0.2"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.12" radius="0.08" name="Cylinder" id="8">
+				<orientation>
+					{-1.5708,-0,0}
+				</orientation>
+				<position>
+					{-0.1,-0.14,0.53}
+				</position>
+				<colour r="0.2" g="0.2" b="0.2"/>
+			</CylindricalPart>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="-0.20944" vmax="1.74533" vmin="-1.74533" name="Simple Joint" id="4" linkTo="1">
+			<orientation>
+				{-1.5708,-0,0}
+			</orientation>
+			<position>
+				{0,0,0.78}
+			</position>
+		</SimpleJoint>
+		<Actuator name="Actuator" id="5" linkTo="4"/>
+		<ComposedEntity name="Link 2" id="6" linkTo="4">
+			<PrismaticPart height="0.015" name="Prism" id="0">
+				<orientation>
+					{0,-0,3.14159}
+				</orientation>
+				<position>
+					{0,0,0.055}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{-0.13,0,0}
+						{-0.122326,-0.0440041,0}
+						{-0.10021,-0.082813,0}
+						{-0.0662627,-0.111845,0}
+						{-0.0244925,-0.127672,0}
+						{0.0201693,-0.128426,0}
+						{0.06245,-0.114018,0}
+						{0.0973576,-0.0861481,0}
+						{0.120771,-0.0481078,0}
+						{0.129926,-0.00438779,0}
+						{0.123742,0.0398502,0}
+						{0.102948,0.0793835,0}
+						{0.07,0.109545,0}
+						{0.07,0.429545,0}
+						{-0.06,0.61,0}
+						{-0.11,0.61,0}
+						{-0.11,0.54,0}
+						{-0.13,0.54,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.015" name="Prism" id="1">
+				<orientation>
+					{0,-0,-3.14159}
+				</orientation>
+				<position>
+					{0,0,-0.07}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{-0.13,0,0}
+						{-0.122326,-0.0440041,0}
+						{-0.10021,-0.082813,0}
+						{-0.0662627,-0.111845,0}
+						{-0.0244925,-0.127672,0}
+						{0.0201693,-0.128426,0}
+						{0.06245,-0.114018,0}
+						{0.0973576,-0.0861481,0}
+						{0.120771,-0.0481078,0}
+						{0.129926,-0.00438779,0}
+						{0.123742,0.0398502,0}
+						{0.102948,0.0793835,0}
+						{0.07,0.109545,0}
+						{0.07,0.429545,0}
+						{-0.06,0.61,0}
+						{-0.11,0.61,0}
+						{-0.11,0.54,0}
+						{-0.13,0.54,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.11" name="Prism" id="2">
+				<orientation>
+					{0,-0,-3.14159}
+				</orientation>
+				<position>
+					{0,0,-0.055}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.0210477,0.658859,0}
+						{0.038891,0.670782,0}
+						{0.0508135,0.688625,0}
+						{0.055,0.71,0}
+						{0.0516831,0.728811,0}
+						{0.0421324,0.745353,0}
+						{0.0275,0.757631,0}
+						{0.00955065,0.764164,0}
+						{-0.00955065,0.764164,0}
+						{-0.0275,0.757631,0}
+						{-0.11,0.54,0}
+						{-0.13,0.54,0}
+						{-0.13,0,0}
+						{-0.12557,-0.0336465,0}
+						{-0.112583,-0.065,0}
+						{-0.0919239,-0.0919239,0}
+						{-0.065,-0.112583,0}
+						{-0.0336465,-0.12557,0}
+						{0,-0.13,0}
+						{0,-0.11,0}
+						{-0.0284701,-0.106252,0}
+						{-0.055,-0.0952628,0}
+						{-0.0777817,-0.0777817,0}
+						{-0.0952628,-0.055,0}
+						{-0.106252,-0.0284701,0}
+						{-0.11,0,0}
+						{-0.106252,0.0284701,0}
+						{-0.0952628,0.055,0}
+						{-0.0777817,0.0777817,0}
+						{-0.055,0.0952628,0}
+						{-0.0284701,0.106252,0}
+						{0,0.11,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="-0.188496" vmax="1.0472" vmin="-1.0472" name="Simple Joint" id="7" linkTo="4">
+			<orientation>
+				{0,-0,1.5708}
+			</orientation>
+			<position>
+				{0,-0.71,0}
+			</position>
+		</SimpleJoint>
+		<Actuator name="Actuator" id="8" linkTo="7"/>
+		<ComposedEntity name="Link 3" id="9" linkTo="7">
+			<CylindricalPart height="0.2" radius="0.04" name="Cylinder" id="0">
+				<position>
+					{0,0,-0.1}
+				</position>
+				<colour r="0.1" g="0.1" b="0.1"/>
+			</CylindricalPart>
+			<PrismaticPart height="0.02" name="Prism" id="1">
+				<orientation>
+					{-1.22465e-016,1.22465e-016,-3.14159}
+				</orientation>
+				<position>
+					{0,0,0.07}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.06,0,0}
+						{0.22,0,0}
+						{0.22,0.125,0}
+						{-0.14,0.125,0}
+						{-0.0521719,-0.0296326,0}
+						{-0.0430188,-0.0418256,0}
+						{-0.0266828,-0.0537404,0}
+						{-0.00731645,-0.0595522,0}
+						{0.0128808,-0.0586011,0}
+						{0.0316152,-0.0509949,0}
+						{0.0467592,-0.0375976,0}
+						{0.0565931,-0.0199305,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.02" name="Prism" id="2">
+				<orientation>
+					{-1.22465e-016,1.22465e-016,-3.14159}
+				</orientation>
+				<position>
+					{0,0,-0.09}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.06,0,0}
+						{0.22,0,0}
+						{0.22,0.125,0}
+						{-0.14,0.125,0}
+						{-0.0521719,-0.0296326,0}
+						{-0.0430188,-0.0418256,0}
+						{-0.0266828,-0.0537404,0}
+						{-0.00731645,-0.0595522,0}
+						{0.0128808,-0.0586011,0}
+						{0.0316152,-0.0509949,0}
+						{0.0467592,-0.0375976,0}
+						{0.0565931,-0.0199305,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<CylindricalPart height="0.2" radius="0.085" name="Cylinder" id="3">
+				<orientation>
+					{0,1.5708,0}
+				</orientation>
+				<position>
+					{0.1,-0.125,0}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<PrismaticPart height="0.46" name="Prism" id="4">
+				<orientation>
+					{-0,-1.5708,0}
+				</orientation>
+				<position>
+					{0.24,-0.225,0}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.085,-0.035,0}
+						{0.085,0.135,0}
+						{-0.085,0.135,0}
+						{-0.085,-0.035,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<orientation>
+				{-0,-0,-1.5708}
+			</orientation>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="-0.488692" vmax="3.49066" vmin="-3.49066" name="Simple Joint" id="10" linkTo="7">
+			<orientation>
+				{1.5708,-0,0}
+			</orientation>
+			<position>
+				{-0.125,0,0}
+			</position>
+		</SimpleJoint>
+		<Actuator name="Actuator" id="11" linkTo="10"/>
+		<ComposedEntity name="Link 4" id="12" linkTo="10">
+			<CylindricalPart height="0.01" radius="0.05" name="Cylinder" id="0"/>
+			<CylindricalPart height="0.29" radius="0.085" name="Cylinder" id="1">
+				<position>
+					{0,0,0.01}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<PrismaticPart height="0.1" name="Prism" id="2">
+				<position>
+					{0,0,0.3}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.09,0.09,0}
+						{-0.09,0.09,0}
+						{-0.09,-0.09,0}
+						{0.09,-0.09,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.05" name="Prism" id="3">
+				<orientation>
+					{-0,-1.5708,0}
+				</orientation>
+				<position>
+					{0.09,0,0.4}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0,-0.09,0}
+						{0.16135,-0.0589167,0}
+						{0.180613,-0.0516028,0}
+						{0.196266,-0.0382034,0}
+						{0.206462,-0.0202986,0}
+						{0.21,0,0}
+						{0.206462,0.0202986,0}
+						{0.196266,0.0382034,0}
+						{0.180613,0.0516028,0}
+						{0.16135,0.0589167,0}
+						{0,0.09,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<PrismaticPart height="0.05" name="Prism" id="4">
+				<orientation>
+					{-0,-1.5708,0}
+				</orientation>
+				<position>
+					{-0.04,0,0.4}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0,-0.09,0}
+						{0.16135,-0.0589167,0}
+						{0.180613,-0.0516028,0}
+						{0.196266,-0.0382034,0}
+						{0.206462,-0.0202986,0}
+						{0.21,0,0}
+						{0.206462,0.0202986,0}
+						{0.196266,0.0382034,0}
+						{0.180613,0.0516028,0}
+						{0.16135,0.0589167,0}
+						{0,0.09,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<CylindricalPart height="0.2" radius="0.04" name="Cylinder" id="5">
+				<orientation>
+					{0,1.5708,0}
+				</orientation>
+				<position>
+					{-0.1,0,0.55}
+				</position>
+				<colour r="0.6" g="0.6" b="0.6"/>
+			</CylindricalPart>
+			<orientation>
+				{0,-0,1.5708}
+			</orientation>
+			<position>
+				{0,0,0.3}
+			</position>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="-0.0837758" vmax="2.0944" vmin="-2.0944" name="Simple Joint" id="13" linkTo="10">
+			<orientation>
+				{-1.5708,-0,0}
+			</orientation>
+			<position>
+				{0,0,0.85}
+			</position>
+		</SimpleJoint>
+		<Actuator name="Actuator" id="14" linkTo="13"/>
+		<ComposedEntity name="Link 5" id="15" linkTo="13">
+			<PrismaticPart height="0.08" name="Prism" id="0">
+				<position>
+					{0,0,-0.04}
+				</position>
+				<colour r="1" b="0"/>
+				<face>
+					<vertex>
+						{0.09,0.06,0}
+						{0,0.06,0}
+						{-0.0155291,0.0579556,0}
+						{-0.03,0.0519615,0}
+						{-0.0424264,0.0424264,0}
+						{-0.0519615,0.03,0}
+						{-0.0579556,0.0155291,0}
+						{-0.06,0,0}
+						{-0.0579556,-0.0155291,0}
+						{-0.0519615,-0.03,0}
+						{-0.0424264,-0.0424264,0}
+						{-0.03,-0.0519615,0}
+						{-0.0155291,-0.0579556,0}
+						{0,-0.06,0}
+						{0.09,-0.06,0}
+					</vertex>
+				</face>
+			</PrismaticPart>
+			<CylindricalPart height="0.02" radius="0.04" name="Cylinder" id="1">
+				<orientation>
+					{0,1.5708,0}
+				</orientation>
+				<position>
+					{0.09,0,0}
+				</position>
+				<colour r="1" b="0"/>
+			</CylindricalPart>
+			<CylindricalPart height="0.02" radius="0.04" name="Cylinder" id="2">
+				<orientation>
+					{0,1.5708,0}
+				</orientation>
+				<position>
+					{0.11,0,0}
+				</position>
+				<colour r="0.11" g="0.1" b="0.1"/>
+			</CylindricalPart>
+			<orientation>
+				{-0,-0,-1.5708}
+			</orientation>
+		</ComposedEntity>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="0.349066" vmax="3.49066" vmin="-3.49066" name="Simple Joint" id="16" linkTo="13">
+			<orientation>
+				{1.5708,-0,0}
+			</orientation>
+		</SimpleJoint>
+		<Actuator name="Actuator" id="17" linkTo="16"/>
+		<CylindricalPart height="0.02" radius="0.03" name="Link 6" id="18" linkTo="16">
+			<position>
+				{0,0,0.13}
+			</position>
+			<colour r="0.75" g="0.75" b="0.75"/>
+		</CylindricalPart>
+		<Tcp name="Tcp" id="19" linkTo="16">
+			<position>
+				{0,0,0.15}
+			</position>
+		</Tcp>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="0" vmax="1.74533" vmin="-1.74533" name="Simple Joint" id="20" linkTo="4"/>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="0" vmax="6.28319" vmin="-6.28319" name="Simple Joint" id="21" linkTo="20"/>
+		<PrismaticPart height="0.2" name="Prism" id="22" linkTo="21">
+			<orientation>
+				{-0,-1.5708,0}
+			</orientation>
+			<colour r="0.3" g="0.3" b="0.3"/>
+			<face>
+				<vertex>
+					{0,0.03,0}
+					{0,-0.03,0}
+					{-0.03,-0.03,0}
+					{-0.03,0.03,0}
+				</vertex>
+			</face>
+		</PrismaticPart>
+		<SimpleJoint axis="Z_AXIS" factor="1" offset="0" prismatic="false" value="0" vmax="1.74533" vmin="-1.74533" name="Simple Joint" id="23" linkTo="21">
+			<position>
+				{-0.18,0,0}
+			</position>
+		</SimpleJoint>
+		<CylindricalPart height="0.1" radius="0.015" name="Cylinder" id="24" linkTo="23">
+			<position>
+				{0,0,-0.05}
+			</position>
+			<colour r="0.7" g="0.7" b="0.7"/>
+		</CylindricalPart>
+		<PrismaticPart height="0.03" name="Prism" id="25" linkTo="23">
+			<orientation>
+				{0,-0,3.14159}
+			</orientation>
+			<colour r="0.85" g="0.42" b="0"/>
+			<face>
+				<vertex>
+					{0.03,-0.02,0}
+					{0.03,0.78,0}
+					{-0.03,0.78,0}
+					{-0.03,-0.02,0}
+				</vertex>
+			</face>
+		</PrismaticPart>
+		<CylindricalPart height="0.2" radius="0.015" name="Cylinder" id="26" linkTo="23">
+			<position>
+				{0,-0.74,-0.1}
+			</position>
+			<colour r="0.7" g="0.7" b="0.7"/>
+		</CylindricalPart>
+		<position>
+			{-0.4,0,0}
+		</position>
+	</RobotSim>
+</root>
