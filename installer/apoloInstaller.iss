@@ -26,6 +26,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 Name: "program"; Description: "Program Files"; Types: full sim_only custom; Flags: fixed
 Name: "data"; Description: "Environments and objects files"; Types: full
 Name: "matlab"; Description: "MatLab Toolbox"; Types: full
+Name: "python"; Description: "Python API"; Types: full
 Name: "docs"; Description: "Documentation"; Types: full
 Name: "libs"; Description: "External Libs -manual installation if needed"; Types: full
 
@@ -33,6 +34,7 @@ Name: "libs"; Description: "External Libs -manual installation if needed"; Types
 [Files]
 Source: "Win32/*.*"; DestDir: "{app}"; Components: program
 Source: "Matlab/*.*"; DestDir: "{app}/Matlab"; Components: matlab
+Source: "Python/*.*"; DestDir: "{app}/Python"; Components: python
 Source: "data/*.*"; DestDir: "{app}/data"; Components: data
 Source: "docs/*.*"; DestDir: "{app}/docs"; Components: docs
 Source: "libs/*.*"; DestDir: "{app}/ExternalLibs"; Components: libs
