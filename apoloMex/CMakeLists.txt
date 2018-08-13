@@ -2,6 +2,7 @@
 # Indicamos el nombre que queremos que tenga nuestro proyecto
 PROJECT(apoloMex)
 set(MATLAB_ADDITIONAL_VERSIONS
+    "R2018a=9.4"
     "R2017b=9.3"
   )
 FIND_PACKAGE(MATLAB COMPONENTS MX_LIBRARY)
@@ -12,7 +13,7 @@ matlab_get_all_valid_matlab_roots_from_registry(FALSE
 MESSAGE("SEARCHING MATLAB *******************************************************************")
 If(MATLAB_FOUND)
 MESSAGE("MATLAB FOUND!!********************************************************************")
-MESSAGE("MATLAB VERSIONS: ${matlab_versions} ${matlab_roots} ${MATLAB_MX_LIBRARY}")
+
 matlab_add_mex(NAME apoloMex MODULE
 	SRC apoloMex.cpp apoloMex.h	../apoloMessage.cpp	../apoloMessage.h
     )
