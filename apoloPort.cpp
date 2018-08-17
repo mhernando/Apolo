@@ -1,6 +1,7 @@
 
 #include "apoloPort.h"
 #include "apoloMessage.h"
+#define TAM_APOLO_BUFFER 90000
 ApoloPort::ApoloPort(int port,vector<SimulatedWorld*>*listWorlds)
 {
 	world=listWorlds;
@@ -42,34 +43,36 @@ PositionableEntity *ApoloPort::getElement(char *nworld,char *name,int *worldinde
 	//world & element not found
 	return 0;
 }
+
 void *ApoloPort::handleConnections(void *server)
 {
 	Socket *aux_sock= (Socket*) server;
 	Socket socket=*aux_sock;
 	PositionableEntity *pos;
 	RobotSim *robot;
+	LaserSensorSim *laser;
 	WheeledBaseSim *wb;
 	static int valid=0, total=0;
 	
 	while(1)
 	{
 		Socket *temp=socket.acceptConnection();
-		
-		
+
+		char buffer[TAM_APOLO_BUFFER];
+		int size = 0;
 		while(temp->IsConnected())
 		{	
 			
 			
-			char buffer[10000];
-			int size=0;
-			if(0<(size=temp->Receive(buffer,10000,-1)))
+			int lect = 0;
+			if(0<(lect=temp->Receive(buffer+size, TAM_APOLO_BUFFER -size,-1)))
 			{
-				
+				size += lect;
 				ApoloMessage *m=0;
 				char *pbuffer=buffer;//recorrepbuffer
 				while(m=ApoloMessage::getApoloMessage(&pbuffer,size))
 				{
-					size-=m->getSize();
+					size -= m->getSize();
 					total++;
 					char *nworld=m->getWorld();
 					char *name=m->getObjectName();
@@ -182,18 +185,33 @@ void *ApoloPort::handleConnections(void *server)
 							valid++;
 							}
 							break;
-
+						case AP_GET_LASER_DATA:
+							if (element) {
+								laser = dynamic_cast<LaserSensorSim*>(element);
+								laser->simulate(0);
+								LaserData data;
+								laser->getData(data);
+								int num = (int)data.size();
+								char *resp = new char[sizeof(double)*num+20];
+								int tam = ApoloMessage::writeDoubleVector(resp, data.getRanges());
+								temp->Send(resp, tam);
+								delete [] resp;
+								valid++;
+							}
+							break;
 					}
 
 					delete m;//aseguro limpieza
+					
 				}
 				char messageLog[150];
 				sprintf(messageLog,"Commands Executed: %d/%d",valid,total);
 				wxLogStatus(messageLog);
 				//temp->Send(request,50);
-
-					
-	
+				//prepare the buffer with the remaining data
+				
+				for (int i = 0; i < size; i++)buffer[i] = pbuffer[i];
+				
 								
 			}		
 		}

@@ -14,6 +14,10 @@
 #define AP_GETLOCATION_WB 'g'
 #define AP_DVECTOR 'D'
 #define AP_LINK_TO_ROBOT_TCP 'L'
+#define AP_GET_LASER_DATA 'l'
+
+
+#include <vector>
 /*************************************************************/
 /*This class implements the protocol for easily connect to apolo
   An apolo message pointers to an external buffer. Is simply an interpreter
@@ -38,7 +42,9 @@ public:
 	static int writeGetLocation(char *buffer, char *world,char *object);
 	static int writeGetLocationWheeledBase(char *buffer, char *world,char *robot);
 	static int writeDoubleVector(char *buffer, int num, double *d);
+	static int writeDoubleVector(char *buffer, std::vector<double> v);
 	static int writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object);
+	static int writeGetLaserData(char *buffer, char *world, char *laser);
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}

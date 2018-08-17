@@ -154,6 +154,15 @@ int ApoloMessage::writeLinkToRobotTCP(char *buffer, char *world,char *robot,char
 	insertSize(buffer,n);
 	return n;
 }
+int ApoloMessage::writeGetLaserData(char *buffer, char *world, char *laser)
+{
+	int n = 0;
+	n += writeHeader(buffer, AP_GET_LASER_DATA);//command
+	n += writeString(buffer + n, world);//world
+	n += writeString(buffer + n, laser);//laser
+	insertSize(buffer, n);
+	return n;
+}
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;
@@ -163,6 +172,17 @@ int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 	for(int i=0;i<num;i++)
 		n+=writeDouble(buffer+n,d[i]);
 	insertSize(buffer,n);
+	return n;
+}
+int ApoloMessage::writeDoubleVector(char *buffer, std::vector<double> v)
+{
+	int n = 0;
+	n += writeHeader(buffer, AP_DVECTOR);//command
+	int num = (int)v.size();
+	n += writeUInt16(buffer + n, num);
+	for (int i=0; i<num; ++i) 
+		n += writeDouble(buffer + n, v[i]);
+	insertSize(buffer, n);
 	return n;
 }
 int ApoloMessage::writeBOOL(char *buffer, bool val)
@@ -192,6 +212,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_GETLOCATION_WB:
 		case AP_GETLOCATION:
 		case AP_LINK_TO_ROBOT_TCP:
+		case AP_GET_LASER_DATA:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];

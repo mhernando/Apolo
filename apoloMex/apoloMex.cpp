@@ -21,6 +21,22 @@ static void CloseConection(void){
   delete conection;
 }
 // Definimos la función de interfaz entre Matlab y C++
+static  ApoloMessage *waitForCompleteMessage(char **buffer, int max, int &size)
+{
+	ApoloMessage *m = 0;
+	int numintentos = 0;
+	while (m == 0) {
+		size += conection->Receive((*buffer)+size, max-size,1);
+		m = ApoloMessage::getApoloMessage(buffer, size);
+		numintentos++;
+		//char errorText[100];
+		//mexPrintf( "leido %d=", size);
+		//mexErrMsgTxt("Mensaje de respuesta no identificado");
+		if (size == max)return 0;
+		if (numintentos > 1000)return 0;
+	}
+	return m;
+}
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
 
@@ -61,6 +77,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_GETLOCATION:
 	case AP_GETLOCATION_WB:
 	case AP_LINK_TO_ROBOT_TCP:
+	case AP_GET_LASER_DATA:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -84,7 +101,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	int size;
 	int num;
 	double *dvalues;
-	char resp[300];
+	char resp[10000];
 	switch(command[0])
 	{
 	//commands with world id, and name
@@ -206,6 +223,41 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		else{				
 			size=ApoloMessage::writeLinkToRobotTCP(message,world,name,auxname);
 			if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
+		}
+		break;
+	case AP_GET_LASER_DATA:
+		if (command[0] == AP_GET_LASER_DATA)
+		size = ApoloMessage::writeGetLaserData(message, world, name);
+		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else {
+
+			/*size = conection->Receive(resp, 10000);
+			char *auxb = resp;
+			ApoloMessage *m = ApoloMessage::getApoloMessage(&auxb, size);*/
+			size = 0;
+			char *auxb = resp;
+			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
+			if (m) {
+				//prepara vector de retorno
+				if (m->getType() == AP_DVECTOR) {
+
+					int num = m->getUInt16At(0);
+
+					plhs[0] = mxCreateDoubleMatrix(1, num, mxREAL);
+					double *z = mxGetPr(plhs[0]);
+					for (int i = 0; i<num; i++)z[i] = m->getDoubleAt(2 + i * 8);
+				}
+				else mexErrMsgTxt("Mensaje de respuesta erroneo");
+				delete m;
+			}
+			else {
+				char errorText[1000];
+				sprintf(errorText, "size %d=size\n",size);
+				for (int i = 0; (i < 50) && (i < size); i++)sprintf(errorText + strlen(errorText), "%d ", resp);
+				mexErrMsgTxt(errorText);
+				mexErrMsgTxt("Mensaje de respuesta no identificado");
+			}
+
 		}
 		break;
 	//commands with world only
