@@ -199,6 +199,29 @@ void *ApoloPort::handleConnections(void *server)
 								valid++;
 							}
 							break;
+						case AP_GET_WB_ODOMETRY:
+							if (element) {
+								wb = dynamic_cast<WheeledBaseSim *>(element);
+								double d[4];
+								for (int i = 0; i<4; i++)d[i] = m->getDoubleAt(8 * i);
+								Transformation3D lastPose(d[0], d[1], 0, 0, 0, d[2]);
+							    Odometry last_odom,odom;
+								last_odom.pose = lastPose;
+								wb->getOdometry(odom);
+								Transformation3D inc=odom.getIncrement(last_odom, d[3]);
+								double dresp[3],aux[2];
+								dresp[0] = inc.position[0];
+								dresp[1] = inc.position[1];
+								inc.orientation.getRPY(aux[0], aux[1], dresp[2]);
+
+								char resp[70];
+								int tam;
+								tam = ApoloMessage::writeDoubleVector(resp, 3, d);
+								temp->Send(resp, tam);
+								
+								valid++;
+							}
+							break;
 					}
 
 					delete m;//aseguro limpieza

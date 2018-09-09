@@ -45,9 +45,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			scanf("%c",&order);
 			fflush(stdin);
 			printf("\nIntroduce object`s world (0 = Search object in all worlds)\n"); 
-			gets(worldName);
+			gets_s(worldName,30);
 			printf("\nIntroduce object`s name\n"); 
-			gets(objectName);
+			gets_s(objectName,30);
 			
 
 

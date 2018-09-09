@@ -163,6 +163,18 @@ int ApoloMessage::writeGetLaserData(char *buffer, char *world, char *laser)
 	insertSize(buffer, n);
 	return n;
 }
+int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy,  double noise)
+{
+	int n = 0;
+	n += writeHeader(buffer, AP_GET_WB_ODOMETRY);//command
+	n += writeString(buffer + n, world);//world
+	n += writeString(buffer + n, robot);//robot
+	for (int i = 0; i<3; i++)//x,y, rot z
+		n += writeDouble(buffer + n, lastxyy[i]);
+	n += writeDouble(buffer + n, noise);
+	insertSize(buffer, n);
+	return n;
+}
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;
@@ -213,6 +225,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_GETLOCATION:
 		case AP_LINK_TO_ROBOT_TCP:
 		case AP_GET_LASER_DATA:
+		case AP_GET_WB_ODOMETRY:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];

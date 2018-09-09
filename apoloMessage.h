@@ -15,6 +15,7 @@
 #define AP_DVECTOR 'D'
 #define AP_LINK_TO_ROBOT_TCP 'L'
 #define AP_GET_LASER_DATA 'l'
+#define AP_GET_WB_ODOMETRY 'o'
 
 
 #include <vector>
@@ -45,6 +46,7 @@ public:
 	static int writeDoubleVector(char *buffer, std::vector<double> v);
 	static int writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object);
 	static int writeGetLaserData(char *buffer, char *world, char *laser);
+	static int writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy, double noise); //last x, last y, last yaw(rad), noise
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}

@@ -78,6 +78,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_GETLOCATION_WB:
 	case AP_LINK_TO_ROBOT_TCP:
 	case AP_GET_LASER_DATA:
+	case AP_GET_WB_ODOMETRY:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -260,6 +261,21 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 		}
 		break;
+	case AP_GET_WB_ODOMETRY:
+		//get the double vector
+		if (mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("odometry is a vector of doubles, and noise (x,y,yaw, noise) .");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if (mxGetM(prhs[3]) != 1)mexErrMsgTxt("last odometry must be row vector.");
+		if (mxGetN(prhs[3]) != 4)mexErrMsgTxt("last odometry must be a 4-row vector.");
+
+		size = ApoloMessage::writeGetOdometry(message, world, name, dvalues, dvalues[3]);
+		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else {
+			//TODO: FALTA LA RECEPCION DEL MENSAJE CLARO.... :) vector de 3 doubles
+		}
+		break;
+
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate
