@@ -216,7 +216,7 @@ void *ApoloPort::handleConnections(void *server)
 
 								char resp[70];
 								int tam;
-								tam = ApoloMessage::writeDoubleVector(resp, 3, d);
+								tam = ApoloMessage::writeDoubleVector(resp, 3, dresp);
 								temp->Send(resp, tam);
 								
 								valid++;

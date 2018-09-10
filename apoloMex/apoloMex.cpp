@@ -37,6 +37,25 @@ static  ApoloMessage *waitForCompleteMessage(char **buffer, int max, int &size)
 	}
 	return m;
 }
+void createMexDoubleArrayFromMessage(ApoloMessage *m, mxArray **p)
+{
+	if (m) {
+		//prepara vector de retorno
+		if (m->getType() == AP_DVECTOR) {
+
+			int num = m->getUInt16At(0);
+
+			p[0] = mxCreateDoubleMatrix(1, num, mxREAL);
+			double *z = mxGetPr(p[0]);
+			for (int i = 0; i<num; i++)z[i] = m->getDoubleAt(2 + i * 8);
+			//mexPrintf("Create double: %d %f %f %f", num, z[0], z[1], z[2]);
+		}
+		else mexErrMsgTxt("Mensaje de respuesta erroneo");
+		delete m;
+	}
+	else mexErrMsgTxt("Mensaje de respuesta no identificado");
+	
+}
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
 
@@ -191,24 +210,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
 		else{
 			
-			size=conection->Receive(resp,300,-1);
-			char *auxb=resp;
-					
-			ApoloMessage *m=ApoloMessage::getApoloMessage(&auxb,size);
-			if(m){
-				//prepara vector de retorno
-				if(m->getType()==AP_DVECTOR){
-
-					int num=m->getUInt16At(0);
-				
-					plhs[0] = mxCreateDoubleMatrix(1,num, mxREAL);
-					double *z = mxGetPr(plhs[0]);
-					for(int i=0;i<num;i++)z[i]=m->getDoubleAt(2+i*8);
-				}
-				else mexErrMsgTxt("Mensaje de respuesta erroneo");
-				delete m;
-			}
-			else mexErrMsgTxt("Mensaje de respuesta no identificado");
+			size = 0;
+			char *auxb = resp;
+			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
+			createMexDoubleArrayFromMessage(m, plhs);
 			
 		}
 		break;
@@ -231,33 +236,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		size = ApoloMessage::writeGetLaserData(message, world, name);
 		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
 		else {
-
-			/*size = conection->Receive(resp, 10000);
-			char *auxb = resp;
-			ApoloMessage *m = ApoloMessage::getApoloMessage(&auxb, size);*/
 			size = 0;
 			char *auxb = resp;
 			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
-			if (m) {
-				//prepara vector de retorno
-				if (m->getType() == AP_DVECTOR) {
-
-					int num = m->getUInt16At(0);
-
-					plhs[0] = mxCreateDoubleMatrix(1, num, mxREAL);
-					double *z = mxGetPr(plhs[0]);
-					for (int i = 0; i<num; i++)z[i] = m->getDoubleAt(2 + i * 8);
-				}
-				else mexErrMsgTxt("Mensaje de respuesta erroneo");
-				delete m;
-			}
-			else {
-				char errorText[1000];
-				sprintf(errorText, "size %d=size\n",size);
-				for (int i = 0; (i < 50) && (i < size); i++)sprintf(errorText + strlen(errorText), "%d ", resp);
-				mexErrMsgTxt(errorText);
-				mexErrMsgTxt("Mensaje de respuesta no identificado");
-			}
+			createMexDoubleArrayFromMessage(m, plhs);
 
 		}
 		break;
@@ -271,8 +253,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 		size = ApoloMessage::writeGetOdometry(message, world, name, dvalues, dvalues[3]);
 		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
-		else {
-			//TODO: FALTA LA RECEPCION DEL MENSAJE CLARO.... :) vector de 3 doubles
+		else {//resp
+			size = 0;
+			char *auxb = resp;
+			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
+			createMexDoubleArrayFromMessage(m, plhs);
 		}
 		break;
 
