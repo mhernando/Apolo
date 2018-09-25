@@ -249,7 +249,13 @@
 			</position>
 		</QuadrotorSim>
 		<UltrasonicSensor name="Sensor1" linkTo="$Neo$" >
-
+			<position>
+				{0.15,0,0.2}
+			</position>
+			<orientation>
+				{0,-0.1,0}
+			</orientation>
+			<colour r="0" g="1" b="0"/>
 		</UltrasonicSensor>
 	</World>
 </root>
