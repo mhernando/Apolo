@@ -1,6 +1,7 @@
 
 #include "apoloPort.h"
 #include "apoloMessage.h"
+
 #define TAM_APOLO_BUFFER 90000
 ApoloPort::ApoloPort(int port,vector<SimulatedWorld*>*listWorlds)
 {
@@ -11,7 +12,18 @@ ApoloPort::ApoloPort(int port,vector<SimulatedWorld*>*listWorlds)
 
 }
 
-
+bool ApoloPort::getDependentUltrasonicSensors(PositionableEntity *object, vector<UltrasonicSensor *> &v)
+{
+	ReferenceSystem *location = object->getReferenciableLocation();
+	int i, n = location->getNumberOfDependents();
+	UltrasonicSensor *aux;
+	for (i = 0; i<n; i++) {
+		aux = dynamic_cast<UltrasonicSensor *>((location->getDependent(i))->getOwner());
+		if (aux)v.push_back(aux);
+	}
+	if (v.size() > 0)return true;
+	return false;
+}
 
 
 PositionableEntity *ApoloPort::getElement(char *nworld,char *name,int *worldindex)
@@ -222,6 +234,24 @@ void *ApoloPort::handleConnections(void *server)
 								valid++;
 							}
 							break;
+							case AP_GET_USENSOR:
+								if (element) {
+									UltrasonicSensor *usensor = dynamic_cast<UltrasonicSensor *>(element);
+									if (!usensor)break;
+									double measure = usensor->getDistance();
+									char resp[70];
+									int tam;
+									tam = ApoloMessage::writeDoubleVector(resp, 1, &measure);
+									temp->Send(resp, tam);
+									valid++;
+								}
+							break;
+							case AP_GET_DEP_USENSORS:
+								if (element) {
+									;//getDepndentUsensors
+								}
+							break;
+
 					}
 
 					delete m;//aseguro limpieza

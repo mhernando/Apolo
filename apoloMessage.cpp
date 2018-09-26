@@ -163,6 +163,7 @@ int ApoloMessage::writeGetLaserData(char *buffer, char *world, char *laser)
 	insertSize(buffer, n);
 	return n;
 }
+
 int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy,  double noise)
 {
 	int n = 0;
@@ -175,6 +176,25 @@ int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot, doub
 	insertSize(buffer, n);
 	return n;
 }
+int ApoloMessage::writeGetUltrasonicSensor(char *buffer, char *world, char* name)
+{
+	int n = 0;
+	n += writeHeader(buffer, AP_GET_USENSOR);//command
+	n += writeString(buffer + n, world);//world
+	n += writeString(buffer + n, name);//laser
+	insertSize(buffer, n);
+	return n;
+}
+int ApoloMessage::writeGetDependentUltrasonicSensors(char *buffer, char *world, char* object) 
+{
+	int n = 0;
+	n += writeHeader(buffer, AP_GET_DEP_USENSORS);//command
+	n += writeString(buffer + n, world);//world
+	n += writeString(buffer + n, object);//laser
+	insertSize(buffer, n);
+	return n;
+}
+
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;

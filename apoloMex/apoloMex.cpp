@@ -98,6 +98,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_LINK_TO_ROBOT_TCP:
 	case AP_GET_LASER_DATA:
 	case AP_GET_WB_ODOMETRY:
+	case AP_GET_USENSOR:
+	case AP_GET_DEP_USENSORS:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
 		if (( mxIsChar(prhs[2]) != 1)&&(mxGetM(prhs[2])!=1))mexErrMsgTxt("name must be a string.");
 		name=mxArrayToString(prhs[2]);
@@ -232,7 +234,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		}
 		break;
 	case AP_GET_LASER_DATA:
-		if (command[0] == AP_GET_LASER_DATA)
 		size = ApoloMessage::writeGetLaserData(message, world, name);
 		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
 		else {
@@ -260,7 +261,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 			createMexDoubleArrayFromMessage(m, plhs);
 		}
 		break;
+	case AP_GET_USENSOR:
+	case AP_GET_DEP_USENSORS:
+		if (command[0] == AP_GET_USENSOR)size = ApoloMessage::writeGetUltrasonicSensor(message, world, name);
+		else size = ApoloMessage::writeGetDependentUltrasonicSensors(message, world, name);
 
+		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else {
+			size = 0;
+			char *auxb = resp;
+			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
+			createMexDoubleArrayFromMessage(m, plhs);
+
+		}
+		break;
 	//commands with world only
 	case AP_UPDATEWORLD:
 		//ApoloUpdate

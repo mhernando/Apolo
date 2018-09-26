@@ -2,20 +2,23 @@
 #pragma once
 
 #define AP_NONE 0
-#define AP_SETJOINTS 'J'
-#define AP_PLACE 'P'
-#define AP_CHECKJOINTS 'j'
-#define AP_UPDATEWORLD 'U'
-#define AP_TRUE 'T'
-#define AP_FALSE 'F'
-#define AP_PLACE_WB 'p'
-#define AP_MOVE_WB 'm'
-#define AP_GETLOCATION 'G'
-#define AP_GETLOCATION_WB 'g'
 #define AP_DVECTOR 'D'
+#define AP_FALSE 'F'
+#define AP_GETLOCATION 'G'
+#define AP_SETJOINTS 'J'
 #define AP_LINK_TO_ROBOT_TCP 'L'
+#define AP_PLACE 'P'
+#define AP_TRUE 'T'
+#define AP_UPDATEWORLD 'U'
+#define AP_GET_DEP_USENSORS 'd'
+#define AP_GETLOCATION_WB 'g'
+#define AP_CHECKJOINTS 'j'
 #define AP_GET_LASER_DATA 'l'
+#define AP_MOVE_WB 'm'
 #define AP_GET_WB_ODOMETRY 'o'
+#define AP_PLACE_WB 'p'
+#define AP_GET_USENSOR 'u'
+
 
 
 #include <vector>
@@ -47,6 +50,10 @@ public:
 	static int writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object);
 	static int writeGetLaserData(char *buffer, char *world, char *laser);
 	static int writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy, double noise); //last x, last y, last yaw(rad), noise
+	static int writeGetUltrasonicSensor(char *buffer, char *world, char* name); //AP_GET_USENSOR
+	static int writeGetDependentUltrasonicSensors(char *buffer, char *world, char* object);// AP_GET_DEP_USENSORS
+		
+	
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}

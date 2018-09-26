@@ -8,6 +8,7 @@ class ApoloPort
 
 {
 	PositionableEntity *getElement(char *nworld,char *name,int *worldindex);
+	bool getDependentUltrasonicSensors(PositionableEntity *object, vector<UltrasonicSensor *> &v);
 public:
 	ApoloPort(int port,vector<SimulatedWorld*>*listWorlds);
 	void *handleConnections(void *server);
