@@ -248,7 +248,21 @@ void *ApoloPort::handleConnections(void *server)
 							break;
 							case AP_GET_DEP_USENSORS:
 								if (element) {
-									;//getDepndentUsensors
+									vector<UltrasonicSensor *> v;
+									if (getDependentUltrasonicSensors(element, v))
+									{
+										int n = v.size();
+										double *vaux = new double[n];
+										for(int i=0;i<n;i++)vaux[i] = v[i]->getDistance();
+										char *resp=new char[8*n+10];
+										int tam;
+										tam = ApoloMessage::writeDoubleVector(resp, n, vaux);
+										temp->Send(resp, tam);
+										valid++;
+										delete[] vaux;
+										delete[] resp;
+									}
+									
 								}
 							break;
 

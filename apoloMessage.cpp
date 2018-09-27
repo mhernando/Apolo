@@ -246,6 +246,8 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_LINK_TO_ROBOT_TCP:
 		case AP_GET_LASER_DATA:
 		case AP_GET_WB_ODOMETRY:
+		case AP_GET_USENSOR:
+		case AP_GET_DEP_USENSORS:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];
