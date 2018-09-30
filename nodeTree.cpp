@@ -347,7 +347,24 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		if(name.empty())name = "Asea IRB2000";
 		
 	}
-
+	else if (dynamic_cast<UltrasonicSensor *>(pos))
+	{
+		pointer.ultrasonic = dynamic_cast<UltrasonicSensor *>(pos);
+		tipo = N_UltrasonicSensor;
+		bit = Bit_ultrasonic;
+		bitsel = BitSel_ultrasonic;
+		name = wxString(pos->getName());
+		if (name.empty())name = "Sensor Ultrasonic";
+	}
+	else if (dynamic_cast<LandMark *>(pos))
+	{
+		pointer.landmark = dynamic_cast<LandMark *>(pos);
+		tipo = N_LandMark;
+		bit = Bit_landmark;
+		bitsel = BitSel_landmark;
+		name = wxString(pos->getName());
+		if (name.empty())name = "LandMark";
+	}
 
 	else return;
 

@@ -59,7 +59,10 @@
 #include "bitmaps/link.xpm"
 #include "bitmaps/link2.xpm"
 #include "bitmaps/euitiBot.xpm"
-
+#include "bitmaps/ultrasonic.xpm"
+#include "bitmaps/ultrasonicSelect.xpm"
+#include "bitmaps/landmark.xpm"
+#include "bitmaps/landmarkSelect.xpm"
 class PanelXML;
 class MainWindow;
 class SimulatedWorld;

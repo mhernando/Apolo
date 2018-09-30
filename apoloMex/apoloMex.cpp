@@ -37,6 +37,34 @@ static  ApoloMessage *waitForCompleteMessage(char **buffer, int max, int &size)
 	}
 	return m;
 }
+void createMexLandMarkInfoFromMessage(ApoloMessage *m, mxArray **p)
+{
+	if (m) {
+		if (m->getType() == AP_LM_INFO) {
+			int num = m->getUInt16At(0);
+			const char *fieldnames[3] = { "id","angle","distance" };		
+			mxArray *m_id,*m_ang, *m_dist;
+			m_id = mxCreateNumericMatrix(1, num, mxINT32_CLASS, mxREAL);
+			m_ang = mxCreateDoubleMatrix(1, num, mxREAL);
+			m_dist = mxCreateDoubleMatrix(1, num, mxREAL);
+			int *id = (int *)mxGetData(m_id);
+			double *angle = mxGetPr(m_ang);
+			double *dist = mxGetPr(m_dist);
+			for (int i = 0; i < num; i++) {
+				id[i] = m->getUInt16At(2 + i * (18));
+				angle[i] = m->getDoubleAt(4 + i * (18));
+				dist[i] = m->getDoubleAt(12 + i * (18));
+			}
+			p[0]= mxCreateStructMatrix(1, 1, 3, fieldnames);	
+			mxSetFieldByNumber(p[0], 0, 0, m_id);
+			mxSetFieldByNumber(p[0], 0, 1, m_ang);
+			mxSetFieldByNumber(p[0], 0, 2, m_dist);
+		}
+		else mexErrMsgTxt("Mensaje de respuesta erroneo");
+		delete m;
+	}
+	else mexErrMsgTxt("Mensaje de respuesta no identificado");
+}
 void createMexDoubleArrayFromMessage(ApoloMessage *m, mxArray **p)
 {
 	if (m) {
@@ -97,6 +125,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_GETLOCATION_WB:
 	case AP_LINK_TO_ROBOT_TCP:
 	case AP_GET_LASER_DATA:
+	case AP_GET_LASER_LM:
 	case AP_GET_WB_ODOMETRY:
 	case AP_GET_USENSOR:
 	case AP_GET_DEP_USENSORS:
@@ -241,6 +270,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 			char *auxb = resp;
 			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
 			createMexDoubleArrayFromMessage(m, plhs);
+
+		}
+		break;
+	case AP_GET_LASER_LM:
+		size = ApoloMessage::writeGetLaserLandMarks(message, world, name);
+		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
+		else {
+			size = 0;
+			char *auxb = resp;
+			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
+			//aquí sería la creación de una matriz no un double array TODO
+			createMexLandMarkInfoFromMessage(m, plhs);
 
 		}
 		break;

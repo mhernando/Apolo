@@ -14,7 +14,7 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 {
 	wxImageList *images = new wxImageList(16,16,true);
 	// should correspond to "bit" & "bitsel" enum 
-	wxIcon icons[51];
+	wxIcon icons[55];
 	icons[0] = wxIcon (universe_xpm); //universe
 	icons[1] = wxIcon (joint_xpm); //simple joint
 	icons[2] = wxIcon (jointSelect_xpm); //simple joint select 
@@ -66,7 +66,10 @@ Tree::Tree(wxWindow * parent, const wxWindowID id)
 	icons[48]=	wxIcon (link_xpm);
 	icons[49]=	wxIcon(link2_xpm);
 	icons[50]=  wxIcon(euitiBot_xpm);
-
+	icons[51] = wxIcon(ultrasonic_xpm);
+	icons[52] = wxIcon(ultrasonicSelect_xpm);
+	icons[53] = wxIcon(landmark_xpm);
+	icons[54] = wxIcon(landmarkSelect_xpm);
 
 	for(int i=0;i<WXSIZEOF(icons);i++)
 	{

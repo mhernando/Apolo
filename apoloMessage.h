@@ -1,7 +1,9 @@
 
 #pragma once
+#include "mrcore.h"
 
 #define AP_NONE 0
+#define AP_GET_LASER_LM 'B'
 #define AP_DVECTOR 'D'
 #define AP_FALSE 'F'
 #define AP_GETLOCATION 'G'
@@ -10,6 +12,7 @@
 #define AP_PLACE 'P'
 #define AP_TRUE 'T'
 #define AP_UPDATEWORLD 'U'
+#define AP_LM_INFO 'b'
 #define AP_GET_DEP_USENSORS 'd'
 #define AP_GETLOCATION_WB 'g'
 #define AP_CHECKJOINTS 'j'
@@ -52,7 +55,8 @@ public:
 	static int writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy, double noise); //last x, last y, last yaw(rad), noise
 	static int writeGetUltrasonicSensor(char *buffer, char *world, char* name); //AP_GET_USENSOR
 	static int writeGetDependentUltrasonicSensors(char *buffer, char *world, char* object);// AP_GET_DEP_USENSORS
-		
+	static int writeGetLaserLandMarks(char *buffer, char *world, char *laser); //AP_GET_LASER_LM
+	static int writeLandMarkInfoVector(char *buffer, std::vector<mr::LaserSensorSim::LandMarkInfo> &v); //AP_LM_INFO
 	
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 

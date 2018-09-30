@@ -21,7 +21,7 @@ writes intp buffer the message for moving a robot in a worl
 if world=null... is equivalent to any.
 returns the message size
 **/
-inline int writeString(char *buffer, char *cad){
+inline int Apolo_writeString(char *buffer, char *cad){
 	int n=0,len;
 	if(cad!=0){ //not null
 		if(cad[0]==0)buffer[n++]=0;//empty string
@@ -34,13 +34,13 @@ inline int writeString(char *buffer, char *cad){
 	}else buffer[n++]=0;
 	return n;
 }
-inline int writeDouble(char *buffer, double val){
+inline int Apolo_writeDouble(char *buffer, double val){
 	double2byteConversor aux;
 	aux.real=val;
 	for(int i=0;i<8;i++)buffer[i]=aux.bytes[i];
 	return 8;
 }
-inline int writeUInt16(char *message, int &num)
+inline int Apolo_writeUInt16(char *message, int &num)
 {
 	if(num>65535)num=65535;
 	if(num<0)num=0;
@@ -48,18 +48,18 @@ inline int writeUInt16(char *message, int &num)
 	((uchar *)message)[1]=(uchar)(num/255);
 	return 2;
 }
-inline void insertSize(char *message, int size)//size including the header
+inline void Apolo_insertSize(char *message, int size)//size including the header
 {
 	((uchar *)message)[2]=(uchar)(size%255);
 	((uchar *)message)[3]=(uchar)(size/255);
 }
 //tamaño minimo de mensaje es 5
-inline int writeHeader(char*buffer,char command) //escribe la cabecera 
+inline int Apolo_writeHeader(char*buffer,char command) //escribe la cabecera 
 {
 	int n=0;
 	buffer[0]='a';
 	buffer[1]='a';
-	insertSize(buffer,5);
+	Apolo_insertSize(buffer,5);
 	buffer[4]=command;
 	return 5;
 }
@@ -67,48 +67,48 @@ inline int writeHeader(char*buffer,char command) //escribe la cabecera
 int ApoloMessage::writeSetRobotJoints(char *buffer, char *world, char *robot, int num, double *values)
 {
 	int n=0;
-	n+=writeHeader(buffer,AP_SETJOINTS);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,robot);//robot
+	n+= Apolo_writeHeader(buffer,AP_SETJOINTS);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,robot);//robot
 	if(num<0)num=0; 
 	if(num>255)num=255;
 	((uchar *)buffer)[n++]=(uchar)num;//num joints
 	for(int i=0;i<num;i++)
-		n+=writeDouble(buffer+n,values[i]);
-	insertSize(buffer,n);
+		n+= Apolo_writeDouble(buffer+n,values[i]);
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writePlaceObject(char *buffer, char *world,char *object, double *xyzrpy)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_PLACE);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,object);//object
+	n+= Apolo_writeHeader(buffer,AP_PLACE);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,object);//object
 	for(i=0;i<6;i++)
-		n+=writeDouble(buffer+n,xyzrpy[i]);
-	insertSize(buffer,n);
+		n+= Apolo_writeDouble(buffer+n,xyzrpy[i]);
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeMoveWheeledBase(char *buffer, char *world,char *robot, double *sp_rs_t)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_MOVE_WB);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,robot);//robot
+	n+= Apolo_writeHeader(buffer,AP_MOVE_WB);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,robot);//robot
 	for(i=0;i<3;i++)//speed, rot speed, time
-		n+=writeDouble(buffer+n,sp_rs_t[i]);
-	insertSize(buffer,n);
+		n+= Apolo_writeDouble(buffer+n,sp_rs_t[i]);
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int  ApoloMessage::writePlaceWheeledBase(char *buffer, char *world,char *robot, double *xyzy)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_PLACE_WB);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,robot);//robot
+	n+= Apolo_writeHeader(buffer,AP_PLACE_WB);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,robot);//robot
 	for(i=0;i<4;i++)//x,y,z, rot z
-		n+=writeDouble(buffer+n,xyzy[i]);
-	insertSize(buffer,n);
+		n+= Apolo_writeDouble(buffer+n,xyzy[i]);
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 //the same message But changes the command id
@@ -121,77 +121,85 @@ int ApoloMessage::writeCheckColision(char *buffer, char *world, char *robot, int
 int ApoloMessage::writeGetLocation(char *buffer, char *world,char *object)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_GETLOCATION);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,object);//robot
-	insertSize(buffer,n);
+	n+= Apolo_writeHeader(buffer,AP_GETLOCATION);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,object);//robot
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeGetLocationWheeledBase(char *buffer, char *world,char *robot)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_GETLOCATION_WB);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,robot);//robot
-	insertSize(buffer,n);
+	n+= Apolo_writeHeader(buffer,AP_GETLOCATION_WB);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,robot);//robot
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeUpdateWorld(char *buffer, char *world)
 {
 	int n=0;
-	n+=writeHeader(buffer,AP_UPDATEWORLD);//command
-	n+=writeString(buffer+n,world);//world
-	insertSize(buffer,n);
+	n+= Apolo_writeHeader(buffer,AP_UPDATEWORLD);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeLinkToRobotTCP(char *buffer, char *world,char *robot,char *object)
 {
 	int n=0,i;
-	n+=writeHeader(buffer,AP_LINK_TO_ROBOT_TCP);//command
-	n+=writeString(buffer+n,world);//world
-	n+=writeString(buffer+n,robot);//robot
-	n+=writeString(buffer+n,object);//robot
-	insertSize(buffer,n);
+	n+= Apolo_writeHeader(buffer,AP_LINK_TO_ROBOT_TCP);//command
+	n+= Apolo_writeString(buffer+n,world);//world
+	n+= Apolo_writeString(buffer+n,robot);//robot
+	n+= Apolo_writeString(buffer+n,object);//robot
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeGetLaserData(char *buffer, char *world, char *laser)
 {
 	int n = 0;
-	n += writeHeader(buffer, AP_GET_LASER_DATA);//command
-	n += writeString(buffer + n, world);//world
-	n += writeString(buffer + n, laser);//laser
-	insertSize(buffer, n);
+	n += Apolo_writeHeader(buffer, AP_GET_LASER_DATA);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, laser);//laser
+	Apolo_insertSize(buffer, n);
 	return n;
 }
-
+int ApoloMessage::writeGetLaserLandMarks(char *buffer, char *world, char *laser)//AP_GET_LASER_LM
+{
+	int n = 0;
+	n += Apolo_writeHeader(buffer, AP_GET_LASER_LM);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, laser);//laser
+	Apolo_insertSize(buffer, n);
+	return n;
+}
 int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy,  double noise)
 {
 	int n = 0;
-	n += writeHeader(buffer, AP_GET_WB_ODOMETRY);//command
-	n += writeString(buffer + n, world);//world
-	n += writeString(buffer + n, robot);//robot
+	n += Apolo_writeHeader(buffer, AP_GET_WB_ODOMETRY);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, robot);//robot
 	for (int i = 0; i<3; i++)//x,y, rot z
-		n += writeDouble(buffer + n, lastxyy[i]);
-	n += writeDouble(buffer + n, noise);
-	insertSize(buffer, n);
+		n += Apolo_writeDouble(buffer + n, lastxyy[i]);
+	n += Apolo_writeDouble(buffer + n, noise);
+	Apolo_insertSize(buffer, n);
 	return n;
 }
 int ApoloMessage::writeGetUltrasonicSensor(char *buffer, char *world, char* name)
 {
 	int n = 0;
-	n += writeHeader(buffer, AP_GET_USENSOR);//command
-	n += writeString(buffer + n, world);//world
-	n += writeString(buffer + n, name);//laser
-	insertSize(buffer, n);
+	n += Apolo_writeHeader(buffer, AP_GET_USENSOR);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, name);//laser
+	Apolo_insertSize(buffer, n);
 	return n;
 }
 int ApoloMessage::writeGetDependentUltrasonicSensors(char *buffer, char *world, char* object) 
 {
 	int n = 0;
-	n += writeHeader(buffer, AP_GET_DEP_USENSORS);//command
-	n += writeString(buffer + n, world);//world
-	n += writeString(buffer + n, object);//laser
-	insertSize(buffer, n);
+	n += Apolo_writeHeader(buffer, AP_GET_DEP_USENSORS);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, object);//laser
+	Apolo_insertSize(buffer, n);
 	return n;
 }
 
@@ -199,22 +207,37 @@ int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;
 
-	n+=writeHeader(buffer,AP_DVECTOR);//command
-	n+=writeUInt16(buffer+n,num);
+	n+= Apolo_writeHeader(buffer,AP_DVECTOR);//command
+	n+= Apolo_writeUInt16(buffer+n,num);
 	for(int i=0;i<num;i++)
-		n+=writeDouble(buffer+n,d[i]);
-	insertSize(buffer,n);
+		n+= Apolo_writeDouble(buffer+n,d[i]);
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 int ApoloMessage::writeDoubleVector(char *buffer, std::vector<double> v)
 {
 	int n = 0;
-	n += writeHeader(buffer, AP_DVECTOR);//command
+	n += Apolo_writeHeader(buffer, AP_DVECTOR);//command
 	int num = (int)v.size();
-	n += writeUInt16(buffer + n, num);
+	n += Apolo_writeUInt16(buffer + n, num);
 	for (int i=0; i<num; ++i) 
-		n += writeDouble(buffer + n, v[i]);
-	insertSize(buffer, n);
+		n += Apolo_writeDouble(buffer + n, v[i]);
+	Apolo_insertSize(buffer, n);
+	return n;
+}
+
+int ApoloMessage::writeLandMarkInfoVector(char *buffer, std::vector<mr::LaserSensorSim::LandMarkInfo> &v)
+{
+	int n = 0;
+	n += Apolo_writeHeader(buffer, AP_LM_INFO);//command
+	int num = (int)v.size();
+	n += Apolo_writeUInt16(buffer + n, num);
+	for (int i = 0; i < num; ++i) {
+		n += Apolo_writeUInt16(buffer + n, v[i].ID);
+		n += Apolo_writeDouble(buffer + n, v[i].ang);
+		n += Apolo_writeDouble(buffer + n, v[i].dist);
+	}
+	Apolo_insertSize(buffer, n);
 	return n;
 }
 int ApoloMessage::writeBOOL(char *buffer, bool val)
@@ -222,8 +245,8 @@ int ApoloMessage::writeBOOL(char *buffer, bool val)
 	int n=0;
 	char command=AP_FALSE;
 	if(val)command=AP_TRUE;
-	n+=writeHeader(buffer,command);//command
-	insertSize(buffer,n);
+	n+= Apolo_writeHeader(buffer,command);//command
+	Apolo_insertSize(buffer,n);
 	return n;
 }
 ApoloMessage::ApoloMessage(char *buffer,int size,char type)
@@ -248,6 +271,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_GET_WB_ODOMETRY:
 		case AP_GET_USENSOR:
 		case AP_GET_DEP_USENSORS:
+		case AP_GET_LASER_LM:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];

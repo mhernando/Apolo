@@ -38,6 +38,8 @@ enum TypeNode
 	N_PersonSim,
 	N_QuadrotorSim,
 	N_AseaIRB2000,
+	N_UltrasonicSensor,
+	N_LandMark
 };
 enum Bitmap 
 {
@@ -64,6 +66,8 @@ enum Bitmap
 	Bit_adeptonesim=41,
 	Bit_spherepart=43,
 	Bit_asea=45,
+	Bit_ultrasonic=51,
+	Bit_landmark=53
 
 };
 enum BitmapSelect
@@ -91,8 +95,11 @@ enum BitmapSelect
 	BitSel_adeptonesim=42,
 	BitSel_spherepart=44,
 	BitSel_asea=46,
+	BitSel_ultrasonic = 52,
+	BitSel_landmark = 54
 
 };
+
 struct MRPointer
 {
 	union{
@@ -115,6 +122,8 @@ struct MRPointer
 	AdeptOneSim* adeptone;
 	SpherePart * spherepart;
 	AseaIRB2000Sim *aseaIRB2000Sim;
+	UltrasonicSensor *ultrasonic;
+	LandMark *landmark;
 	};
 	WheeledBaseSim* wheeledbasesim;
 	ComposedEntity* composedentity;

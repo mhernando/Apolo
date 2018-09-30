@@ -211,6 +211,19 @@ void *ApoloPort::handleConnections(void *server)
 								valid++;
 							}
 							break;
+						case AP_GET_LASER_LM:
+							if (element) {
+								laser = dynamic_cast<LaserSensorSim*>(element);
+								vector<LaserSensorSim::LandMarkInfo> v;
+								laser->detectLandMarks(v);
+								int num = (int)v.size();
+								char *resp = new char[(2*sizeof(double)+2)*num + 20];
+								int tam = ApoloMessage::writeLandMarkInfoVector(resp, v);
+								temp->Send(resp, tam);
+								delete[] resp;
+								valid++;
+							}
+							break;
 						case AP_GET_WB_ODOMETRY:
 							if (element) {
 								wb = dynamic_cast<WheeledBaseSim *>(element);

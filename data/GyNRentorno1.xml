@@ -148,5 +148,14 @@
 		</position>
       <colour r="0" g="1" b="0"/>
     </UltrasonicSensor>
+
+	<LandMark  name ="LM1" mark_id="12">
+		  <position>			{0,0,0.2}
+		</position>
+	</LandMark>
+	<LandMark  name = "LM2" mark_id="23">
+		  <position>			{5.0,5,0.2}
+		</position>
+	</LandMark>
   </World>
 </root>
