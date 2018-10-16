@@ -44,14 +44,14 @@ inline int Apolo_writeUInt16(char *message, int &num)
 {
 	if(num>65535)num=65535;
 	if(num<0)num=0;
-	((uchar *)message)[0]=(uchar)(num%255);
-	((uchar *)message)[1]=(uchar)(num/255);
+	((uchar *)message)[0]=(uchar)(num%256);
+	((uchar *)message)[1]=(uchar)(num/256);
 	return 2;
 }
 inline void Apolo_insertSize(char *message, int size)//size including the header
 {
-	((uchar *)message)[2]=(uchar)(size%255);
-	((uchar *)message)[3]=(uchar)(size/255);
+	((uchar *)message)[2]=(uchar)(size%256);
+	((uchar *)message)[3]=(uchar)(size/256);
 }
 //tamaño minimo de mensaje es 5
 inline int Apolo_writeHeader(char*buffer,char command) //escribe la cabecera 

@@ -61,8 +61,8 @@ def extractData(data):
         if tam * (8+8+2) + 7 > len(data):
             print("BAD FORMATED MESSAGE")
         else:
-            print("TO BE IMPLEMENTED")
-            
+            return [x for x in struct.iter_unpack('<Hdd', data[7:])]
+
 def writeData(data, *args):
     for thing in args:
         if type(thing) is str:
@@ -152,6 +152,14 @@ class Apolo:
         self.sock.connect((address, self.APOLO_PORT))
         self.data=[]
 
+    def getMessage(self ):
+        m = bytearray(self.sock.recv(1024))
+        tam = int.from_bytes(m[2:4],byteorder='little')
+        while len(m)<tam:
+            aux = self.sock.recv(tam-len(m))
+            m.extend(aux)
+        return m
+
     def updateWorld(self,world=''):
         self.sock.send(m_updateWorld(self.data,world))
 
@@ -182,26 +190,35 @@ class Apolo:
 
     def getLaserLandMarks(self, laser, world=''):
         self.sock.send(m_getLaserLM(self.data, laser, world))
+        return extractData(self.getMessage())
 
     def getDependentUSensors(self, object, world=''):
         self.sock.send(m_getDepUSensors(self.data, object, world))
+        return extractData(self.getMessage())
 
     def getLaserData(self, laser, world=''):
         self.sock.send(m_getLaserData(self.data, laser, world))
+        return extractData(self.getMessage())
 
     def getUSensor(self, sensor, world=''):
         self.sock.send(m_getUSensor(self.data, sensor, world))
+        return extractData(self.getMessage())
 
     def getOdometry(self, robot, last, noise=0, world=''):
         self.sock.send(m_getOdometry(self.data, robot, last, noise, world))
+        return extractData(self.getMessage())
 
 
 if __name__ == "__main__":
     import time
     ap=Apolo()
     ap.updateWorld()
-    ap.checkRobotJoints("Puma 560",[0.5, 1, 0.5])
+    '''ap.checkRobotJoints("Puma 560",[0.5, 1, 0.5])
     for i in range(-100,100):
         print(ap.checkRobotJoints("Puma 560",[i*0.01, i*0.03, i*0.01]))
         #ap.updateWorld()
-    print(ap.getLocation('Puma 560'))
+    print(ap.getLocation('Puma 560'))'''
+    b=ap.getLaserData('LMS100')
+    print(b)
+    c=ap.getLaserLandMarks('LMS100')
+    print(c)
