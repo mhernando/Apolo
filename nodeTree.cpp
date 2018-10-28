@@ -40,6 +40,9 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	if(dynamic_cast<PrismaticPart*>(pos)) menus.menu_prismaticpart=true;
 
 
+	pointer.wheeledbasesim = 0; pointer.solidentity = 0;pointer.positionableentity; pointer.composedentity = 0;
+	pointer.world = 0; pointer.robotsim = 0; pointer.lasersensorsim = 0; pointer.lasersensor3dsim = 0; pointer.joint = 0;
+	
 	//Ahora los punteros a las clases base que pueden ser parte
 	//de una herencia multiple, los cuales no retornan directamente y son no exclusivos
 	//orden de herencia
@@ -52,6 +55,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name =wxString(pos->getName());
 		if(name.empty())name = "Positionable Entity";
 	}
+	
 
 	if(dynamic_cast<SolidEntity *>(pos))
 	{
@@ -62,6 +66,7 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 		name =wxString( pos->getName());
 		if(name.empty())name = "Solid Entity";
 	}
+	
 
 	if(dynamic_cast<ComposedEntity *>(pos))
 	{

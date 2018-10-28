@@ -138,9 +138,8 @@ def m_getUSensor(data, sensor, world=''):
     writeData(data, world, sensor)
 
 @apolo_message(AP_GET_WB_ODOMETRY)
-def m_getOdometry(data, robot, last, noise, world=''):
-    writeData(data, world, robot, float(last[0]),
-              float(last[1]), float(last[2]), float(noise))
+def m_getOdometry(data, robot, world=''):
+    writeData(data, world, robot)
 
 
 class Apolo:
@@ -204,8 +203,8 @@ class Apolo:
         self.sock.send(m_getUSensor(self.data, sensor, world))
         return extractData(self.getMessage())
 
-    def getOdometry(self, robot, last, noise=0, world=''):
-        self.sock.send(m_getOdometry(self.data, robot, last, noise, world))
+    def getOdometry(self, robot, world=''):
+        self.sock.send(m_getOdometry(self.data, robot, world))
         return extractData(self.getMessage())
 
 

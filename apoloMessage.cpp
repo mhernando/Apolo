@@ -172,15 +172,12 @@ int ApoloMessage::writeGetLaserLandMarks(char *buffer, char *world, char *laser)
 	Apolo_insertSize(buffer, n);
 	return n;
 }
-int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot, double *lastxyy,  double noise)
+int ApoloMessage::writeGetOdometry(char  *buffer, char *world, char *robot)
 {
 	int n = 0;
 	n += Apolo_writeHeader(buffer, AP_GET_WB_ODOMETRY);//command
 	n += Apolo_writeString(buffer + n, world);//world
 	n += Apolo_writeString(buffer + n, robot);//robot
-	for (int i = 0; i<3; i++)//x,y, rot z
-		n += Apolo_writeDouble(buffer + n, lastxyy[i]);
-	n += Apolo_writeDouble(buffer + n, noise);
 	Apolo_insertSize(buffer, n);
 	return n;
 }
@@ -199,6 +196,17 @@ int ApoloMessage::writeGetDependentUltrasonicSensors(char *buffer, char *world, 
 	n += Apolo_writeHeader(buffer, AP_GET_DEP_USENSORS);//command
 	n += Apolo_writeString(buffer + n, world);//world
 	n += Apolo_writeString(buffer + n, object);//laser
+	Apolo_insertSize(buffer, n);
+	return n;
+}
+int ApoloMessage::writeResetOdometry(char *buffer, char *world, char *robot, double *xyt) //AP_RESET_ODOMETRY
+{
+	int n = 0, i;
+	n += Apolo_writeHeader(buffer, AP_RESET_ODOMETRY);//command
+	n += Apolo_writeString(buffer + n, world);//world
+	n += Apolo_writeString(buffer + n, robot);//robot
+	for (i = 0; i<3; i++)//x,y, rot z
+		n += Apolo_writeDouble(buffer + n, xyt[i]);
 	Apolo_insertSize(buffer, n);
 	return n;
 }
@@ -272,6 +280,7 @@ ApoloMessage::ApoloMessage(char *buffer,int size,char type)
 		case AP_GET_USENSOR:
 		case AP_GET_DEP_USENSORS:
 		case AP_GET_LASER_LM:
+		case AP_RESET_ODOMETRY:
 			if(pData[5]!=0){
 				world=pData+6;
 				aux=world+((uchar *)pData)[5];

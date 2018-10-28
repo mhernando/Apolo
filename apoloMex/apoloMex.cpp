@@ -127,6 +127,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	case AP_GET_LASER_DATA:
 	case AP_GET_LASER_LM:
 	case AP_GET_WB_ODOMETRY:
+	case AP_RESET_ODOMETRY:
 	case AP_GET_USENSOR:
 	case AP_GET_DEP_USENSORS:
 		if(nrhs<3)mexErrMsgTxt(" name parameter not present");
@@ -286,14 +287,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		}
 		break;
 	case AP_GET_WB_ODOMETRY:
-		//get the double vector
-		if (mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("odometry is a vector of doubles, and noise (x,y,yaw, noise) .");
-		dvalues = mxGetPr(prhs[3]);
-		//  get the dimension of the row vector 
-		if (mxGetM(prhs[3]) != 1)mexErrMsgTxt("last odometry must be row vector.");
-		if (mxGetN(prhs[3]) != 4)mexErrMsgTxt("last odometry must be a 4-row vector.");
-
-		size = ApoloMessage::writeGetOdometry(message, world, name, dvalues, dvalues[3]);
+		size = ApoloMessage::writeGetOdometry(message, world, name);
 		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
 		else {//resp
 			size = 0;
@@ -301,6 +295,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 			ApoloMessage *m = waitForCompleteMessage(&auxb, 10000, size);
 			createMexDoubleArrayFromMessage(m, plhs);
 		}
+		break;
+	case AP_RESET_ODOMETRY:
+		//get the double vector
+		if (mxIsDouble(prhs[3]) != 1)mexErrMsgTxt("new odometry value must be a vector of doubles.");
+		dvalues = mxGetPr(prhs[3]);
+		//  get the dimension of the row vector 
+		if (mxGetM(prhs[3]) != 1)mexErrMsgTxt("odometry must be row vector.");
+		if (mxGetN(prhs[3]) != 3)mexErrMsgTxt("odometry must be a 3-row vector.");
+
+		size = ApoloMessage::writeResetOdometry(message, world, name, dvalues);
+		if (conection->Send(message, size)<size)mexErrMsgTxt(" Socket Bad Send");
 		break;
 	case AP_GET_USENSOR:
 	case AP_GET_DEP_USENSORS:

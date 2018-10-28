@@ -110,7 +110,7 @@
 			</position>
       </face>
     </FaceSetPart>
-    <Pioneer3ATSim name="Marvin" id="0">
+    <Pioneer3ATSim name="Marvin" id="0" odometryNoise="0.1">
       <orientation>			{0,-0,-3.08}
 		</orientation>
       <position>			{-8.71081,4.22228,0}
@@ -121,6 +121,7 @@
         <position>				{3.4377,-4.60055,0}
 			</position>
       </odometry>
+	  
     </Pioneer3ATSim>
     <LMS100Sim name="LMS100" id="1" linkTo="$Marvin$">
       <position>			{0.1,0,0.4}

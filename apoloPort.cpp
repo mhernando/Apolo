@@ -90,7 +90,11 @@ void *ApoloPort::handleConnections(void *server)
 					char *name=m->getObjectName();
 					int worldindex=0;
 					PositionableEntity *element=getElement(nworld,name,&worldindex);
-
+					//DISABLES ALL AUTOMATIC SIMULATIONS To avoid concurrents access
+					//TODO: not stoping the simulation... just avoid the concurrency (disable on timer while procesing a single message)
+					for (int i = 0; i < world->size(); i++)
+						(*world)[i]->getChild()->SetPlaySimu(false);
+					//END OF IT
 					switch(m->getType())
 					{
 						case AP_CHECKJOINTS:
@@ -205,7 +209,7 @@ void *ApoloPort::handleConnections(void *server)
 								laser->getData(data);
 								int num = (int)data.size();
 								char *resp = new char[sizeof(double)*num+20];
-								int tam = ApoloMessage::writeDoubleVector(resp, data.getRanges());
+ 								int tam = ApoloMessage::writeDoubleVector(resp, data.getRanges());
 								temp->Send(resp, tam);
 								delete [] resp;
 								valid++;
@@ -215,6 +219,7 @@ void *ApoloPort::handleConnections(void *server)
 							if (element) {
 								laser = dynamic_cast<LaserSensorSim*>(element);
 								vector<LaserSensorSim::LandMarkInfo> v;
+								laser->simulate(0);
 								laser->detectLandMarks(v);
 								int num = (int)v.size();
 								char *resp = new char[(2*sizeof(double)+2)*num + 20];
@@ -227,30 +232,34 @@ void *ApoloPort::handleConnections(void *server)
 						case AP_GET_WB_ODOMETRY:
 							if (element) {
 								wb = dynamic_cast<WheeledBaseSim *>(element);
-								double d[4];
-								for (int i = 0; i<4; i++)d[i] = m->getDoubleAt(8 * i);
-								Transformation3D lastPose(d[0], d[1], 0, 0, 0, d[2]);
-							    Odometry last_odom,odom;
-								last_odom.pose = lastPose;
-								wb->getOdometry(odom);
-								Transformation3D inc=odom.getIncrement(last_odom, d[3]);
-								double dresp[3],aux[2];
-								dresp[0] = inc.position[0];
-								dresp[1] = inc.position[1];
-								inc.orientation.getRPY(aux[0], aux[1], dresp[2]);
+								Transformation2D odom = (wb->getWBodometry()).get();
 
+								double dresp[3] = { odom.x,odom.y,odom.theta.getValue() };
 								char resp[70];
 								int tam;
 								tam = ApoloMessage::writeDoubleVector(resp, 3, dresp);
 								temp->Send(resp, tam);
-								
 								valid++;
 							}
 							break;
-							case AP_GET_USENSOR:
+						case AP_RESET_ODOMETRY:
+							if (element) {
+								wb = dynamic_cast<WheeledBaseSim *>(element);
+								bool res = false;
+								double d[3];
+								for (int i = 0; i<3; i++)d[i] = m->getDoubleAt(8 * i);
+								if (wb) {
+									(wb->getWBodometry()).reset(wb);
+									(wb->getWBodometry()).set(d[0], d[1], d[2]);
+									valid++;
+								}
+							}
+							break;
+						case AP_GET_USENSOR:
 								if (element) {
 									UltrasonicSensor *usensor = dynamic_cast<UltrasonicSensor *>(element);
 									if (!usensor)break;
+									usensor->simulate(0);
 									double measure = usensor->getDistance();
 									char resp[70];
 									int tam;
@@ -266,7 +275,10 @@ void *ApoloPort::handleConnections(void *server)
 									{
 										int n = v.size();
 										double *vaux = new double[n];
-										for(int i=0;i<n;i++)vaux[i] = v[i]->getDistance();
+										for (int i = 0; i < n; i++) { 
+											v[i]->simulate(0);
+											vaux[i] = v[i]->getDistance(); 
+										}
 										char *resp=new char[8*n+10];
 										int tam;
 										tam = ApoloMessage::writeDoubleVector(resp, n, vaux);
