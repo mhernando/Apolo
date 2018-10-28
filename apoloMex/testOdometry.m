@@ -1,16 +1,16 @@
 function A= testOdometry(robot,n)
 %TESTOdometry 
-pos=apoloGetOdometry(robot,[0 0 0],0)
+pos=apoloGetOdometry(robot)
 A=[pos]
 for i = 1:n
-    apoloMoveMRobot(robot, [0.1, 0.02], 0.1);
+    apoloMoveMRobot(robot, [0.1, 0.05], 0.1);
     apoloUpdate()
-    a=apoloGetOdometry(robot,pos,0.05);
-    pos=pos+a;
-    A=[A ; pos];
+    a=apoloGetOdometry(robot);
+    A=[A ; a];
    
     
 end
+plot(A(:,1), A(:,2),'b')
 
 
 

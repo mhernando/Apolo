@@ -1,6 +1,5 @@
 
-function ret=apoloGetOdometry(robot, lastodom, noise, world)
-if(nargin<4)world='';end;
-if(nargin==2)noise=0.0;end;
-ret=apoloMex('o',world,robot,[lastodom noise]);
+function ret=apoloGetOdometry(robot, world)
+if(nargin==1)world='';end;
+ret=apoloMex('o',world,robot);
 end 
