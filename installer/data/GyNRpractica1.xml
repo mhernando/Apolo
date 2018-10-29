@@ -1,0 +1,101 @@
+<root>
+  <World>
+	<!-- Los alumnos deben poner el número entero de su número de matrícula a continuación -->
+    <WorldInfo name="Guiado y Navegacion. MUAR. UPM 2018">
+		<RegisterNumber number="23454"/>
+		<RegisterNumber number="22354"/>
+	</WorldInfo>
+	<!-- definición de una habitación como un conjunto de paredes -->
+<FaceSetPart name="Sala Cuadrada 8x8">
+	<face>
+		<vertex>
+			{4.000000 , -3.000000, 0}
+			{4.000000 , 4.000000, 0}
+			{-4.000000 , 4.000000, 0}
+			{-4.000000 , -3.000000, 0}
+		</vertex>
+		<colour r="0.2" g="0.2" b="1"/>
+	</face>
+	<face>
+		<vertex>
+			{0.000000 , 0.000000, 0}
+			{0.000000 , 2.000000, 0}
+			{7.000000 , 2.000000, 0}
+			{7.000000 , 0.000000, 0}
+		</vertex>
+		<orientation>{1.570796 , 0.000000, 1.570796}</orientation>
+		<position>{4.000000 , -3.000000, 0}</position>
+		<colour r="0.2" g="0.2" b="0.8"/>
+	</face>
+	<face>
+		<vertex>
+			{0.000000 , 0.000000, 0}
+			{0.000000 , 2.000000, 0}
+			{8.000000 , 2.000000, 0}
+			{8.000000 , 0.000000, 0}
+		</vertex>
+		<orientation>{1.570796 , 0.000000, 3.141593}</orientation>
+		<position>{4.000000 , 4.000000, 0}</position>
+		<colour r="0.2" g="0.2" b="0.8"/>
+	</face>
+	<face>
+		<vertex>
+			{0.000000 , 0.000000, 0}
+			{0.000000 , 2.000000, 0}
+			{7.000000 , 2.000000, 0}
+			{7.000000 , 0.000000, 0}
+		</vertex>
+		<orientation>{1.570796 , 0.000000, -1.570796}</orientation>
+		<position>{-4.000000 , 4.000000, 0}</position>
+		<colour r="0.2" g="0.2" b="0.8"/>
+	</face>
+	<face>
+		<vertex>
+			{0.000000 , 0.000000, 0}
+			{0.000000 , 2.000000, 0}
+			{8.000000 , 2.000000, 0}
+			{8.000000 , 0.000000, 0}
+		</vertex>
+		<orientation>{1.570796 , 0.000000, 0.000000}</orientation>
+		<position>{-4.000000 , -3.000000, 0}</position>
+		<colour r="0.2" g="0.2" b="0.8"/>
+	</face>
+</FaceSetPart>
+<!-- definición de un robot Pioner3at , posicion y orientación inicial-->
+    <Pioneer3ATSim name="Marvin">
+      <orientation>	{0,0,0} </orientation>
+      <position>	{0,0,0}	</position>
+    </Pioneer3ATSim>
+<!-- definición de un laser unido al robot , posicion y orientación relativa-->	
+    <LMS100Sim name="LMS100" linkTo="$Marvin$">
+      <position>	{0.1,0,0.4} </position>
+      <colour r="0" g="1" b="0"/>
+    </LMS100Sim>
+<!-- definición de 3 ultrasonidos frontales unidos al robot , posicion y orientación relativa-->		
+    <UltrasonicSensor name = "uc0" linkTo="$Marvin$">
+      <orientation>	{0,-0.1,0}	</orientation>
+      <position>	{0.2,0,0.2}	</position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+	
+    <UltrasonicSensor name="ul1" linkTo="$Marvin$">
+      <orientation>	{0,-0.1,0.7}    </orientation>
+      <position>	{0.18,0.11,0.2}	</position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+	
+    <UltrasonicSensor name="ur1" linkTo="$Marvin$">
+      <orientation>	{0,-0.1,-0.7}    </orientation>
+      <position>	{0.18,-0.11,0.2} </position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+<!-- definición de 2 balizas-->
+	<LandMark  name ="LM1" mark_id="1">
+		  <position> {-3.9,3.9,0.2}	</position>
+	</LandMark>
+	
+	<LandMark  name = "LM2" mark_id="2">
+		  <position> {3.9,3.9,0.2} </position>
+	</LandMark>
+  </World>
+</root>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <World>
+    <WorldInfo name="Guiado y Navegacion. MUAR. UPM 2018">
+		<RegisterNumber number="23454"/>
+		<RegisterNumber number="22354"/>
+	</WorldInfo>
+    <FaceSetPart name="Room" id="5">
+      <face>
+        <vertex>				{-22,20,0}
+				{15,20,0}
+				{15,6,0}
+				{6,6,0}
+				{6,-15,0}
+				{-20,-15,0}
+				{-20,-4,0}
+				{-22,-4,0}
+			</vertex>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{37,0,0}
+				{37,1,0}
+				{0,1,0}
+			</vertex>
+        <orientation>				{1.57,0,0}
+			</orientation>
+        <position>				{-22,20,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{2,0,0}
+				{2,1,0}
+				{0,1,0}
+			</vertex>
+        <orientation>				{1.57,0,0}
+			</orientation>
+        <position>				{-22,-4,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{26,0,0}
+				{26,1,0}
+				{0,1,0}
+			</vertex>
+        <orientation>				{1.57,0,0}
+			</orientation>
+        <position>				{-20,-15,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{-26,0,0}
+				{-26,1,0}
+				{0,1,0}
+			</vertex>
+        <orientation>{1.57,0,0}
+			</orientation>
+        <position>				{15,6,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{0,21,0}
+				{1,21,0}
+				{1,0,0}
+			</vertex>
+        <orientation>				{0,-1.57,0}
+			</orientation>
+        <position>				{6,-15,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{0,14,0}
+				{1,14,0}
+				{1,0,0}
+			</vertex>
+        <orientation>				{0,-1.57,0}
+			</orientation>
+        <position>				{15,6,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{0,24,0}
+				{1,24,0}
+				{1,0,0}
+			</vertex>
+        <orientation>				{0,-1.57,0}
+			</orientation>
+        <position>				{-22,-4,0}
+			</position>
+      </face>
+      <face>
+        <colour r="0.1" g="0.1" b="0.9"/>
+        <vertex>				{0,0,0}
+				{0,11,0}
+				{1,11,0}
+				{1,0,0}
+			</vertex>
+        <orientation>				{0,-1.57,0}
+			</orientation>
+        <position>				{-20,-15,0}
+			</position>
+      </face>
+    </FaceSetPart>
+    <Pioneer3ATSim name="Marvin" id="0" odometryNoise="0.1">
+      <orientation>			{0,-0,-3.08}
+		</orientation>
+      <position>			{-8.71081,4.22228,0}
+		</position>
+    </Pioneer3ATSim>
+	
+    <LMS100Sim name="LMS100" id="1" linkTo="$Marvin$">
+      <position>			{0.1,0,0.4}
+		</position>
+      <colour r="0" g="1" b="0"/>
+    </LMS100Sim>
+	
+    <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="u0" id="2" linkTo="$Marvin$">
+      <orientation>			{0,-0.1,0}
+		</orientation>
+      <position>			{0.2,0,0.2}
+		</position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+	
+    <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="ul1" id="3" linkTo="$Marvin$">
+      <orientation>			{6.93889e-18,-0.1,0.7}
+		</orientation>
+      <position>			{0.18,0.11,0.2}
+		</position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+	
+    <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="ur1" id="4" linkTo="$Marvin$">
+      <orientation>			{-6.93889e-18,-0.1,-0.7}
+		</orientation>
+      <position>			{0.18,-0.11,0.2}
+		</position>
+      <colour r="0" g="1" b="0"/>
+    </UltrasonicSensor>
+
+	<LandMark  name ="LM1" mark_id="12">
+		  <position>			{0,0,0.2}
+		</position>
+	</LandMark>
+	
+	<LandMark  name = "LM2" mark_id="23">
+		  <position>			{5.0,5,0.2}
+		</position>
+	</LandMark>
+	
+  </World>
+</root>
