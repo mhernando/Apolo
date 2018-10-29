@@ -1,5 +1,6 @@
 import struct
 import socket
+import math
 AP_NONE = 0
 AP_GET_LASER_LM = 'B'
 AP_DVECTOR = 'D'
@@ -207,6 +208,36 @@ class Apolo:
         self.sock.send(m_getOdometry(self.data, robot, world))
         return extractData(self.getMessage())
 
+def createRoom(vertex, height, name, fileName):
+    '''utility function that creates a room, given de 2D x,y coordinates of the floor
+    vertexes and a height
+    e.g.: createRoom([(1,0),(1,1),(0,1),(0,0)], 2.0, name, 'myfile.xml')
+    '''
+    f = open(fileName,"w+")
+    f.write('<FaceSetPart name="%s">\n'%name)
+    f.write('\t<face>\n\t\t<vertex>\n')
+    for x,y in vertex:#floor
+        f.write('\t\t\t{%f , %f, 0}\n'%(x,y))
+    f.write('\t\t</vertex>\n\t\t<colour r="0.2" g="0.2" b="1"/>\n\t</face>\n')
+    #walls
+
+    n = len(vertex)
+    for i in range(0,n):
+        f.write('\t<face>\n\t\t<vertex>\n')
+        dx = vertex[(i+1)%n][0] - vertex[i][0]
+        dy = vertex[(i+1)%n][1] - vertex[i][1]
+        d=(dx*dx+dy*dy)**0.5
+        f.write('\t\t\t{%f , %f, 0}\n' % (0, 0))
+        f.write('\t\t\t{%f , %f, 0}\n' % (0, height))
+        f.write('\t\t\t{%f , %f, 0}\n' % (d, height))
+        f.write('\t\t\t{%f , %f, 0}\n' % (d, 0))
+        f.write('\t\t</vertex>\n')
+        f.write('\t\t<orientation>{%f , %f, %f}</orientation>\n' % (math.pi/2, 0, math.atan2(dy,dx)))
+        f.write('\t\t<position>{%f , %f, 0}</position>\n' % (vertex[i][0],vertex[i][1]))
+        f.write('\t\t<colour r="0.2" g="0.2" b="0.8"/>\n')
+
+        f.write('\t</face>\n')
+    f.write('</FaceSetPart>\n')
 
 if __name__ == "__main__":
     import time

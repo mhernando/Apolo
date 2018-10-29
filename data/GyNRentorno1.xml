@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
   <World>
+    <WorldInfo name="Guiado y Navegacion. MUAR. UPM 2018">
+		<RegisterNumber number="23454"/>
+		<RegisterNumber number="22354"/>
+	</WorldInfo>
     <FaceSetPart name="Room" id="5">
       <face>
         <vertex>				{-22,20,0}
@@ -115,19 +119,14 @@
 		</orientation>
       <position>			{-8.71081,4.22228,0}
 		</position>
-      <odometry seconds="1538003793" microseconds="825000">
-        <orientation>				{0,-0,2.22}
-			</orientation>
-        <position>				{3.4377,-4.60055,0}
-			</position>
-      </odometry>
-	  
     </Pioneer3ATSim>
+	
     <LMS100Sim name="LMS100" id="1" linkTo="$Marvin$">
       <position>			{0.1,0,0.4}
 		</position>
       <colour r="0" g="1" b="0"/>
     </LMS100Sim>
+	
     <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="u0" id="2" linkTo="$Marvin$">
       <orientation>			{0,-0.1,0}
 		</orientation>
@@ -135,6 +134,7 @@
 		</position>
       <colour r="0" g="1" b="0"/>
     </UltrasonicSensor>
+	
     <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="ul1" id="3" linkTo="$Marvin$">
       <orientation>			{6.93889e-18,-0.1,0.7}
 		</orientation>
@@ -142,6 +142,7 @@
 		</position>
       <colour r="0" g="1" b="0"/>
     </UltrasonicSensor>
+	
     <UltrasonicSensor conusAngle="0.174533" maxRange="6" minRange="0.05" error="0" name="ur1" id="4" linkTo="$Marvin$">
       <orientation>			{-6.93889e-18,-0.1,-0.7}
 		</orientation>
@@ -154,9 +155,11 @@
 		  <position>			{0,0,0.2}
 		</position>
 	</LandMark>
+	
 	<LandMark  name = "LM2" mark_id="23">
 		  <position>			{5.0,5,0.2}
 		</position>
 	</LandMark>
+	
   </World>
 </root>
