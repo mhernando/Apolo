@@ -3,7 +3,7 @@ function A= testOdometry(robot,n)
 pos=apoloGetOdometry(robot)
 A=[pos]
 for i = 1:n
-    apoloMoveMRobot(robot, [0.1, 0.05], 0.1);
+    apoloMoveMRobot(robot, [0.05, 0.05], 0.1);
     apoloUpdate()
     a=apoloGetOdometry(robot);
     A=[A ; a];

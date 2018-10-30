@@ -9,6 +9,7 @@ AP_GETLOCATION = 'G'
 AP_SETJOINTS = 'J'
 AP_LINK_TO_ROBOT_TCP = 'L'
 AP_PLACE = 'P'
+AP_RESET_ODOMETRY = 'R'
 AP_TRUE = 'T'
 AP_UPDATEWORLD = 'U'
 AP_LM_INFO = 'b'
@@ -142,6 +143,10 @@ def m_getUSensor(data, sensor, world=''):
 def m_getOdometry(data, robot, world=''):
     writeData(data, world, robot)
 
+@apolo_message(AP_RESET_ODOMETRY)
+def m_resetOdometry(data, robot, pose2d=(0, 0, 0), world=''):
+    writeData(data, world, robot, float(pose2d[0]), float(pose2d[1]),float(pose2d[2]))
+
 
 class Apolo:
     APOLO_IP = "127.0.0.1"
@@ -176,6 +181,7 @@ class Apolo:
 
     def moveWheeledBase(self, robot, speed, rotspeed, time, world=''):
         self.sock.send(m_moveWheeledBase(self.data, robot, speed, rotspeed, time, world))
+        return extractData(self.sock.recv(1024))
 
     def placeWheeledBase(self, robot, x,y,z,yaw, world=''):
         self.sock.send(m_placeWheeledBase(self.data, robot, x,y,z,yaw,world))
@@ -207,6 +213,10 @@ class Apolo:
     def getOdometry(self, robot, world=''):
         self.sock.send(m_getOdometry(self.data, robot, world))
         return extractData(self.getMessage())
+
+    def resetOdometry(self, robot, pose2d=(0, 0, 0), world=''):
+        self.sock.send(m_resetOdometry(self.data, robot, pose2d, world))
+
 
 def createRoom(vertex, height, name, fileName):
     '''utility function that creates a room, given de 2D x,y coordinates of the floor

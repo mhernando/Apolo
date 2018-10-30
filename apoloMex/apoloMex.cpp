@@ -231,7 +231,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 						
 		size=ApoloMessage::writeMoveWheeledBase(message,world,name,dvalues);
 		if(conection->Send(message,size)<size)mexErrMsgTxt(" Socket Bad Send");
-		
+		else {
+			mxLogical val = 0;
+			size = conection->Receive(resp, 100, 100);
+			char *auxb = resp;
+			ApoloMessage *m = ApoloMessage::getApoloMessage(&auxb, size);
+
+			if (m) {
+				//prepara vector de retorno
+				if (m->getType() == AP_TRUE)val = 1;
+				delete m;
+			}
+			plhs[0] = mxCreateLogicalScalar(val);
+		}
 		break;
 
 	case AP_GETLOCATION:

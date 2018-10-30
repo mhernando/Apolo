@@ -175,6 +175,10 @@ void *ApoloPort::handleConnections(void *server)
 								wb->move(d[0],d[1]);
 								wb->simulate(d[2]);
 								wb->move(0,0);
+								bool res = wb->getMoveSuccess();
+								char resp[50];
+								int tam = ApoloMessage::writeBOOL(resp, res);
+								temp->Send(resp, tam);
 								valid++;
 							}
 							break;
