@@ -16,6 +16,8 @@ WizardImageFile=./images/installerImage.bmp
 WizardSmallImageFile=./images/logoCAR.bmp
 PrivilegesRequired=admin
 
+ArchitecturesInstallIn64BitMode=x64
+
 [Types]
 Name: "full"; Description: "Full installation"
 Name: "sim_only"; Description: "Simulator Only"
@@ -32,7 +34,9 @@ Name: "libs"; Description: "External Libs -manual installation if needed"; Types
 
 
 [Files]
-Source: "Win32/*.*"; DestDir: "{app}"; Components: program
+Source: "Win64/*.*"; DestDir: "{app}"; Components: program; Check: Is64BitInstallMode;
+Source: "Win32/*.*"; DestDir: "{app}"; Components: program; Check: not Is64BitInstallMode; 
+;Source: "Win32/*.*"; DestDir: "{app}"; Components: program
 Source: "Matlab/*.*"; DestDir: "{app}/Matlab"; Components: matlab
 Source: "Python/*.*"; DestDir: "{app}/Python"; Components: python
 Source: "data/*.*"; DestDir: "{app}/data"; Components: data
