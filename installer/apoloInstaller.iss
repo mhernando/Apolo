@@ -17,6 +17,8 @@ WizardSmallImageFile=./images/logoCAR.bmp
 PrivilegesRequired=admin
 
 ArchitecturesInstallIn64BitMode=x64
+UsePreviousAppDir=False
+AllowRootDirectory=True
 
 [Types]
 Name: "full"; Description: "Full installation"
