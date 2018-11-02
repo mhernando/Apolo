@@ -50,10 +50,15 @@ NodeTree::NodeTree(PositionableEntity* pos,SimulatedWorld *simu)
 	{
 		pointer.positionableentity = dynamic_cast<PositionableEntity *>(pos);
 		tipo = N_PositionableEntity;
-		bit = Bit_positionableentity;
-		bitsel = BitSel_positionableentity;
+		bit = Bit_world;
+		bitsel = BitSel_world;
 		name =wxString(pos->getName());
 		if(name.empty())name = "Positionable Entity";
+		//caso especial
+		if (dynamic_cast<WorldInfo *>(pos)) {
+			name = "World INFO (UPM specific)";
+			menus.menu_positionable = false;
+		}
 	}
 	
 

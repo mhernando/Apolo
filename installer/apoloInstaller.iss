@@ -6,7 +6,7 @@
 [Setup]
 AppName=Apolo Robot Simulator
 
-AppVersion=1.2
+AppVersion=1.3
 
 DefaultDirName={pf}\Apolo
 DefaultGroupName=Apolo
@@ -15,7 +15,7 @@ OutputDir=./Installer
 WizardImageFile=./images/installerImage.bmp
 WizardSmallImageFile=./images/logoCAR.bmp
 PrivilegesRequired=admin
-
+OutputBaseFilename=ApoloSetup
 ArchitecturesInstallIn64BitMode=x64
 UsePreviousAppDir=False
 AllowRootDirectory=True
