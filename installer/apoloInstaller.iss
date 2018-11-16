@@ -14,7 +14,8 @@ UninstallDisplayIcon={app}\Apolo.exe
 OutputDir=./Installer
 WizardImageFile=./images/installerImage.bmp
 WizardSmallImageFile=./images/logoCAR.bmp
-PrivilegesRequired=admin
+;next should be admin to install on program files folder
+PrivilegesRequired=lowest
 OutputBaseFilename=ApoloSetup
 ArchitecturesInstallIn64BitMode=x64
 UsePreviousAppDir=False
