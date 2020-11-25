@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<root>
+	<World>
+		<MeshPart name="Nigna" stl_file="ship.stl">
+
+		</MeshPart>
+	  <MeshPart name="Pinta" stl_file="ship.stl">
+		      <orientation>	{0,0,-0.2}	</orientation>
+				<position>	{-0.5,-2.0,0.0}	</position>
+				<colour r="0" g="1" b="1"/>
+	  </MeshPart>
+	  	  <MeshPart name="Santa Maria" stl_file="ship.stl">
+		      <orientation>	{0,0.0,0.2}	</orientation>
+				<position>	{3.5,2.0,0.0}	</position>
+				<colour r="1" g="1" b="0"/>
+	  </MeshPart>
+	<LMS100Sim name="Sick LMS100">
+    	<position>
+		{-0.5,1.6,1.3}
+	    </position>
+	 <colour r="1" g="1" b="0"/>
+    </LMS100Sim>
+	</World>
+</root>

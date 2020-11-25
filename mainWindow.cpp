@@ -1075,7 +1075,7 @@ void MainWindow::OnLoadWorldXML(wxCommandEvent& WXUNUSED(event))
 		if(doc.Load(filec))
 		{
 			XMLfile xml_file(filec);
-			xml_file.load(filec);
+			//xml_file.load(filec);
 			Object *test1 = xml_file.load(filec);
 			World *test2 = dynamic_cast<World *>(test1);				
 			//xml_file.save();
