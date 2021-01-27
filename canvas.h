@@ -29,6 +29,7 @@ public:
 	void OnKey(wxKeyEvent& event);
 	wxPoint getCursorPosition(){return pt;};
 	void ChangeBackGroundColour(wxColour colour);
+	void ViewAll();
 	
 	
 private:

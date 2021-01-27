@@ -14,7 +14,7 @@ BEGIN_EVENT_TABLE(ChildView, wxMDIChildFrame)
 	EVT_UPDATE_UI(ID_PLAY, ChildView::UpdateUIPlay)
 	EVT_UPDATE_UI(ID_STOP2, ChildView::UpdateUIStop)
 	EVT_UPDATE_UI(wxID_ANY,ChildView::UpdateIsActivated)
-
+	//EVT_UPDATE_UI(ID_VIEW_ALL, ChildView::UpdateUIHorizontalFirst)
 
 END_EVENT_TABLE()
 
@@ -46,7 +46,8 @@ ChildView::ChildView(wxMDIParentFrame *parent, const wxString& title, SimulatedW
 void ChildView::InitToolBar(wxToolBar* toolbar)
 {
 	int a=0, b=0;
-	wxBitmap bitmaps[8];
+	wxBitmap bitmaps[9];
+	
 	bitmaps[0] = wxBitmap ( V1_xpm);
 	bitmaps[1] = wxBitmap ( V2_xpm);
 	bitmaps[2] = wxBitmap ( V3_xpm);
@@ -55,8 +56,9 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	bitmaps[5] = wxBitmap ( play_xpm);
 	bitmaps[6] = wxBitmap ( stop2_xpm);
 	bitmaps[7] = wxBitmap ( colour_xpm);
+	bitmaps[8] = wxBitmap( home_xpm);
 
-
+	toolbar->AddTool(ID_VIEW_ALL, "view unsplit simple", bitmaps[8]);
 	toolbar->AddTool(ID_UNSPLITF, "view unsplit simple", bitmaps[4]);
 	toolbar->AddTool(ID_SPLITHF, "view horizontal simple",  bitmaps[0]);
 	toolbar->AddTool(ID_SPLITVF, "view vertical simple", bitmaps[1]);
@@ -72,7 +74,13 @@ void ChildView::InitToolBar(wxToolBar* toolbar)
 	
 }
 
-
+void ChildView::ViewAll()
+{
+	canvas1->ViewAll();
+	canvas2->ViewAll();
+	canvas3->ViewAll();
+	RefreshChild();
+}
 
 void ChildView::UpdateWorld()
 {

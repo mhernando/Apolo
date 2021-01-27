@@ -148,7 +148,7 @@ public:
 	bool GetShowLinksState(){return showLinks;}
 	void CreatePanelXML();
 	void showXMLEditor(wxCommandEvent& event);
-	
+	void ViewAll(wxCommandEvent& event);
 
 
 	

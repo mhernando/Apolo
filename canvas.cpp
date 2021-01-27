@@ -185,3 +185,7 @@ void Canvas::DrawGrid(bool draw)
 		//scene2D.setShowGrid(draw); /// implementar setShowGrid en MRCore en glscene2D
 
 }
+void Canvas::ViewAll()
+{
+	scene.viewAll();
+}

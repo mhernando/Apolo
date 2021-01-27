@@ -18,6 +18,7 @@
 #include "bitmaps/play.xpm"
 #include "bitmaps/stop2.xpm"
 #include "bitmaps/box.xpm"
+#include "bitmaps/home.xpm"
 using namespace std;
 
 class MainWindow;
@@ -62,6 +63,7 @@ public:
 	bool getIsActivated(){return isActivated;}
 	SimulatedWorld* getSimuWorld(){return s_world;}
 	void ChangeBackgroundColor();
+	void ViewAll();
 	
 private:
 	Canvas* canvas1;

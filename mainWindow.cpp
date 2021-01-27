@@ -122,6 +122,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	EVT_MENU(ID_COPYDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_PASTEDESIGN, MainWindow::CopyPasteDesign)
 	EVT_MENU(ID_SAVEASROBOT,MainWindow::SaveRobotAsRobotSimXml)
+	EVT_MENU(ID_VIEW_ALL, MainWindow::ViewAll)
 END_EVENT_TABLE()
 
 
@@ -232,6 +233,7 @@ void MainWindow::CreateMenuBar()
 	ipro=new wxMenu;
 	osel=new wxMenu;
 	dwid=new wxMenu;
+	menuSettings->Append(new wxMenuItem(menuSettings, ID_VIEW_ALL, wxT("View all"), wxT("Adjusts the main camera to view all")));
 	menuSettings->AppendSubMenu(ipro,wxT("Positionable Properties"),wxT("Change display configuration of Positionable Properties"));
 	ipro->AppendCheckItem(CONT_MENU,wxT("Contextual Menu"));
 	ipro->AppendCheckItem(SLI_VERT,wxT("Vertical Sliders"));
@@ -245,8 +247,10 @@ void MainWindow::CreateMenuBar()
 
 	menubar = new wxMenuBar;
 	menubar->Append(menuFile, wxT("&File"));
-	menubar->Append(menuAbout, wxT("About"));
 	menubar->Append(menuSettings, wxT("Settings"));
+	menubar->Append(menuAbout, wxT("About"));
+
+
 	SetMenuBar(menubar);
 	
 		
@@ -1608,6 +1612,19 @@ void MainWindow::SaveRobotAsRobotSimXml(wxCommandEvent& event)
 		}
 	}
 	else wxLogMessage(wxT("Please select a Object."));
+}
+void MainWindow::ViewAll(wxCommandEvent& event)
+{
+	wxTreeItemId itemId = tree->GetSelection();
+
+	for (unsigned int i = 0; i < listWorlds.size(); i++)
+	{
+		if (listWorlds[i]->getTreeItem() == itemId)
+		{
+			listWorlds[i]->getChild()->ViewAll();
+		}
+		else wxLogMessage(wxT("Please, select a World."));
+	}
 }
 
 
