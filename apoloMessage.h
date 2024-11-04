@@ -1,5 +1,6 @@
 
 #pragma once
+
 #include "mrcore.h"
 
 #define AP_NONE 0
