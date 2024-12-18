@@ -23,6 +23,7 @@
 #define AP_GET_WB_ODOMETRY 'o'
 #define AP_PLACE_WB 'p'
 #define AP_GET_USENSOR 'u'
+#define AP_CHANGE_PORT 'z'
 
 
 
@@ -35,7 +36,7 @@
 class ApoloMessage
 {
 	char *pData;//pointer to a byte secuence that has a message (header+size+type+specific data)
-	char *world,*name,*bindata; //utility fields to avoid reinterpretation
+	char* world{}, * name{}, * bindata{}; //utility fields to avoid reinterpretation
 	int size;
 	char type;
 
@@ -60,7 +61,7 @@ public:
 	static int writeGetLaserLandMarks(char *buffer, char *world, char *laser); //AP_GET_LASER_LM
 	static int writeLandMarkInfoVector(char *buffer, std::vector<mr::LaserSensorSim::LandMarkInfo> &v); //AP_LM_INFO
 	static int writeResetOdometry(char *buffer, char *world, char *robot, double *xyt); //AP_RESET_ODOMETRY
-	
+	static int writeChangePort(char* buffer, int port); //AP_CHANGE_PORT
 	static ApoloMessage *getApoloMessage(char **buffer, int max);
 
 	char *getWorld(){return world;}

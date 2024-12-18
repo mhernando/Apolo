@@ -200,7 +200,9 @@ MainWindow::MainWindow(wxWindow *parent, const wxWindowID id, const wxString& ti
 	rToogle=false;
 	SimulatedWorld::tree = tree;
 	SimulatedWorld::mainWin = this;
+
 	port=new ApoloPort(12000,&listWorlds);
+
 	connection=new RobotConnection(this,wxT("Server Configuration"));
 
 }

@@ -210,7 +210,14 @@ int ApoloMessage::writeResetOdometry(char *buffer, char *world, char *robot, dou
 	Apolo_insertSize(buffer, n);
 	return n;
 }
-
+int ApoloMessage::writeChangePort(char* buffer, int port) //AP_CHANGE_PORT
+{
+	int n = 0, i;
+	n += Apolo_writeHeader(buffer, AP_CHANGE_PORT);//command
+	n += Apolo_writeUInt16(buffer + n, port);
+	Apolo_insertSize(buffer, n);
+	return n;
+}
 int ApoloMessage::writeDoubleVector(char *buffer, int num, double *d)
 {
 	int n=0;

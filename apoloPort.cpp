@@ -28,6 +28,7 @@ bool ApoloPort::getDependentUltrasonicSensors(PositionableEntity *object, vector
 
 PositionableEntity *ApoloPort::getElement(char *nworld,char *name,int *worldindex)
 {
+	if (name == 0)return 0;
 	//if nworld=0 busca en todos los mundos
 	PositionableEntity *elem=0;
 	*worldindex=-1;
@@ -294,6 +295,16 @@ void *ApoloPort::handleConnections(void *server)
 									
 								}
 							break;
+							case AP_CHANGE_PORT:
+							{
+								int nport = m->getUInt16At(0);
+								if (nport != socket.GetPort()) {
+									socket.close();
+									aux_sock->close();
+									aux_sock->initServer(nport);
+								}
+							}
+
 
 					}
 
